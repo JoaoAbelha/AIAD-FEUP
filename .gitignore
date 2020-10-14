@@ -13,7 +13,7 @@ AIAD-FEUP.iml
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
 .idea/*.iml
-
+.idea
 
 # Gradle:
 .idea/gradle.xml
