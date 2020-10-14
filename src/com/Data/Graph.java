@@ -1,11 +1,12 @@
 package com.Data;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class Graph {
     private Map<Integer, Map<Integer, RoadInfo>> edges = new HashMap<>();
 
-    void addEdges(int src, int dest, int distance, int maxVelocity) {
+    public void addEdges(int src, int dest, int distance, int maxVelocity) {
             RoadInfo road = new RoadInfo(distance, maxVelocity);
             if (edges.get(src) == null) {
                 HashMap<Integer, RoadInfo> adjacents = new HashMap<>();
@@ -17,11 +18,11 @@ public class Graph {
             }
     }
 
-    boolean edgeExists(int src, int dest) {
+    public boolean edgeExists(int src, int dest) {
         return this.edges.get(src).get(dest) != null;
     }
 
-    RoadInfo getEdgeInfo(int src, int dest) {
+    public RoadInfo getEdgeInfo(int src, int dest) {
         return this.edges.get(src).get(dest);
     }
 
@@ -30,10 +31,21 @@ public class Graph {
      * @param src
      * @return null or adjacent edges
      */
-    Map<Integer, RoadInfo> getAdjacents(int src) {
+    public Map<Integer, RoadInfo> getAdjacent(int src) {
         return this.edges.get(src);
     }
 
+    public void print() {
+        for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : edges.entrySet()) {
+            Integer src = entry.getKey();
+            System.out.print(src + "->");
+            Map<Integer, RoadInfo> value = entry.getValue();
 
-
+            for(Map.Entry<Integer,RoadInfo> adj : value.entrySet()) {
+                Integer dest = adj.getKey();
+                System.out.print(dest + " ");
+            }
+            System.out.println();
+        }
+    }
 }

@@ -1,4 +1,5 @@
 package com.Agent;
+import com.Data.Graph;
 import jade.core.Agent;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,6 +11,7 @@ public class HelloAgent extends Agent {
     final int DEST_NODE = 1;
     final int DIST = 2;
     final int MAX_VELOCITY = 3;
+    private Graph city = new Graph();
 
 
     @Override
@@ -19,10 +21,14 @@ public class HelloAgent extends Agent {
         try {
             reader = new BufferedReader(new FileReader("src/city.txt"));
             String line = reader.readLine();
-            String [] elements = line.split(" ");
 
 
             while(line != null) {
+                String [] elements = line.split(" ");
+                city.addEdges(Integer.parseInt(elements[SRC_NODE]),
+                        Integer.parseInt(elements[DEST_NODE]),
+                        Integer.parseInt(elements[DIST]),
+                        Integer.parseInt(elements[MAX_VELOCITY]));
                 System.out.println(line);
                 line = reader.readLine();
             }
@@ -30,5 +36,7 @@ public class HelloAgent extends Agent {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        city.print();
     }
 }
