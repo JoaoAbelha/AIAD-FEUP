@@ -4,6 +4,7 @@ out
 # modules.xml
 APDescription.txt
 MTPs-Main-Container.txt
+AIAD-FEUP.iml
 
 # User-specific stuff:
 .idea/workspace.xml

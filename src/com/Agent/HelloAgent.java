@@ -6,6 +6,12 @@ import java.io.IOException;
 
 public class HelloAgent extends Agent {
 
+    final int SRC_NODE = 0;
+    final int DEST_NODE = 1;
+    final int DIST = 2;
+    final int MAX_VELOCITY = 3;
+
+
     @Override
     protected void setup() {
         System.out.println("First agent");
@@ -14,6 +20,7 @@ public class HelloAgent extends Agent {
             reader = new BufferedReader(new FileReader("src/city.txt"));
             String line = reader.readLine();
             String [] elements = line.split(" ");
+
 
             while(line != null) {
                 System.out.println(line);

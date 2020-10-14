@@ -17,6 +17,23 @@ public class Graph {
             }
     }
 
+    boolean edgeExists(int src, int dest) {
+        return this.edges.get(src).get(dest) != null;
+    }
+
+    RoadInfo getEdgeInfo(int src, int dest) {
+        return this.edges.get(src).get(dest);
+    }
+
+    /**
+     *
+     * @param src
+     * @return null or adjacent edges
+     */
+    Map<Integer, RoadInfo> getAdjacents(int src) {
+        return this.edges.get(src);
+    }
+
 
 
 }
