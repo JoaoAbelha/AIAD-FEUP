@@ -1,6 +1,6 @@
 
 out
-# *.iml
+*.iml
 # modules.xml
 APDescription.txt
 MTPs-Main-Container.txt
