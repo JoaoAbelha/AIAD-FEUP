@@ -7,8 +7,6 @@ import java.io.FileNotFoundException;
 
 public class StarterAgent extends Agent {
 
-    final private Graph city = new Graph();
-
     @Override
     protected void setup() {
         System.out.println("First agent");
