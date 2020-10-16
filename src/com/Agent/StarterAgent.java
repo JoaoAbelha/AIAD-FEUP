@@ -1,6 +1,7 @@
 package com.Agent;
 import com.utils.CarReader;
 import com.utils.TypeWeatherReader;
+import com.utils.WeatherReader;
 import jade.core.Agent;
 import java.io.FileNotFoundException;
 
@@ -17,7 +18,8 @@ public class StarterAgent extends Agent {
             //CarReader reader = new CarReader("src/car.txt");
             //reader.readFile();
             //reader.createAgent();
-            TypeWeatherReader reader = new TypeWeatherReader("src/weather.txt");
+            //TypeWeatherReader reader = new TypeWeatherReader("src/typeWeather.txt");
+            WeatherReader reader = new WeatherReader("src/weather.txt");
             reader.readFile();
             reader.createAgent();
         } catch (FileNotFoundException e) {

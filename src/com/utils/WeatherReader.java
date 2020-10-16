@@ -1,0 +1,35 @@
+package com.utils;
+
+import jade.core.Agent;
+
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
+
+public class WeatherReader extends FileReader {
+
+    final int WEATHER_TIME = 0;
+    final int WEATHER_TYPE = 1;
+
+    private final HashMap<Integer, String> weather = new HashMap<>();
+
+
+    public WeatherReader(String filename) throws FileNotFoundException {
+        super(filename);
+    }
+
+    @Override
+    public void readLine(String[] line) {
+        weather.put(Integer.parseInt(line[WEATHER_TIME]), line[WEATHER_TYPE]);
+    }
+
+    @Override
+    public Agent createAgent() {
+        for(Map.Entry<Integer,String> v : weather.entrySet()) {
+            Integer time = v.getKey();
+            String type = v.getValue();
+            System.out.println(time+":" +type);
+        }
+        return null;
+    }
+}
