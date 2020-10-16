@@ -1,7 +1,6 @@
 package com.Agent;
-import com.Data.Graph;
 import com.utils.CarReader;
-import com.utils.GraphReader;
+import com.utils.TypeWeatherReader;
 import jade.core.Agent;
 import java.io.FileNotFoundException;
 
@@ -15,7 +14,10 @@ public class StarterAgent extends Agent {
             //GraphReader reader = new GraphReader("src/city.txt");
             //reader.readFile();
             //reader.createAgent();
-            CarReader reader = new CarReader("src/car.txt");
+            //CarReader reader = new CarReader("src/car.txt");
+            //reader.readFile();
+            //reader.createAgent();
+            TypeWeatherReader reader = new TypeWeatherReader("src/weather.txt");
             reader.readFile();
             reader.createAgent();
         } catch (FileNotFoundException e) {

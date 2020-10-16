@@ -7,9 +7,9 @@ import java.io.FileNotFoundException;
 
 public class GraphReader extends FileReader {
 
-    final int DIST = 0;
-    final int SRC_NODE = 1;
-    final int DEST_NODE = 2;
+    final int SRC_NODE = 0;
+    final int DEST_NODE = 1;
+    final int DIST = 2;
     final int MAX_VELOCITY = 3;
     final private Graph city = new Graph();
 
