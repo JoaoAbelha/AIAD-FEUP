@@ -1,19 +1,28 @@
 package com.Data;
+import com.utils.RouteStrategy;
 
 public class Car {
 
     private int currentVelocity;
-    private String name;
+    private final String name;
     private int currentNode;
-    private int destNode;
-    private String strategy;
+    private final int destNode;
+    private final RouteStrategy strategy;
 
-    public Car(String name, int src, int dest, String strategy) {
+    public Car(String name, int src, int dest, RouteStrategy strategy) {
         this.name = name;
         this.currentVelocity = 0;
         this.currentNode = src;
         this.destNode= dest;
         this.strategy = strategy;
+    }
+
+    public void setCurrentNode(int currentNode) {
+        this.currentNode = currentNode;
+    }
+
+    public void setCurrentVelocity(int currentVelocity) {
+        this.currentVelocity = currentVelocity;
     }
 
     public void print(){

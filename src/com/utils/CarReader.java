@@ -10,6 +10,7 @@ public class CarReader extends FileReader {
     final int DEST_NODE = 2;
     final int STRATEGY = 3;
 
+
     HashSet<Car> cars = new HashSet<>();
 
     public CarReader(String filename) throws FileNotFoundException {
@@ -18,10 +19,18 @@ public class CarReader extends FileReader {
 
     @Override
     public void readLine(String[] line) {
+
+        String strategy = line[STRATEGY];
+        RouteStrategy routeStrategy = null;
+        if (strategy.equals("DIJKSTRA")) {
+            routeStrategy = new Dijkstra();
+        }
+
+
         cars.add(new Car(line[NAME_NODE],
                 Integer.parseInt(line[SRC_NODE]),
                 Integer.parseInt(line[DEST_NODE]),
-                line[STRATEGY]));
+                routeStrategy));
     }
 
     @Override
