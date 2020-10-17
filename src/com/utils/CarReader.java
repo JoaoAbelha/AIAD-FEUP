@@ -1,8 +1,5 @@
 package com.utils;
-
 import com.Data.Car;
-import jade.core.Agent;
-
 import java.io.FileNotFoundException;
 import java.util.HashSet;
 
@@ -28,10 +25,10 @@ public class CarReader extends FileReader {
     }
 
     @Override
-    public Agent createAgent() {
+    public HashSet<Car> getInfo() {
         for(Car car : this.cars) {
             car.print();
         }
-        return null;
+        return cars;
     }
 }

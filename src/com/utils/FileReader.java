@@ -13,9 +13,9 @@ public abstract class FileReader implements IFileReader {
 
     FileReader(String filename) throws FileNotFoundException {
         this.reader = new BufferedReader(new java.io.FileReader(filename));
+        //this.readFile();
     }
 
-    @Override
     public void readFile() {
         String line;
         try {

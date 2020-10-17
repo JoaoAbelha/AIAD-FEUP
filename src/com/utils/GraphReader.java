@@ -18,9 +18,9 @@ public class GraphReader extends FileReader {
     }
 
     @Override
-    public Agent createAgent() {
+    public Graph getInfo() {
         city.print(); // just for debug sake
-        return null;
+        return city;
     }
 
     @Override

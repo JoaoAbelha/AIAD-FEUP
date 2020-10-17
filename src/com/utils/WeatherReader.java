@@ -1,7 +1,5 @@
 package com.utils;
 
-import jade.core.Agent;
-
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +11,6 @@ public class WeatherReader extends FileReader {
 
     private final HashMap<Integer, String> weather = new HashMap<>();
 
-
     public WeatherReader(String filename) throws FileNotFoundException {
         super(filename);
     }
@@ -24,7 +21,7 @@ public class WeatherReader extends FileReader {
     }
 
     @Override
-    public Agent createAgent() {
+    public HashMap<Integer, String> getInfo() {
         for(Map.Entry<Integer,String> v : weather.entrySet()) {
             Integer time = v.getKey();
             String type = v.getValue();
