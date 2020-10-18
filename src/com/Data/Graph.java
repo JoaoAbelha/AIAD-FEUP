@@ -34,6 +34,10 @@ public class Graph {
         return this.edges.get(src);
     }
 
+    public Map<Integer, Map<Integer, RoadInfo>> getEdges() {
+        return edges;
+    }
+
     public void print() {
         for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : edges.entrySet()) {
             Integer src = entry.getKey();

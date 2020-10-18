@@ -23,7 +23,7 @@ public class CarReader extends FileReader {
         String strategy = line[STRATEGY];
         RouteStrategy routeStrategy = null;
         if (strategy.equals("DIJKSTRA")) {
-            routeStrategy = new Dijkstra();
+            routeStrategy = new ShortestPath();
         }
 
 
