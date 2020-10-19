@@ -79,7 +79,7 @@ public class ShortestPath implements RouteStrategy {
         Collections.reverse(solution);
 
         for(Integer x : solution) {
-            System.out.print( x + " ");
+            System.out.print( x + "     ");
         }
 
 

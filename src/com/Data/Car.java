@@ -28,4 +28,8 @@ public class Car {
     public void print(){
         System.out.println("[" + name + " " +  currentNode + " " + strategy + "]");
     }
+
+    public String getName() {
+        return name;
+    }
 }
