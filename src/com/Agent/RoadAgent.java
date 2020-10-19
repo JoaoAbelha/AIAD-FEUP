@@ -1,12 +1,9 @@
 package com.Agent;
 
 import jade.core.Agent;
-import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.domain.FIPAException;
 
-public class RoadAgent  extends Agent {
+public class RoadAgent  extends AgentRegister {
     private int distance;
     private int velocity;
     private DFAgentDescription dfd;
@@ -17,24 +14,9 @@ public class RoadAgent  extends Agent {
         this.velocity = velocity;
     }
 
-    public void register() {
-        ServiceDescription sd = new ServiceDescription();
-        sd.setType("road");
-        sd.setName(getLocalName());
-
-        this.dfd = new DFAgentDescription();
-        dfd.setName(getAID());
-        dfd.addServices(sd);
-        try {
-            DFService.register(this, this.dfd);
-        } catch (FIPAException fe) {
-            fe.printStackTrace();
-        }
-    }
-
     @Override
     protected void setup() {
-        register();
+        register("road");
         System.out.println("Road agent started");
     }
 }
