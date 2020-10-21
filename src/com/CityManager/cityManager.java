@@ -15,21 +15,24 @@ import java.util.Map;
 
 public class cityManager extends AgentCreator {
 
-    private Graph graph;
-    private HashSet<Car> cars;
+    private Graph graph = new Graph();
+    private HashSet<Car> cars = new HashSet<>();
     private HashMap<String, Float> weatherVelocityRestriction;
     private HashMap<Integer, String> weather = new HashMap<>();
 
 
     public cityManager() throws FileNotFoundException {
         super();
+        /*
         CarReader r = new CarReader("src/car.txt");
         r.readFile();
         this.cars = r.getInfo();
 
         GraphReader gr = new GraphReader("src/city.txt");
         gr.readFile();
-        this.graph = gr.getInfo();
+        this.graph = gr.getInfo();*/
+
+
 
         //ShortestPath sp = new ShortestPath();
         //sp.buildRoute(1,4, this.graph);
@@ -41,7 +44,7 @@ public class cityManager extends AgentCreator {
     void createAgentCars() {
         int unique = 0;
         for(Car car : this.cars) {
-            CarAgent carAgent = new CarAgent(car.getName());
+            CarAgent carAgent = new CarAgent(car);
             try {
                 this.agentController = this.containerController.acceptNewAgent("car" + String.valueOf(unique++), carAgent);
                 this.agentController.start();
@@ -77,6 +80,8 @@ public class cityManager extends AgentCreator {
         cityManager cityManager = new cityManager();
         cityManager.createAgentCars();
         cityManager.createRoads();
+        System.out.println("city manager running...");
+
     }
 
 }
