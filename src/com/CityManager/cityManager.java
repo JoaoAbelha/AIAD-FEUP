@@ -32,7 +32,7 @@ public class cityManager extends AgentCreator {
         GraphReader gr = new GraphReader("src/city.txt");
         gr.readFile();
         this.graph = gr.getInfo();
-        
+
         //ShortestPath sp = new ShortestPath();
         //sp.buildRoute(1,4, this.graph);
         // initialize the rest
@@ -43,7 +43,7 @@ public class cityManager extends AgentCreator {
     void createAgentCars() {
         int unique = 0;
         for(Car car : this.cars) {
-            CarAgent carAgent = new CarAgent(car);
+            CarAgent carAgent = new CarAgent(car, graph);
             try {
                 this.agentController = this.containerController.acceptNewAgent("car" + String.valueOf(unique++), carAgent);
                 this.agentController.start();
