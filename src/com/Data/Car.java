@@ -29,6 +29,10 @@ public class Car {
         System.out.println("[" + name + " " +  currentNode + " " + strategy+ "]");
     }
 
+    public int getCurrentNode() {
+        return currentNode;
+    }
+
     public String getName() {
         return name;
     }

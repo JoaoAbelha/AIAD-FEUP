@@ -1,5 +1,6 @@
 package com.Behaviour;
 
+import com.Agent.CarAgent;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
@@ -11,10 +12,12 @@ import java.util.Vector;
 public class CarNetInitiator extends ContractNetInitiator {
 
     private int nrResponders;
+    private CarAgent car;
 
     public CarNetInitiator(Agent a, ACLMessage cfp, int nrResponders) {
         super(a, cfp);
         this.nrResponders = nrResponders;
+        this.car = (CarAgent) a;
     }
 
     @Override

@@ -1,11 +1,14 @@
 package com.Agent;
 
 import com.Behaviour.RoadNetResponder;
+import com.Data.Car;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+
+import java.util.HashSet;
 
 public class RoadAgent  extends AgentRegister {
     private int distance;

@@ -23,17 +23,16 @@ public class cityManager extends AgentCreator {
 
     public cityManager() throws FileNotFoundException {
         super();
-        /*
+
         CarReader r = new CarReader("src/car.txt");
         r.readFile();
         this.cars = r.getInfo();
 
+
         GraphReader gr = new GraphReader("src/city.txt");
         gr.readFile();
-        this.graph = gr.getInfo();*/
-
-
-
+        this.graph = gr.getInfo();
+        
         //ShortestPath sp = new ShortestPath();
         //sp.buildRoute(1,4, this.graph);
         // initialize the rest
@@ -61,13 +60,15 @@ public class cityManager extends AgentCreator {
 
     @Override
     void createRoads() {
-        int unique = 1;
         for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : this.graph.getEdges().entrySet()) {
+            Integer src = entry.getKey();
             Map<Integer, RoadInfo> value = entry.getValue();
             for(Map.Entry<Integer,RoadInfo> adj : value.entrySet()) {
+                Integer dest= adj.getKey();
                 RoadAgent roadAgent = new RoadAgent(adj.getValue().getMaxVelocity(), adj.getValue().getDistance());
                 try {
-                    this.agentController = this.containerController.acceptNewAgent("road" + String.valueOf(unique++), roadAgent);
+                    System.out.println(src + " " + dest);
+                    this.agentController = this.containerController.acceptNewAgent("road" + src + dest, roadAgent);
                     this.agentController.start();
                 } catch (StaleProxyException e) {
                     e.printStackTrace();

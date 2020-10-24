@@ -1,6 +1,7 @@
 package com.Behaviour;
 
 
+import com.Agent.RoadAgent;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
@@ -10,8 +11,12 @@ import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 
 public class RoadNetResponder extends ContractNetResponder {
+
+    private RoadAgent road;
+
     public RoadNetResponder(Agent a, MessageTemplate mt) {
         super(a, mt);
+        this.road = (RoadAgent) a;
     }
 
     // todo: should this function be in the road class
