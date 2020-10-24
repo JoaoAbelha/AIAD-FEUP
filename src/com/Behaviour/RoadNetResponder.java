@@ -21,9 +21,12 @@ public class RoadNetResponder extends ContractNetResponder {
     }
 
 
+    /**
+     * todos: not sure here
+     * */
     private boolean performAction() {
-        // Simulate action execution by generating a random number
-        return (Math.random() > 0.2);
+        // the action never fails
+        return true;
     }
 
 
@@ -61,11 +64,10 @@ public class RoadNetResponder extends ContractNetResponder {
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
         System.out.println("Agent "+ myAgent.getLocalName() +": Proposal accepted");
 
-        // todo: I think we are not gonna need this case
         if (performAction()) {
             System.out.println("Agent "+ myAgent.getLocalName() +": Action successfully performed");
             ACLMessage inform = accept.createReply();
-            inform.setPerformative(ACLMessage.INFORM);
+            inform.setPerformative(ACLMessage.INFORM); // INFORM DONE
             return inform;
         }
         else {
@@ -74,6 +76,7 @@ public class RoadNetResponder extends ContractNetResponder {
         }
     }
 
+    @Override
     protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
         System.out.println("Agent "+ myAgent.getLocalName() +": Proposal rejected");
     }

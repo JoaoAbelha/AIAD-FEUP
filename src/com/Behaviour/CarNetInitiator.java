@@ -33,8 +33,7 @@ public class CarNetInitiator extends ContractNetInitiator {
     @Override
     protected void handleFailure(ACLMessage failure) {
         if (failure.getSender().equals(myAgent.getAMS())) {
-            // FAILURE notification from the JADE runtime: the receiver
-            // does not exist
+            // FAILURE notification from the JADE runtime: the receiver does not exist
             System.out.println("Responder does not exist");
         }
         else {
@@ -85,4 +84,7 @@ public class CarNetInitiator extends ContractNetInitiator {
     protected void handleInform(ACLMessage inform) {
         System.out.println("Agent "+inform.getSender().getName()+" successfully performed the requested action");
     }
+
+    // todo:
+    // handleFailure function nao existe pq?
 }
