@@ -26,6 +26,10 @@ public class CarAgent extends AgentRegister {
         this.car = car;
     }
 
+    public Car getCar() {
+        return car;
+    }
+
     @Override
     protected void setup() {
         register(car.getName());

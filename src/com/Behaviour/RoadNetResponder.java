@@ -1,6 +1,7 @@
 package com.Behaviour;
 
 
+import com.Agent.CarAgent;
 import com.Agent.RoadAgent;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.FailureException;
@@ -19,11 +20,6 @@ public class RoadNetResponder extends ContractNetResponder {
         this.road = (RoadAgent) a;
     }
 
-    // todo: should this function be in the road class
-    private int utility() {
-        // todo change in the future
-        return (int) (Math.random() * 10);
-    }
 
     private boolean roadNotFull() {
         // Simulate action execution by generating a random number
@@ -37,9 +33,9 @@ public class RoadNetResponder extends ContractNetResponder {
 
 
     @Override
-    protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
+    protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException {
         System.out.println("Agent " + myAgent.getLocalName() + ": CFP received from " + cfp.getSender().getName() + ". Action is " + cfp.getContent());
-        int proposal = utility();
+        int proposal = this.road.getUtility(cfp.getSender().getName());
         if (roadNotFull()) {
             // We provide a proposal
             System.out.println("Agent " + myAgent.getLocalName() + ": Proposing " + proposal);
