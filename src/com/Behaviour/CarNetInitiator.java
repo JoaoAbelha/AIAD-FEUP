@@ -69,6 +69,9 @@ public class CarNetInitiator extends ContractNetInitiator {
                     accept = reply;
                 }
             }
+            else if (msg.getPerformative() == ACLMessage.REFUSE) {
+                System.out.println(myAgent.getName() + "was refused by a full road " + msg.getSender().getName());
+            }
         }
         // Accept the proposal of the best proposer
         if (accept != null) {

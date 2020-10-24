@@ -44,10 +44,12 @@ public class RoadNetResponder extends ContractNetResponder {
             propose.setContent(String.valueOf(proposal));
             return propose;
         } else {
-            // todo: We refuse to provide a proposal, send a message
+            ACLMessage refuse = cfp.createReply();
+            refuse.setPerformative(ACLMessage.REFUSE);
+            refuse.setContent("full-road");
             System.out.println("Agent " + myAgent.getLocalName() + ": Refuse");
-            // todo: should send a refuse message?
-            throw new RefuseException("evaluation-failed");
+            return refuse;
+           // throw new RefuseException("evaluation-failed");
         }
     }
 
