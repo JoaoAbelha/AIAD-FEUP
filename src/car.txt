@@ -1,1 +1,1 @@
-volvo-v40 1 5 dijkstra
+volvo-v40 1 5 dijkstra 4.85

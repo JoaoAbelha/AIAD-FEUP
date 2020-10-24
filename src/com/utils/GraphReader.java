@@ -11,6 +11,7 @@ public class GraphReader extends FileReader {
     final int DEST_NODE = 1;
     final int DIST = 2;
     final int MAX_VELOCITY = 3;
+    final int MAX_CARS = 4;
     final private Graph city = new Graph();
 
     public GraphReader(String filename) throws FileNotFoundException {

@@ -65,7 +65,7 @@ public class cityManager extends AgentCreator {
             Map<Integer, RoadInfo> value = entry.getValue();
             for(Map.Entry<Integer,RoadInfo> adj : value.entrySet()) {
                 Integer dest= adj.getKey();
-                RoadAgent roadAgent = new RoadAgent(adj.getValue().getMaxVelocity(), adj.getValue().getDistance());
+                RoadAgent roadAgent = new RoadAgent(adj.getValue());
                 try {
                     System.out.println(src + " " + dest);
                     this.agentController = this.containerController.acceptNewAgent("road" + src + dest, roadAgent);

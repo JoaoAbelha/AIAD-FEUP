@@ -2,6 +2,7 @@ package com.Agent;
 
 import com.Behaviour.RoadNetResponder;
 import com.Data.Car;
+import com.Data.RoadInfo;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPANames;
@@ -12,17 +13,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class RoadAgent  extends AgentRegister {
-    private int distance;
-    private int velocity;
+    private RoadInfo roadInfo;
     private DFAgentDescription dfd;
     private HashSet<Car> currentCars; // current cars in the road
     private HashMap<String, Car> carsThatWishToBe;
+    private float spaceOccupied; // sum of the length of current cars
+    private final float PERCENTAGE_SPACE_BETWEEN_CARS_IN_A_ROAD = 15;
 
-    public RoadAgent(int velocity, int distance) {
-        this.distance = distance;
-        this.velocity = velocity;
+    public RoadAgent(RoadInfo roadInfo) {
+
+        this.roadInfo = roadInfo;
         this.currentCars = new HashSet<>();
         this.carsThatWishToBe = new HashMap<>();
+        this.spaceOccupied = 0;
     }
 
     /*
@@ -30,7 +33,10 @@ public class RoadAgent  extends AgentRegister {
     * */
     public int getUtility(String agent) {
         return - currentCars.size() + (carsThatWishToBe.get(agent) != null ? 50 : 0) + (int) (Math.random() * 10);
+    }
 
+    public boolean isRoadFull() {
+        return spaceOccupied > this.roadInfo.getDistance() * (1 - PERCENTAGE_SPACE_BETWEEN_CARS_IN_A_ROAD/100.0) ;
     }
 
 

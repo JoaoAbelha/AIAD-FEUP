@@ -21,11 +21,6 @@ public class RoadNetResponder extends ContractNetResponder {
     }
 
 
-    private boolean roadNotFull() {
-        // Simulate action execution by generating a random number
-        return (Math.random() > 0.2);
-    }
-
     private boolean performAction() {
         // Simulate action execution by generating a random number
         return (Math.random() > 0.2);
@@ -36,7 +31,7 @@ public class RoadNetResponder extends ContractNetResponder {
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException {
         System.out.println("Agent " + myAgent.getLocalName() + ": CFP received from " + cfp.getSender().getName() + ". Action is " + cfp.getContent());
         int proposal = this.road.getUtility(cfp.getSender().getName());
-        if (roadNotFull()) {
+        if (!road.isRoadFull()) {
             // We provide a proposal
             System.out.println("Agent " + myAgent.getLocalName() + ": Proposing " + proposal);
             ACLMessage propose = cfp.createReply();
