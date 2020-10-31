@@ -1,20 +1,18 @@
 package com.Agent;
 
 import com.Behaviour.RoadNetResponder;
-import jade.core.Agent;
+import com.Data.RoadInfo;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 public class RoadAgent  extends AgentRegister {
-    private int distance;
-    private int velocity;
+    private RoadInfo road;
     private DFAgentDescription dfd;
 
-    public RoadAgent(int velocity, int distance) {
-        this.distance = distance;
-        this.velocity = velocity;
+    public RoadAgent(RoadInfo roadInfo) {
+        this.road = roadInfo;
     }
 
 

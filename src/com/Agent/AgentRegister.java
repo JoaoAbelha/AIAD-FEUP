@@ -24,4 +24,13 @@ public class AgentRegister extends Agent {
             fe.printStackTrace();
         }
     }
+
+    public void unregister() {
+        try {
+            DFService.deregister(this);
+            this.doDelete();
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
+    }
 }

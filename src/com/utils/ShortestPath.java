@@ -13,8 +13,8 @@ public class ShortestPath implements RouteStrategy {
     private HashMap<Integer, Integer> path = new HashMap<>();
 
     @Override
-    public void buildRoute(final int src, final int dest, Graph city) {
-        System.out.println("building route...");
+    public ArrayList<Integer> buildRoute(final int src, final int dest, Graph city) {
+        //System.out.println("building route...");
         for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : city.getEdges().entrySet()) {
             distances.put(entry.getKey(), Integer.MAX_VALUE);
             Map<Integer, RoadInfo> value = entry.getValue();
@@ -23,9 +23,9 @@ public class ShortestPath implements RouteStrategy {
             }
         }
 
-        System.out.println("distances:");
+        //System.out.println("distances:");
         for(Map.Entry<Integer, Integer> e : distances.entrySet()) {
-            System.out.print(e.getKey() + " ");
+            //System.out.print(e.getKey() + " ");
         }
 
         heap.add(new Integer[]{0, src});
@@ -35,8 +35,8 @@ public class ShortestPath implements RouteStrategy {
             int DISTANCE = 0, NODE = 1;
 
             int currentDistance = Atop[DISTANCE];
-            System.out.println();
-            System.out.print("exploring " +  Atop[NODE] + "-> ");
+            //System.out.println();
+            //System.out.print("exploring " +  Atop[NODE] + "-> ");
 
             Map<Integer, RoadInfo> adjacently = city.getAdjacent(Atop[NODE]);
 
@@ -64,11 +64,11 @@ public class ShortestPath implements RouteStrategy {
         int current = dest;
 
         if (path.get(current) == null) {
-            System.out.println("No available path");
-            return;
+            //System.out.println("No available path");
+            return solution;
         }
         solution.add(dest);
-        System.out.println("\npath");
+        //System.out.println("\npath");
 
         while(path.get(current) != src) {
             solution.add(path.get(current));
@@ -77,12 +77,6 @@ public class ShortestPath implements RouteStrategy {
 
         solution.add(src);
         Collections.reverse(solution);
-
-        for(Integer x : solution) {
-            System.out.print( x + "     ");
-        }
-
-
-
+        return solution;
     }
 }
