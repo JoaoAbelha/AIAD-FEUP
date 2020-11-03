@@ -31,19 +31,5 @@ public class CarAgent extends AgentRegister {
         car.calculateCarPath(this.city);
         System.out.println("Car agent started");
         addBehaviour(new CarMovement(this, 300));
-        /*ACLMessage message = new ACLMessage(ACLMessage.CFP);
-        message.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-        message.setReplyByDate(new Date(System.currentTimeMillis() + 10000)); // wait 10 seconds for reply
-        message.setContent("road-value?");
-        Map<Integer, RoadInfo> adjacentRoads = this.city.getAdjacent(car.getCurrentNode());
-
-        adjacentRoads.forEach((followingNode, roadInfo) -> {
-           message.addReceiver(new AID( "road"+ car.getCurrentNode() + followingNode, false));
-        });
-
-
-        // todo dfSearch to find the roads registered that we want and pass the number of agents
-        int nrAgents = adjacentRoads.size();
-        addBehaviour(new CarNetInitiator(this, message, nrAgents));*/
     }
 }

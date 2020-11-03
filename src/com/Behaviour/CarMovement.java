@@ -1,7 +1,14 @@
 package com.Behaviour;
 
 import com.Agent.CarAgent;
+import com.Data.RoadInfo;
+import jade.core.AID;
 import jade.core.behaviours.TickerBehaviour;
+import jade.domain.FIPANames;
+import jade.lang.acl.ACLMessage;
+
+import java.util.Date;
+import java.util.Map;
 
 public class CarMovement extends TickerBehaviour {
     public enum Status {ROAD, INTERSECTION};
@@ -37,6 +44,21 @@ public class CarMovement extends TickerBehaviour {
     }
 
     private void handleIntersection() {
+        ACLMessage message = new ACLMessage(ACLMessage.CFP);
+        message.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
+        message.setReplyByDate(new Date(System.currentTimeMillis() + 10000)); // wait 10 seconds for reply
+        message.setContent("road-value?");
+        Map<Integer, RoadInfo> adjacentRoads = this.carAgent.getCity().getAdjacent(this.carAgent.getCar().getCurrentNode());
+
+        adjacentRoads.forEach((followingNode, roadInfo) -> {
+           message.addReceiver(new AID( "road"+ this.carAgent.getCar().getCurrentNode() + followingNode, false));
+        });
+
+
+        // todo dfSearch to find the roads registered that we want and pass the number of agents
+        int nrAgents = adjacentRoads.size();
+        this.carAgent.addBehaviour(new CarNetInitiator(this.carAgent, message, nrAgents));
+
         carAgent.getCar().updateCarPath(carAgent.getCity());
     }
 
