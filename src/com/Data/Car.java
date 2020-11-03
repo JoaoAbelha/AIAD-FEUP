@@ -15,7 +15,7 @@ public class Car {
     private double currentDistanceTravelled;
     private RoadInfo currentRoad;
 
-    public Car(String name, int src, int dest, RouteStrategy strategy) {
+    public Car(String name, int src, int dest, float length, RouteStrategy strategy) {
         this.name = name;
         this.currentVelocity = 0;
         this.currentNode = src;

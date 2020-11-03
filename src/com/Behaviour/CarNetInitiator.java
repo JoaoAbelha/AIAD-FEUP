@@ -1,5 +1,6 @@
 package com.Behaviour;
 
+import com.Agent.CarAgent;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
@@ -11,10 +12,12 @@ import java.util.Vector;
 public class CarNetInitiator extends ContractNetInitiator {
 
     private int nrResponders;
+    private CarAgent car;
 
     public CarNetInitiator(Agent a, ACLMessage cfp, int nrResponders) {
         super(a, cfp);
         this.nrResponders = nrResponders;
+        this.car = (CarAgent) a;
     }
 
     @Override
@@ -30,8 +33,7 @@ public class CarNetInitiator extends ContractNetInitiator {
     @Override
     protected void handleFailure(ACLMessage failure) {
         if (failure.getSender().equals(myAgent.getAMS())) {
-            // FAILURE notification from the JADE runtime: the receiver
-            // does not exist
+            // FAILURE notification from the JADE runtime: the receiver does not exist
             System.out.println("Responder does not exist");
         }
         else {
@@ -66,6 +68,9 @@ public class CarNetInitiator extends ContractNetInitiator {
                     accept = reply;
                 }
             }
+            else if (msg.getPerformative() == ACLMessage.REFUSE) {
+                System.out.println(myAgent.getName() + "was refused by a full road " + msg.getSender().getName());
+            }
         }
         // Accept the proposal of the best proposer
         if (accept != null) {
@@ -79,4 +84,7 @@ public class CarNetInitiator extends ContractNetInitiator {
     protected void handleInform(ACLMessage inform) {
         System.out.println("Agent "+inform.getSender().getName()+" successfully performed the requested action");
     }
+
+    // todo:
+    // handleFailure function nao existe pq?
 }

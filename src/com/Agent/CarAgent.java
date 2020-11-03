@@ -7,10 +7,10 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 
 public class CarAgent extends AgentRegister {
 
-    private String name;
     private DFAgentDescription dfd;
     private final Car car;
-    private final Graph city;
+    private final Graph city; // since all agents know all the city
+
 
     public CarAgent(Car car, Graph city) {
         this.car = car;
@@ -34,9 +34,16 @@ public class CarAgent extends AgentRegister {
         /*ACLMessage message = new ACLMessage(ACLMessage.CFP);
         message.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
         message.setReplyByDate(new Date(System.currentTimeMillis() + 10000)); // wait 10 seconds for reply
-        message.setContent("what-best-road-value");
+        message.setContent("road-value?");
+        Map<Integer, RoadInfo> adjacentRoads = this.city.getAdjacent(car.getCurrentNode());
+
+        adjacentRoads.forEach((followingNode, roadInfo) -> {
+           message.addReceiver(new AID( "road"+ car.getCurrentNode() + followingNode, false));
+        });
+
+
         // todo dfSearch to find the roads registered that we want and pass the number of agents
-        int nrAgents = 0;
+        int nrAgents = adjacentRoads.size();
         addBehaviour(new CarNetInitiator(this, message, nrAgents));*/
     }
 }

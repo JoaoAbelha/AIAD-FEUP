@@ -9,6 +9,7 @@ public class CarReader extends FileReader {
     final int SRC_NODE = 1;
     final int DEST_NODE = 2;
     final int STRATEGY = 3;
+    final int LENGTH = 4;
 
 
     HashSet<Car> cars = new HashSet<>();
@@ -30,6 +31,7 @@ public class CarReader extends FileReader {
         cars.add(new Car(line[NAME_NODE],
                 Integer.parseInt(line[SRC_NODE]),
                 Integer.parseInt(line[DEST_NODE]),
+                Float.parseFloat(line[LENGTH]),
                 routeStrategy));
     }
 
