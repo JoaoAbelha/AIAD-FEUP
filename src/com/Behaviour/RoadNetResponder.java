@@ -9,6 +9,8 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 
+import java.io.IOException;
+
 public class RoadNetResponder extends ContractNetResponder {
 
     private RoadAgent road;
@@ -63,15 +65,20 @@ public class RoadNetResponder extends ContractNetResponder {
         System.out.println("Agent "+ myAgent.getLocalName() +": Proposal accepted");
 
         if (performAction()) {
-            System.out.println("Agent "+ myAgent.getLocalName() +": Action successfully performed");
-            ACLMessage inform = accept.createReply();
-            inform.setPerformative(ACLMessage.INFORM); // INFORM DONE
-            return inform;
+            try {
+                ACLMessage inform = accept.createReply();
+                inform.setPerformative(ACLMessage.INFORM); // INFORM DONE
+                inform.setContentObject(road.getRoadInfo());
+                return inform;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else {
-            System.out.println("Agent "+ myAgent.getLocalName() +": Action execution failed");
             throw new FailureException("unexpected-error");
         }
+
+        return null;
     }
 
     @Override

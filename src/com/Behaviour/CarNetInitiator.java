@@ -1,9 +1,11 @@
 package com.Behaviour;
 
 import com.Agent.CarAgent;
+import com.Data.RoadInfo;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 
 import java.util.Enumeration;
@@ -82,7 +84,12 @@ public class CarNetInitiator extends ContractNetInitiator {
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        System.out.println("Agent "+inform.getSender().getName()+" successfully performed the requested action");
+        try {
+            RoadInfo roadInfo = (RoadInfo) inform.getContentObject();
+            car.getCar().updateCarPath(car.getCity(), roadInfo);
+        } catch (UnreadableException e) {
+            e.printStackTrace();
+        }
     }
 
     // todo:

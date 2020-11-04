@@ -73,17 +73,26 @@ public class Car {
         this.currentVelocity = currentRoad.getMaxVelocity();
     }
 
-    public void updateCarPath(Graph city) {
+    public void updateCurrentNode() {
         this.carPath.remove(0);
         this.currentNode = this.carPath.get(0);
+        this.currentRoad = null;
+    }
 
+    public void updateCarPath(Graph city, RoadInfo roadInfo) {
         if(carPath.size() == 1)
             return;
 
-        Map<Integer, RoadInfo> roads = city.getEdges().get(this.currentNode);
         int nextNode = carPath.get(1);
-        this.currentRoad = roads.get(nextNode);
+        this.currentRoad = roadInfo;
         this.currentVelocity = currentRoad.getMaxVelocity();
+        this.currentDistanceTravelled = 0;
+
+        if(nextNode != roadInfo.getEndNode()) {
+            this.carPath = strategy.buildRoute(roadInfo.getEndNode(), this.destNode, city);
+            this.carPath.add(0, this.currentNode);
+        }
+
         System.out.println(this.name + " driving on road " + this.currentNode + "->" + nextNode);
     }
 

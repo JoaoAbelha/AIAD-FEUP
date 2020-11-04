@@ -3,7 +3,6 @@ package com.Agent;
 import com.Behaviour.RoadNetResponder;
 import com.Data.Car;
 import com.Data.RoadInfo;
-import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -26,6 +25,10 @@ public class RoadAgent  extends AgentRegister {
         this.currentCars = new HashSet<>();
         this.carsThatWishToBe = new HashMap<>();
         this.spaceOccupied = 0;
+    }
+
+    public RoadInfo getRoadInfo() {
+        return roadInfo;
     }
 
     /*

@@ -32,7 +32,6 @@ public class CarMovement extends TickerBehaviour {
         }
 
         if(carStatus.equals(Status.ROAD) && carAgent.getCar().getCurrentRoad() != null) {
-
             if(carAgent.getCar().getCurrentDistanceTravelled() >= carAgent.getCar().getCurrentRoad().getDistance()) {
                 this.handleEndOfRoad();
             } else {
@@ -48,18 +47,15 @@ public class CarMovement extends TickerBehaviour {
         message.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
         message.setReplyByDate(new Date(System.currentTimeMillis() + 10000)); // wait 10 seconds for reply
         message.setContent("road-value?");
-        Map<Integer, RoadInfo> adjacentRoads = this.carAgent.getCity().getAdjacent(this.carAgent.getCar().getCurrentNode());
 
+        Map<Integer, RoadInfo> adjacentRoads = this.carAgent.getCity().getAdjacent(this.carAgent.getCar().getCurrentNode());
         adjacentRoads.forEach((followingNode, roadInfo) -> {
            message.addReceiver(new AID( "road"+ this.carAgent.getCar().getCurrentNode() + followingNode, false));
         });
 
-
-        // todo dfSearch to find the roads registered that we want and pass the number of agents
         int nrAgents = adjacentRoads.size();
         this.carAgent.addBehaviour(new CarNetInitiator(this.carAgent, message, nrAgents));
-
-        carAgent.getCar().updateCarPath(carAgent.getCity());
+        this.carStatus = Status.ROAD;
     }
 
     private void handleMovement() {
@@ -69,6 +65,7 @@ public class CarMovement extends TickerBehaviour {
 
     private void handleEndOfRoad() {
         carStatus = Status.INTERSECTION;
+        this.carAgent.getCar().updateCurrentNode();
     }
 
     private int kmph_to_mps(int kmph) {
