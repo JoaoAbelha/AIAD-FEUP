@@ -2,6 +2,8 @@ package com.utils;
 
 import com.Data.Graph;
 
+import java.util.ArrayList;
+
 public interface RouteStrategy {
-    void buildRoute(int src, int dest, Graph city);
+    ArrayList<Integer> buildRoute(int src, int dest, Graph city);
 }

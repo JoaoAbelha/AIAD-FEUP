@@ -6,7 +6,7 @@ public class Graph {
     private Map<Integer, Map<Integer, RoadInfo>> edges = new HashMap<>();
 
     public void addEdges(int src, int dest, int distance, int maxVelocity) {
-            RoadInfo road = new RoadInfo(distance, maxVelocity);
+            RoadInfo road = new RoadInfo(distance, maxVelocity, src, dest);
             if (edges.get(src) == null) {
                 HashMap<Integer, RoadInfo> adjacents = new HashMap<>();
                 adjacents.put(dest, road);

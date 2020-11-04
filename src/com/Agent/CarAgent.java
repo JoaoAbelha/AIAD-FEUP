@@ -1,34 +1,35 @@
 package com.Agent;
 
-import com.Behaviour.CarNetInitiator;
+import com.Behaviour.CarMovement;
 import com.Data.Car;
+import com.Data.Graph;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPANames;
-import jade.lang.acl.ACLMessage;
-import jade.proto.ContractNetInitiator;
-
-import java.util.Date;
 
 public class CarAgent extends AgentRegister {
 
-    private String name;
     private DFAgentDescription dfd;
     private final Car car;
+    private final Graph city; // since all agents know all the city
 
-    public CarAgent(Car car) {
+
+    public CarAgent(Car car, Graph city) {
         this.car = car;
+        this.city = city;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public Graph getCity() {
+        return city;
     }
 
     @Override
     protected void setup() {
         register(car.getName());
+        car.calculateCarPath(this.city);
         System.out.println("Car agent started");
-        ACLMessage message = new ACLMessage(ACLMessage.CFP);
-        message.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-        message.setReplyByDate(new Date(System.currentTimeMillis() + 10000)); // wait 10 seconds for reply
-        message.setContent("what-best-road-value");
-        // todo dfSearch to find the roads registered that we want and pass the number of agents
-        int nrAgents = 0;
-        addBehaviour(new CarNetInitiator(this, message, nrAgents));
+        addBehaviour(new CarMovement(this, 300));
     }
 }
