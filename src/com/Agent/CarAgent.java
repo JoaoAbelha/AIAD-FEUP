@@ -32,4 +32,6 @@ public class CarAgent extends AgentRegister {
         System.out.println("Car agent started");
         addBehaviour(new CarMovement(this, 300));
     }
+
+
 }
