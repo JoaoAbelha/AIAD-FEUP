@@ -29,14 +29,10 @@ public class VelocitySubscriptionManager implements SubscriptionResponder.Subscr
     public void notifyAll(String content) {
         Iterator<SubscriptionResponder.Subscription> i = subscriptions.values().iterator();
         while (i.hasNext()) {
-            try {
-                SubscriptionResponder.Subscription s = (SubscriptionResponder.Subscription) i.next();
-                ACLMessage notification = new ACLMessage(ACLMessage.INFORM);
-                notification.setContent(content);
-                s.notify(notification);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            SubscriptionResponder.Subscription s = (SubscriptionResponder.Subscription) i.next();
+            ACLMessage notification = new ACLMessage(ACLMessage.INFORM);
+            notification.setContent(content);
+            s.notify(notification);
         }
     }
 }

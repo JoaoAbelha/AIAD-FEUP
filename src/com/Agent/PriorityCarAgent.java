@@ -20,6 +20,10 @@ public class PriorityCarAgent extends AgentRegister {
         return car;
     }
 
+    public Graph getCity() {
+        return city;
+    }
+
     public PriorityCarSubscriptionInitiator getSubscriptionInitiator() {
         return subscriptionInitiator;
     }

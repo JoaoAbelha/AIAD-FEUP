@@ -50,16 +50,12 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
             cancellationCompleted(inform.getSender());
             car.removeBehaviour(car.getSubscriptionInitiator());
         } else {
-            try {
-                String content = inform.getContent();
-                String[] contentArray = content.split(":");
-                if(contentArray.length != 2)
-                    return;
-                double maxVelocity = Double.parseDouble(contentArray[1]);
-                car.getCar().setCurrentVelocity(maxVelocity);
-            } catch (UnreadableException e) {
-                e.printStackTrace();
-            }
+            String content = inform.getContent();
+            String[] contentArray = content.split(":");
+            if(contentArray.length != 2)
+                return;
+            double maxVelocity = Double.parseDouble(contentArray[1]);
+            car.getCar().setCurrentVelocity(maxVelocity);
         }
     }
 

@@ -1,13 +1,14 @@
 package com.Behaviour;
 
 import com.Agent.PriorityCarAgent;
+import com.Data.RoadInfo;
 import jade.core.behaviours.TickerBehaviour;
 
 public class PriorityCarMovement extends TickerBehaviour {
-    public enum Status {ROAD, INTERSECTION};
+    public enum Status {INTIAL, ROAD, INTERSECTION};
 
     private PriorityCarAgent priorityCarAgent = null;
-    private Status carStatus = Status.ROAD;
+    private Status carStatus = Status.INTIAL;
     private long time;
 
     public PriorityCarMovement(PriorityCarAgent priorityCarAgent, long time) {
@@ -19,7 +20,7 @@ public class PriorityCarMovement extends TickerBehaviour {
     @Override
     protected void onTick() {
         if(priorityCarAgent.getCar().getCurrentNode() == priorityCarAgent.getCar().getDestNode()) {
-            System.out.println("Dest node");
+            System.out.println("Dest node pc");
             priorityCarAgent.unregister();
             return;
         }
@@ -32,12 +33,20 @@ public class PriorityCarMovement extends TickerBehaviour {
             }
         } else if(carStatus.equals(Status.INTERSECTION)) {
             this.handleIntersection();
+        } else if(carStatus.equals(Status.INTIAL)) {
+            handleIntial();
         }
     }
 
-    private void handleIntersection() {
-        // send "I'm going there"
+    private void handleIntial() {
         this.priorityCarAgent.addBehaviour(new SendInformPriorityCar(this.priorityCarAgent));
+        this.carStatus = Status.ROAD;
+    }
+
+    private void handleIntersection() {
+        SendInformPriorityCar b = new SendInformPriorityCar(this.priorityCarAgent);
+        this.priorityCarAgent.addBehaviour(b);
+        priorityCarAgent.getCar().updateCarPath(priorityCarAgent.getCity(), b.getRoadInfo());
         this.carStatus = Status.ROAD;
     }
 

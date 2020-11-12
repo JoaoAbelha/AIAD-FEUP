@@ -37,7 +37,7 @@ public class sendPreference extends Behaviour {
             msg.addReceiver(new AID(wishedRoad, false));
             msg.setConversationId("SP");
             msg.setContent("preference");
-            System.out.println(" >>>>>> Sending inform message to preferred " + wishedRoad);
+            //System.out.println(" >>>>>> Sending inform message to preferred " + wishedRoad);
             myAgent.send(msg);
             firstMessageSent = true;
         }
@@ -46,7 +46,7 @@ public class sendPreference extends Behaviour {
         ACLMessage ack = myAgent.receive(mt); // received a message with content ack
 
         if (ack != null ) {
-            System.out.println(">>>>>> received ack " + ack.getContent());
+            //System.out.println(">>>>>> received ack " + ack.getContent());
             done = true;
         }
         else {

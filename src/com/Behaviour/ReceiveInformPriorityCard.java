@@ -6,6 +6,8 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
+import java.io.IOException;
+
 public class ReceiveInformPriorityCard extends CyclicBehaviour {
 
     private final RoadAgent roadAgent;
@@ -23,6 +25,15 @@ public class ReceiveInformPriorityCard extends CyclicBehaviour {
         if(msg != null) {
             // update road agent
             System.out.println("received msg from the priority car " + msg.getSender().getLocalName());
+            roadAgent.getManager().notifyAll("priority:" + 0);
+            try {
+                ACLMessage reply = msg.createReply();
+                reply.setConversationId("IPC");
+                reply.setContentObject(roadAgent.getRoadInfo());
+                roadAgent.send(reply);
+            } catch (IOException e){
+                e.printStackTrace();
+            }
             // do here stuff
         } else {
             block();

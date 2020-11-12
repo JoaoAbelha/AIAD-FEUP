@@ -22,10 +22,10 @@ public class PreferenceListener extends CyclicBehaviour {
         ACLMessage msg = roadAgent.receive(mt);
         if(msg != null) {
             // update road agent
-            System.out.println("received from the car " + msg.getSender().getLocalName());
+            //System.out.println("received from the car " + msg.getSender().getLocalName());
             roadAgent.updateWishList( msg.getSender().getLocalName(), true);
             ACLMessage reply = msg.createReply();
-            reply.setPerformative(ACLMessage.INFORM);
+            reply.setConversationId("SP");
             reply.setContent("ACK");
             roadAgent.send(reply);
         } else {

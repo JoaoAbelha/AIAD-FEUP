@@ -43,7 +43,7 @@ public class RoadAgent  extends AgentRegister {
         else
             carsWishToBe.remove(carIdentifier);
 
-        System.out.println(">>>Cars preferred by the road updated size " + carsWishToBe.size());
+        //System.out.println(">>>Cars preferred by the road updated size " + carsWishToBe.size());
     }
     
     public VelocitySubscriptionManager getManager() {

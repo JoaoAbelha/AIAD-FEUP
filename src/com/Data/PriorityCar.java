@@ -86,4 +86,15 @@ public class PriorityCar {
         if (this.carPath.size() <= 1) return -1;
         return this.carPath.get(1);
     }
+
+    public void updateCarPath(Graph city, RoadInfo roadInfo) {
+        if(carPath.size() == 1)
+            return;
+
+        this.currentRoad = roadInfo;
+        this.currentVelocity = currentRoad.getMaxVelocity();
+        this.currentDistanceTravelled = 0;
+
+        System.out.println(this.name + " driving on road " + this.currentNode + "->" + roadInfo.getEndNode());
+    }
 }
