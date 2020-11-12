@@ -81,4 +81,9 @@ public class PriorityCar {
     public void setCurrentVelocity(double currentVelocity) {
         this.currentVelocity = currentVelocity;
     }
+
+    public int getNextNode() {
+        if (this.carPath.size() <= 1) return -1;
+        return this.carPath.get(1);
+    }
 }

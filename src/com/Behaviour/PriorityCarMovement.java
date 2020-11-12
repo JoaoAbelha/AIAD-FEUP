@@ -36,7 +36,8 @@ public class PriorityCarMovement extends TickerBehaviour {
     }
 
     private void handleIntersection() {
-        //TODO
+        // send "I'm going there"
+        this.priorityCarAgent.addBehaviour(new SendInformPriorityCar(this.priorityCarAgent));
         this.carStatus = Status.ROAD;
     }
 

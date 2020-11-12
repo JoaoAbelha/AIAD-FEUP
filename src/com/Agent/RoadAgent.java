@@ -1,9 +1,6 @@
 package com.Agent;
 
-import com.Behaviour.PreferenceListener;
-import com.Behaviour.RoadNetResponder;
-import com.Behaviour.RoadSubscriptionInitiator;
-import com.Behaviour.RoadSubscriptionResponder;
+import com.Behaviour.*;
 import com.Data.Car;
 import com.Data.RoadInfo;
 import com.Manager.VelocitySubscriptionManager;
@@ -68,6 +65,7 @@ public class RoadAgent  extends AgentRegister {
     @Override
     protected void setup() {
         register("road");
+        addBehaviour(new ReceiveInformPriorityCard(this));
         addBehaviour(new PreferenceListener(this));
         System.out.println("Road agent started");
         MessageTemplate template = MessageTemplate.and(
