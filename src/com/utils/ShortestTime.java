@@ -1,67 +1,65 @@
 package com.utils;
+
 import com.Data.Graph;
 import com.Data.RoadInfo;
 
 import java.util.*;
 
-public class ShortestPath implements RouteStrategy {
-
+public class ShortestTime implements RouteStrategy {
+    
     private static class Pair {
-        int first; // distance
+        double first; // time
         int second; // node
 
-        Pair(int first, int second) {
+        Pair(double first, int second) {
             this.first = first;
             this.second = second;
         }
     }
 
-    PriorityQueue<Pair> heap = new PriorityQueue<>(Comparator.comparingInt(a -> a.first));
-    private final HashMap<Integer, Integer> distances = new HashMap<>();
-    private HashMap<Integer, Integer> path = new HashMap<>();
+    PriorityQueue<Pair> heap = new PriorityQueue<>(Comparator.comparingDouble(a -> a.first));
+
+    private final HashMap<Integer, Double> distances = new HashMap<>(); // todo: times
+    private final HashMap<Integer, Integer> path = new HashMap<>();
 
     @Override
     public ArrayList<Integer> buildRoute(final int src, final int dest, Graph city) {
         //System.out.println("building route...");
         for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : city.getEdges().entrySet()) {
-            distances.put(entry.getKey(), Integer.MAX_VALUE);
+            distances.put(entry.getKey(), Double.MAX_VALUE);
             Map<Integer, RoadInfo> value = entry.getValue();
             for(Map.Entry<Integer,RoadInfo> adj : value.entrySet()) {
-                distances.put(adj.getKey(), Integer.MAX_VALUE);
+                distances.put(adj.getKey(), Double.MAX_VALUE);
             }
         }
 
-        //System.out.println("distances:");
-        for(Map.Entry<Integer, Integer> e : distances.entrySet()) {
-            //System.out.print(e.getKey() + " ");
-        }
 
-        heap.add(new Pair(0, src));
-        distances.put(src, 0);
+       heap.add(new Pair(0, src));
+        distances.put(src, 0.0);
         while(heap.size() > 0) {
             Pair Atop = heap.remove();
-            int DISTANCE = 0, NODE = 1;
 
-            int currentDistance = Atop.first;
+            Double currentDistance = Atop.first;
+            int currentNode = Atop.second;
             //System.out.println();
             //System.out.print("exploring " +  Atop[NODE] + "-> ");
 
-            Map<Integer, RoadInfo> adjacently = city.getAdjacent(Atop.second);
+            Map<Integer, RoadInfo> adjacently = city.getAdjacent(currentNode);
 
             if (adjacently == null) continue;
 
-            if (distances.get(Atop.second) < currentDistance) continue;
+            if (distances.get(currentNode) < currentDistance) continue;
 
             //distances.putIfAbsent(Atop[NODE], currentDistance);
             for(Map.Entry<Integer, RoadInfo> adj : adjacently.entrySet()) {
                 Integer nodeDest = adj.getKey();
-                int distance = adj.getValue().getDistance();
+                double distance = adj.getValue().getDistance() * 1.0 / adj.getValue().getMaxVelocity();
                 System.out.print(nodeDest + " ");
 
-                if (distances.get(nodeDest) > distances.get(Atop.second) + distance) {
-                    distances.put(nodeDest , distances.get(Atop.second) + distance);
+                if (distances.get(nodeDest) > distances.get(currentNode) + distance) {
+                    distances.put(nodeDest , distances.get(currentNode) + distance);
                     heap.add(new Pair(distances.get(nodeDest), nodeDest));
-                    path.put(nodeDest, Atop.second);
+                    path.put(nodeDest, currentNode);
                 }
 
             }
@@ -76,7 +74,6 @@ public class ShortestPath implements RouteStrategy {
             return solution;
         }
         solution.add(dest);
-        //System.out.println("\npath");
 
         while(path.get(current) != src) {
             solution.add(path.get(current));
@@ -85,12 +82,12 @@ public class ShortestPath implements RouteStrategy {
 
         solution.add(src);
         Collections.reverse(solution);
-        System.out.println("shortest path: ");
+        System.out.println("shortest time: ");
         for (Integer integer : solution) {
             System.out.print(integer + " ");
         }
         System.out.println();
-
         return solution;
     }
+
 }
