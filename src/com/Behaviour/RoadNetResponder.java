@@ -32,11 +32,11 @@ public class RoadNetResponder extends ContractNetResponder {
 
     @Override
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException {
-        System.out.println("Agent " + myAgent.getLocalName() + ": CFP received from " + cfp.getSender().getName() + ". Action is " + cfp.getContent());
+        //System.out.println("Agent " + myAgent.getLocalName() + ": CFP received from " + cfp.getSender().getName() + ". Action is " + cfp.getContent());
         int proposal = this.road.getUtility(cfp.getSender().getName());
         if (!road.isRoadFull()) {
             // We provide a proposal
-            System.out.println("Agent " + myAgent.getLocalName() + ": Proposing " + proposal);
+            //System.out.println("Agent " + myAgent.getLocalName() + ": Proposing " + proposal);
             ACLMessage propose = cfp.createReply();
             propose.setPerformative(ACLMessage.PROPOSE);
             propose.setContent(String.valueOf(proposal));
@@ -45,7 +45,7 @@ public class RoadNetResponder extends ContractNetResponder {
             ACLMessage refuse = cfp.createReply();
             refuse.setPerformative(ACLMessage.REFUSE);
             refuse.setContent("full-road");
-            System.out.println("Agent " + myAgent.getLocalName() + ": Refuse");
+            //System.out.println("Agent " + myAgent.getLocalName() + ": Refuse");
             return refuse;
            // throw new RefuseException("evaluation-failed");
         }
@@ -62,7 +62,7 @@ public class RoadNetResponder extends ContractNetResponder {
      */
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
-        System.out.println("Agent "+ myAgent.getLocalName() +": Proposal accepted");
+        //System.out.println("Agent "+ myAgent.getLocalName() +": Proposal accepted");
 
         if (performAction()) {
             try {
@@ -83,6 +83,6 @@ public class RoadNetResponder extends ContractNetResponder {
 
     @Override
     protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
-        System.out.println("Agent "+ myAgent.getLocalName() +": Proposal rejected");
+        //System.out.println("Agent "+ myAgent.getLocalName() +": Proposal rejected");
     }
 }

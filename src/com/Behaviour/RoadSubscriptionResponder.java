@@ -1,18 +1,18 @@
 package com.Behaviour;
 
-import com.Agent.CityAgent;
+import com.Agent.RoadAgent;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.proto.SubscriptionResponder;
 
-public class CitySubscriptionResponder extends SubscriptionResponder {
-    CityAgent city;
+public class RoadSubscriptionResponder extends SubscriptionResponder {
+    RoadAgent road;
 
-    public CitySubscriptionResponder(CityAgent city, SubscriptionManager sm) {
-        super(city, SubscriptionResponder.createMessageTemplate(ACLMessage.SUBSCRIBE), sm);
-        this.city = city;
+    public RoadSubscriptionResponder(RoadAgent road, SubscriptionManager sm) {
+        super(road, SubscriptionResponder.createMessageTemplate(ACLMessage.SUBSCRIBE), sm);
+        this.road = road;
     }
 
     @Override

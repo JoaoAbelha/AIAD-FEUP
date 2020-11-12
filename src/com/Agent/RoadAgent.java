@@ -1,8 +1,11 @@
 package com.Agent;
 
 import com.Behaviour.RoadNetResponder;
+import com.Behaviour.RoadSubscriptionInitiator;
+import com.Behaviour.RoadSubscriptionResponder;
 import com.Data.Car;
 import com.Data.RoadInfo;
+import com.Manager.VelocitySubscriptionManager;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -18,6 +21,8 @@ public class RoadAgent  extends AgentRegister {
     private HashMap<String, Car> carsThatWishToBe;
     private float spaceOccupied; // sum of the length of current cars
     private final float PERCENTAGE_SPACE_BETWEEN_CARS_IN_A_ROAD = 15;
+    VelocitySubscriptionManager manager;
+
 
     public RoadAgent(RoadInfo roadInfo) {
 
@@ -25,10 +30,15 @@ public class RoadAgent  extends AgentRegister {
         this.currentCars = new HashSet<>();
         this.carsThatWishToBe = new HashMap<>();
         this.spaceOccupied = 0;
+        this.manager = new VelocitySubscriptionManager();
     }
 
     public RoadInfo getRoadInfo() {
         return roadInfo;
+    }
+
+    public VelocitySubscriptionManager getManager() {
+        return manager;
     }
 
     /*
@@ -53,5 +63,7 @@ public class RoadAgent  extends AgentRegister {
         );
 
         addBehaviour(new RoadNetResponder(this, template));
+        addBehaviour(new RoadSubscriptionResponder(this, this.manager));
+        addBehaviour(new RoadSubscriptionInitiator(this, null));
     }
 }

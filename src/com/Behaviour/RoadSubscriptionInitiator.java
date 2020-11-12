@@ -1,23 +1,26 @@
 package com.Behaviour;
 
+import com.Agent.RoadAgent;
 import jade.core.AID;
-import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 import jade.proto.SubscriptionInitiator;
 
 import java.util.Vector;
 
 public class RoadSubscriptionInitiator extends SubscriptionInitiator {
+    private RoadAgent road;
 
-    public RoadSubscriptionInitiator(Agent a, ACLMessage msg) {
-        super(a, msg);
+    public RoadSubscriptionInitiator(RoadAgent road, ACLMessage msg) {
+        super(road, msg);
+        this.road = road;
     }
 
     @Override
     protected Vector prepareSubscriptions(ACLMessage subscription) {
         subscription = new ACLMessage(ACLMessage.SUBSCRIBE);
-        subscription.addReceiver(new AID(("responder"), AID.ISLOCALNAME));
+        subscription.addReceiver(new AID(("city"), AID.ISLOCALNAME));
         subscription.setProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
         Vector l = new Vector(1);
         l.addElement(subscription);
@@ -37,7 +40,13 @@ public class RoadSubscriptionInitiator extends SubscriptionInitiator {
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        int weather = Integer.valueOf(inform.getContent());
-        System.out.println("current weather is - " + weather);
+        try {
+            float velocity = (float) inform.getContentObject();
+            int roadVelocity = road.getRoadInfo().getRoadInitialVelocity();
+            road.getRoadInfo().setMaxVelocity((int) (velocity * roadVelocity));
+            road.getManager().notifyAll(road.getRoadInfo().getMaxVelocity());
+        } catch (UnreadableException e) {
+            e.printStackTrace();
+        }
     }
 }

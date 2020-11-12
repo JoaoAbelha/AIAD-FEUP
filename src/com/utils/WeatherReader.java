@@ -2,7 +2,6 @@ package com.utils;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
-import java.util.Map;
 
 public class WeatherReader extends FileReader {
 
@@ -22,11 +21,6 @@ public class WeatherReader extends FileReader {
 
     @Override
     public HashMap<Integer, String> getInfo() {
-        for(Map.Entry<Integer,String> v : weather.entrySet()) {
-            Integer time = v.getKey();
-            String type = v.getValue();
-            System.out.println(time+":" +type);
-        }
-        return null;
+        return weather;
     }
 }
