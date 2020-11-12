@@ -1,6 +1,7 @@
 package com.Data;
 
 import com.utils.ShortestPath;
+import com.utils.ShortestTime;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class PriorityCar {
      * todo: mudar para shortest time depois
      */
     public void calculateCarPath(Graph city) {
-        this.carPath = new ShortestPath().buildRoute(this.currentNode, this.destNode, city);
+        this.carPath = new ShortestTime().buildRoute(this.currentNode, this.destNode, city);
 
         if(carPath.size() == 0)
             return;
