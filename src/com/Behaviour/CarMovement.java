@@ -3,6 +3,7 @@ package com.Behaviour;
 import com.Agent.CarAgent;
 import com.Data.RoadInfo;
 import jade.core.AID;
+import jade.core.behaviours.SequentialBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -54,7 +55,12 @@ public class CarMovement extends TickerBehaviour {
         });
 
         int nrAgents = adjacentRoads.size();
-        this.carAgent.addBehaviour(new CarNetInitiator(this.carAgent, message, nrAgents));
+        SequentialBehaviour negotiation = new SequentialBehaviour();
+        negotiation.addSubBehaviour(new sendPreference(this.carAgent));
+        negotiation.addSubBehaviour(new CarNetInitiator(this.carAgent, message, nrAgents));
+        this.carAgent.addBehaviour(negotiation);
+
+
         this.carStatus = Status.ROAD;
     }
 
