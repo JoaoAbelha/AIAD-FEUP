@@ -20,7 +20,7 @@ public abstract class AgentCreator {
     }
 
     abstract void createAgentCars();
-    abstract void createWeatherStation();
+    abstract void createCity();
     abstract void createAgentRoads();
     abstract void createPriorityCars();
 }

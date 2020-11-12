@@ -1,4 +1,4 @@
-10 sun
+10 rain
 20 cloudy
 30 sun
 50 rain

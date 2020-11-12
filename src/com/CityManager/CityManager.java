@@ -2,11 +2,13 @@ package com.CityManager;
 
 import com.Agent.CarAgent;
 import com.Agent.PriorityCarAgent;
+import com.Agent.CityAgent;
 import com.Agent.RoadAgent;
 import com.Data.Car;
 import com.Data.Graph;
 import com.Data.PriorityCar;
 import com.Data.RoadInfo;
+import com.Data.WeatherStation;
 import com.utils.*;
 import jade.wrapper.StaleProxyException;
 
@@ -36,6 +38,13 @@ public class CityManager extends AgentCreator {
         pr.readFile();
         this.priorityCars = pr.getInfo();
 
+        TypeWeatherReader twr = new TypeWeatherReader("src/typeWeather.txt");
+        twr.readFile();
+        this.weatherVelocityRestriction = twr.getInfo();
+
+        WeatherReader wr = new WeatherReader("src/weather.txt");
+        wr.readFile();
+        this.weather = wr.getInfo();
 
         GraphReader gr = new GraphReader("src/city.txt");
         gr.readFile();
@@ -57,8 +66,15 @@ public class CityManager extends AgentCreator {
     }
 
     @Override
-    void createWeatherStation() {
-        // todo
+    void createCity() {
+        WeatherStation weatherStation = new WeatherStation(this.weatherVelocityRestriction, this.weather);
+        CityAgent cityAgent = new CityAgent(weatherStation);
+        try {
+            this.agentController = this.containerController.acceptNewAgent("city", cityAgent);
+            this.agentController.start();
+        } catch (StaleProxyException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -96,6 +112,7 @@ public class CityManager extends AgentCreator {
 
     public static void main(String[] args) throws FileNotFoundException {
         CityManager cityManager = new CityManager();
+        cityManager.createCity();
         cityManager.createAgentRoads();
         cityManager.createAgentCars();
         cityManager.createPriorityCars();
