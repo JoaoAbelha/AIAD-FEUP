@@ -84,7 +84,7 @@ public class CityManager extends AgentCreator {
     void createPriorityCars() {
         int unique = 0;
         for(PriorityCar car : this.priorityCars) {
-            PriorityCarAgent carAgent = new PriorityCarAgent();
+            PriorityCarAgent carAgent = new PriorityCarAgent(car, this.graph);
             try {
                 this.agentController = this.containerController.acceptNewAgent("priorityCar" + String.valueOf(unique++), carAgent);
                 this.agentController.start();
