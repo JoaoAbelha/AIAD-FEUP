@@ -85,11 +85,11 @@ public class MinInterseptions implements  RouteStrategy {
 
         solution.add(src);
         Collections.reverse(solution);
-        System.out.println("min intersections path: ");
+        /*System.out.println("min intersections path: ");
         for (Integer integer : solution) {
             System.out.print(integer + " ");
         }
-        System.out.println();
+        System.out.println();*/
 
         return solution;
     }

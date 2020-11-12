@@ -24,22 +24,22 @@ public class CarNetInitiator extends ContractNetInitiator {
 
     @Override
     protected void handlePropose(ACLMessage propose, Vector acceptances) {
-        System.out.println("Agent "+propose.getSender().getName()+" proposed "+propose.getContent());
+        //System.out.println("Agent "+propose.getSender().getName()+" proposed "+propose.getContent());
     }
 
     @Override
     protected void handleRefuse(ACLMessage refuse) {
-        System.out.println("Agent "+refuse.getSender().getName()+" refused");
+        //System.out.println("Agent "+refuse.getSender().getName()+" refused");
     }
 
     @Override
     protected void handleFailure(ACLMessage failure) {
         if (failure.getSender().equals(myAgent.getAMS())) {
             // FAILURE notification from the JADE runtime: the receiver does not exist
-            System.out.println("Responder does not exist");
+            //System.out.println("Responder does not exist");
         }
         else {
-            System.out.println("Agent "+failure.getSender().getName()+" failed");
+            //System.out.println("Agent "+failure.getSender().getName()+" failed");
         }
         // Immediate failure --> we will not receive a response from this agent
         nrResponders--;
@@ -49,7 +49,7 @@ public class CarNetInitiator extends ContractNetInitiator {
     protected void handleAllResponses(Vector responses, Vector acceptances) {
         if (responses.size() < nrResponders) {
             // Some responder didn't reply within the specified timeout
-            System.out.println("Timeout expired: missing "+(nrResponders - responses.size())+" responses");
+            //System.out.println("Timeout expired: missing "+(nrResponders - responses.size())+" responses");
         }
         // Evaluate proposals. Chooses the one with the highest value
         //todo: can receive refuses (roads are full)
@@ -71,12 +71,12 @@ public class CarNetInitiator extends ContractNetInitiator {
                 }
             }
             else if (msg.getPerformative() == ACLMessage.REFUSE) {
-                System.out.println(myAgent.getName() + "was refused by a full road " + msg.getSender().getName());
+                //System.out.println(myAgent.getName() + "was refused by a full road " + msg.getSender().getName());
             }
         }
         // Accept the proposal of the best proposer
         if (accept != null) {
-            System.out.println("Accepting proposal "+bestProposal+" from responder "+bestProposer.getName());
+            //System.out.println("Accepting proposal "+bestProposal+" from responder "+bestProposer.getName());
             accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
         }
 
@@ -87,6 +87,7 @@ public class CarNetInitiator extends ContractNetInitiator {
         try {
             RoadInfo roadInfo = (RoadInfo) inform.getContentObject();
             car.getCar().updateCarPath(car.getCity(), roadInfo);
+            car.updateSubscriptionInitiator();
         } catch (UnreadableException e) {
             e.printStackTrace();
         }

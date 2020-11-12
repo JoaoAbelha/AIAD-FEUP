@@ -82,11 +82,11 @@ public class ShortestTime implements RouteStrategy {
 
         solution.add(src);
         Collections.reverse(solution);
-        System.out.println("shortest time: ");
+        /*System.out.println("shortest time: ");
         for (Integer integer : solution) {
             System.out.print(integer + " ");
         }
-        System.out.println();
+        System.out.println();*/
         return solution;
     }
 

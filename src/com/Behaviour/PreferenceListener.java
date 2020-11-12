@@ -13,12 +13,12 @@ public class PreferenceListener extends CyclicBehaviour {
 
     public PreferenceListener(Agent a) {
         roadAgent = (RoadAgent) a;
-        mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+        //mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+        mt = MessageTemplate.MatchConversationId("SP");
     }
 
     @Override
     public void action() {
-
         ACLMessage msg = roadAgent.receive(mt);
         if(msg != null) {
             // update road agent

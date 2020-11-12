@@ -85,11 +85,11 @@ public class ShortestPath implements RouteStrategy {
 
         solution.add(src);
         Collections.reverse(solution);
-        System.out.println("shortest path: ");
-        for (Integer integer : solution) {
-            System.out.print(integer + " ");
-        }
-        System.out.println();
+        //System.out.println("shortest path: ");
+        //for (Integer integer : solution) {
+        //    System.out.print(integer + " ");
+        //}
+        //System.out.println();
 
         return solution;
     }

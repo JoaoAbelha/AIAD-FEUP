@@ -67,14 +67,16 @@ public class CarMovement extends TickerBehaviour {
     private void handleMovement() {
         double distanceTravelled = this.time / 1000.0 * this.kmph_to_mps(carAgent.getCar().getCurrentVelocity());
         carAgent.getCar().addDistanceTravelled(distanceTravelled);
+        System.out.println(carAgent.getCar().getName() + ": " + carAgent.getCar().getCurrentVelocity());
     }
 
     private void handleEndOfRoad() {
         carStatus = Status.INTERSECTION;
         this.carAgent.getCar().updateCurrentNode();
+        this.carAgent.getSubscriptionInitiator().cancelInform();
     }
 
-    private int kmph_to_mps(int kmph) {
+    private double kmph_to_mps(int kmph) {
         return(int) (0.277778 * kmph);
     }
 }

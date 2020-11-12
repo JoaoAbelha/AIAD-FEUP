@@ -35,6 +35,7 @@ public class sendPreference extends Behaviour {
 
             ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
             msg.addReceiver(new AID(wishedRoad, false));
+            msg.setConversationId("SP");
             msg.setContent("preference");
             System.out.println(" >>>>>> Sending inform message to preferred " + wishedRoad);
             myAgent.send(msg);

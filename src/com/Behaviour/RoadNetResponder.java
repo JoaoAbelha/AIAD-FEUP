@@ -36,7 +36,7 @@ public class RoadNetResponder extends ContractNetResponder {
         int proposal = this.road.getUtility(cfp.getSender().getLocalName());
         if (!road.isRoadFull()) {
             // We provide a proposal
-            System.out.println("Agent " + myAgent.getLocalName() + ": Proposing " + proposal);
+            //System.out.println("Agent " + myAgent.getLocalName() + ": Proposing " + proposal);
             ACLMessage propose = cfp.createReply();
             propose.setPerformative(ACLMessage.PROPOSE);
             propose.setContent(String.valueOf(proposal));
@@ -64,7 +64,7 @@ public class RoadNetResponder extends ContractNetResponder {
      */
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
-        System.out.println("Agent "+ myAgent.getLocalName() +": Proposal accepted");
+        //System.out.println("Agent "+ myAgent.getLocalName() +": Proposal accepted");
 
         if (performAction()) {
             try {
@@ -85,6 +85,6 @@ public class RoadNetResponder extends ContractNetResponder {
 
     @Override
     protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
-        System.out.println("Agent "+ myAgent.getLocalName() +": Proposal rejected");
+        //System.out.println("Agent "+ myAgent.getLocalName() +": Proposal rejected");
     }
 }
