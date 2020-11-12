@@ -51,7 +51,11 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
             car.removeBehaviour(car.getSubscriptionInitiator());
         } else {
             try {
-                double maxVelocity = (double) inform.getContentObject();
+                String content = inform.getContent();
+                String[] contentArray = content.split(":");
+                if(contentArray.length != 2)
+                    return;
+                double maxVelocity = Double.parseDouble(contentArray[1]);
                 car.getCar().setCurrentVelocity(maxVelocity);
             } catch (UnreadableException e) {
                 e.printStackTrace();

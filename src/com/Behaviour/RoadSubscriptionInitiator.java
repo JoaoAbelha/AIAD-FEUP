@@ -44,7 +44,7 @@ public class RoadSubscriptionInitiator extends SubscriptionInitiator {
             float velocity = (float) inform.getContentObject();
             double roadVelocity = road.getRoadInfo().getRoadInitialVelocity();
             road.getRoadInfo().setMaxVelocity(velocity * roadVelocity);
-            road.getManager().notifyAll(road.getRoadInfo().getMaxVelocity());
+            road.getManager().notifyAll("weather:" + road.getRoadInfo().getMaxVelocity());
         } catch (UnreadableException e) {
             e.printStackTrace();
         }

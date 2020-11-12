@@ -8,6 +8,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.SubscriptionInitiator;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class PriorityCarSubscriptionInitiator extends SubscriptionInitiator {
@@ -52,7 +53,12 @@ public class PriorityCarSubscriptionInitiator extends SubscriptionInitiator {
             priorityCar.removeBehaviour(priorityCar.getSubscriptionInitiator());
         } else {
             try {
-                double maxVelocity = (double) inform.getContentObject();
+                String content = inform.getContent();
+                String[] contentArray = content.split(":");
+                if(contentArray.length != 2 || contentArray[0] == "priority")
+                    return;
+
+                double maxVelocity = Double.parseDouble(contentArray[1]);
                 priorityCar.getCar().setCurrentVelocity(maxVelocity);
             } catch (UnreadableException e) {
                 e.printStackTrace();
