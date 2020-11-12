@@ -32,7 +32,7 @@ public class CarAgent extends AgentRegister {
 
     public void updateSubscriptionInitiator() {
         subscriptionInitiator = new CarSubscriptionInitiator(this, null);
-        //addBehaviour(subscriptionInitiator);
+        addBehaviour(subscriptionInitiator);
     }
 
     @Override
@@ -42,6 +42,6 @@ public class CarAgent extends AgentRegister {
         System.out.println("Car agent started");
         addBehaviour(new CarMovement(this, 300));
         subscriptionInitiator = new CarSubscriptionInitiator(this, null);
-        //addBehaviour(subscriptionInitiator);
+        addBehaviour(subscriptionInitiator);
     }
 }

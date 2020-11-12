@@ -1,6 +1,5 @@
 package com.Data;
 
-import com.utils.RouteStrategy;
 import com.utils.ShortestPath;
 
 import java.util.ArrayList;
@@ -17,6 +16,7 @@ public class PriorityCar {
     private final int destNode;
     private ArrayList<Integer> carPath;
     private RoadInfo currentRoad;
+    private double currentDistanceTravelled;
     private int currentVelocity;
 
     public PriorityCar(String name, int src, int dest) {
@@ -49,7 +49,35 @@ public class PriorityCar {
         this.currentRoad = null;
     }
 
+    public int getCurrentNode() {
+        return currentNode;
+    }
+
+    public int getDestNode() {
+        return destNode;
+    }
+
+    public RoadInfo getCurrentRoad() {
+        return currentRoad;
+    }
+
+    public double getCurrentDistanceTravelled() {
+        return currentDistanceTravelled;
+    }
+
+    public int getCurrentVelocity() {
+        return currentVelocity;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void addDistanceTravelled(double distanceTravelled) {
+        this.currentDistanceTravelled += distanceTravelled;
+    }
+
+    public void setCurrentVelocity(int currentVelocity) {
+        this.currentVelocity = currentVelocity;
     }
 }
