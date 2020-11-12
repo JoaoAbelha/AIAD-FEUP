@@ -1,5 +1,6 @@
 package com.Agent;
 
+import com.Behaviour.PriorityCarMovement;
 import com.Behaviour.PriorityCarSubscriptionInitiator;
 import com.Data.Graph;
 import com.Data.PriorityCar;
@@ -33,6 +34,7 @@ public class PriorityCarAgent extends AgentRegister {
         register(car.getName());
         car.calculateCarPath(city);
         System.out.println("priority car created");
+        addBehaviour(new PriorityCarMovement(this, 300));
         this.subscriptionInitiator = new PriorityCarSubscriptionInitiator(this, null);
         addBehaviour(this.subscriptionInitiator);
     }

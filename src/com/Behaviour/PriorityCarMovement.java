@@ -48,7 +48,7 @@ public class PriorityCarMovement extends TickerBehaviour {
     private void handleEndOfRoad() {
         carStatus = Status.INTERSECTION;
         this.priorityCarAgent.getCar().updateCurrentNode();
-        //this.carAgent.getSubscriptionInitiator().cancelInform();
+        this.priorityCarAgent.getSubscriptionInitiator().cancelInform();
     }
 
     private int kmph_to_mps(int kmph) {
