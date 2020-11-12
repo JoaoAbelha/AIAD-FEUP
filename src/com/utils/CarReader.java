@@ -27,9 +27,12 @@ public class CarReader extends FileReader {
             routeStrategy = new ShortestPath();
         } else if (strategy.equalsIgnoreCase("shortestTime")) {
             routeStrategy = new ShortestTime();
+        } else if (strategy.equalsIgnoreCase("minIntersection")){
+            routeStrategy = new MinInterseptions();
         }
-        else return;
-
+        else {
+            System.out.println("Unknown strategy " +  strategy + ". Not creating the agent...");
+        }
 
 
         cars.add(new Car(line[NAME_NODE],
