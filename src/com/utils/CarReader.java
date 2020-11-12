@@ -25,7 +25,11 @@ public class CarReader extends FileReader {
         RouteStrategy routeStrategy = null;
         if (strategy.equalsIgnoreCase("DIJKSTRA")) {
             routeStrategy = new ShortestPath();
+        } else if (strategy.equalsIgnoreCase("shortestTime")) {
+            routeStrategy = new ShortestTime();
         }
+        else return;
+
 
 
         cars.add(new Car(line[NAME_NODE],

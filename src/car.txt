@@ -1,1 +1,2 @@
-volvo-v40 1 5 dijkstra 4.85
+volvo-v40 1 4 dijkstra 4.85
+ferrari 1 4 shortestTime 4.7

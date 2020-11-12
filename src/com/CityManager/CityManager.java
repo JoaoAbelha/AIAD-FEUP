@@ -29,10 +29,15 @@ public class CityManager extends AgentCreator {
         r.readFile();
         this.cars = r.getInfo();
 
-
         GraphReader gr = new GraphReader("src/city.txt");
         gr.readFile();
         this.graph = gr.getInfo();
+
+        for(Car car : this.cars) {
+            System.out.println();
+            car.calculateCarPath(graph);
+        }
+
     }
 
     @Override
@@ -76,8 +81,8 @@ public class CityManager extends AgentCreator {
 
     public static void main(String[] args) throws FileNotFoundException {
         CityManager cityManager = new CityManager();
-        cityManager.createAgentRoads();
-        cityManager.createAgentCars();
+        //cityManager.createAgentRoads();
+        //cityManager.createAgentCars();
         System.out.println("city manager running...");
     }
 
