@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class Car {
+    public enum Status {ROAD, INTERSECTION};
 
     private double currentVelocity;
     private final String name;
@@ -14,6 +15,7 @@ public class Car {
     private ArrayList<Integer> carPath;
     private double currentDistanceTravelled;
     private RoadInfo currentRoad;
+    private Status carStatus;
 
     public Car(String name, int src, int dest, float length, RouteStrategy strategy) {
         this.name = name;
@@ -23,10 +25,19 @@ public class Car {
         this.strategy = strategy;
         this.carPath = new ArrayList<>();
         this.currentDistanceTravelled = 0;
+        this.carStatus = Status.INTERSECTION;
     }
 
     public String getName() {
         return name;
+    }
+
+    public Status getCarStatus() {
+        return carStatus;
+    }
+
+    public void setCarStatus(Status carStatus) {
+        this.carStatus = carStatus;
     }
 
     public int getCurrentNode() {
@@ -68,14 +79,6 @@ public class Car {
 
     public void calculateCarPath(Graph city) {
         this.carPath = strategy.buildRoute(this.currentNode, this.destNode, city);
-
-        if(carPath.size() == 0)
-            return;
-
-        Map<Integer, RoadInfo> roads = city.getEdges().get(this.currentNode);
-        int nextNode = carPath.get(1);
-        this.currentRoad = roads.get(nextNode);
-        this.currentVelocity = currentRoad.getMaxVelocity();
     }
 
     public void updateCurrentNode() {

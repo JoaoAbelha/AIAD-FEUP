@@ -1,6 +1,7 @@
 package com.Behaviour;
 
 import com.Agent.CarAgent;
+import com.Data.Car;
 import com.Data.RoadInfo;
 import jade.core.AID;
 import jade.core.Agent;
@@ -88,6 +89,7 @@ public class CarNetInitiator extends ContractNetInitiator {
             RoadInfo roadInfo = (RoadInfo) inform.getContentObject();
             car.getCar().updateCarPath(car.getCity(), roadInfo);
             car.updateSubscriptionInitiator();
+            car.getCar().setCarStatus(Car.Status.ROAD);
         } catch (UnreadableException e) {
             e.printStackTrace();
         }

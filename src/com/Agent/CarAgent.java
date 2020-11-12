@@ -41,8 +41,6 @@ public class CarAgent extends AgentRegister {
         car.calculateCarPath(this.city);
         System.out.println("Car agent started");
         addBehaviour(new CarMovement(this, 300));
-        subscriptionInitiator = new CarSubscriptionInitiator(this, null);
-        addBehaviour(subscriptionInitiator);
     }
 
 

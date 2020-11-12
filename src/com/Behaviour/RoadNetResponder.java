@@ -32,7 +32,7 @@ public class RoadNetResponder extends ContractNetResponder {
 
     @Override
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException {
-        System.out.println("Agent " + myAgent.getLocalName() + ": CFP received from " + cfp.getSender().getName() + ". Action is " + cfp.getContent());
+        //System.out.println("Agent " + myAgent.getLocalName() + ": CFP received from " + cfp.getSender().getName() + ". Action is " + cfp.getContent());
         int proposal = this.road.getUtility(cfp.getSender().getLocalName());
         if (!road.isRoadFull()) {
             // We provide a proposal
@@ -68,6 +68,8 @@ public class RoadNetResponder extends ContractNetResponder {
 
         if (performAction()) {
             try {
+                road.getCurrentCars().add(accept.getSender().getLocalName());
+                System.out.println("added car " + accept.getSender().getLocalName() + " - size: " + road.getCurrentCars().size());
                 ACLMessage inform = accept.createReply();
                 inform.setPerformative(ACLMessage.INFORM); // INFORM DONE
                 inform.setContentObject(road.getRoadInfo());

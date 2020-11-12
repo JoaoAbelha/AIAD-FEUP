@@ -4,6 +4,8 @@ import com.Agent.PriorityCarAgent;
 import com.Data.RoadInfo;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.ReceiverBehaviour;
+import jade.core.behaviours.SenderBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
@@ -11,12 +13,13 @@ import jade.lang.acl.UnreadableException;
 public class SendInformPriorityCar extends OneShotBehaviour {
 
     PriorityCarAgent agent;
+    boolean initialRoad;
     boolean done = false;
     boolean firstMessageSent = false;
-    RoadInfo roadInfo;
 
-    SendInformPriorityCar(PriorityCarAgent agent) {
+    SendInformPriorityCar(PriorityCarAgent agent, boolean initialRoad) {
         this.agent = agent;
+        this.initialRoad = initialRoad;
     }
 
     @Override
@@ -45,7 +48,9 @@ public class SendInformPriorityCar extends OneShotBehaviour {
         if (ack != null ) {
             System.out.println(">>>>>> received ack pc com roadinfo");
             try {
-                this.roadInfo = (RoadInfo) ack.getContentObject();
+                if(initialRoad) return;
+                RoadInfo roadInfo = (RoadInfo) ack.getContentObject();
+                this.agent.getCar().updateCarPath(agent.getCity(), roadInfo);
                 done = true;
             } catch (UnreadableException e) {
                 e.printStackTrace();
@@ -54,9 +59,5 @@ public class SendInformPriorityCar extends OneShotBehaviour {
         else {
             block();
         }
-    }
-
-    public RoadInfo getRoadInfo() {
-        return roadInfo;
     }
 }

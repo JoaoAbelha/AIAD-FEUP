@@ -52,9 +52,12 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
         } else {
             String content = inform.getContent();
             String[] contentArray = content.split(":");
-            if(contentArray.length != 2)
+            if(contentArray.length != 2) {
+                System.out.println("size != 2");
                 return;
+            }
             double maxVelocity = Double.parseDouble(contentArray[1]);
+            System.out.println(car.getCar().getName() + ": " + maxVelocity);
             car.getCar().setCurrentVelocity(maxVelocity);
         }
     }

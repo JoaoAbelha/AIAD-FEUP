@@ -1,6 +1,7 @@
 package com.Behaviour;
 
 import com.Agent.CarAgent;
+import com.Data.Car;
 import com.Data.RoadInfo;
 import jade.core.AID;
 import jade.core.behaviours.SequentialBehaviour;
@@ -12,10 +13,7 @@ import java.util.Date;
 import java.util.Map;
 
 public class CarMovement extends TickerBehaviour {
-    public enum Status {ROAD, INTERSECTION};
-
     private CarAgent carAgent = null;
-    private Status carStatus = Status.ROAD;
     private long time;
 
     public CarMovement(CarAgent carAgent, long time) {
@@ -27,18 +25,18 @@ public class CarMovement extends TickerBehaviour {
     @Override
     protected void onTick() {
         if(carAgent.getCar().getCurrentNode() == carAgent.getCar().getDestNode()) {
-            System.out.println("Dest node");
+            System.out.println("Dest node" + carAgent.getCar().getName());
             carAgent.unregister();
             return;
         }
 
-        if(carStatus.equals(Status.ROAD) && carAgent.getCar().getCurrentRoad() != null) {
+        if(carAgent.getCar().getCarStatus().equals(Car.Status.ROAD) && carAgent.getCar().getCurrentRoad() != null) {
             if(carAgent.getCar().getCurrentDistanceTravelled() >= carAgent.getCar().getCurrentRoad().getDistance()) {
                 this.handleEndOfRoad();
             } else {
                 this.handleMovement();
             }
-        } else if(carStatus.equals(Status.INTERSECTION)) {
+        } else if(carAgent.getCar().getCarStatus().equals(Car.Status.INTERSECTION)) {
             this.handleIntersection();
         }
     }
@@ -59,9 +57,6 @@ public class CarMovement extends TickerBehaviour {
         negotiation.addSubBehaviour(new sendPreference(this.carAgent));
         negotiation.addSubBehaviour(new CarNetInitiator(this.carAgent, message, nrAgents));
         this.carAgent.addBehaviour(negotiation);
-
-
-        this.carStatus = Status.ROAD;
     }
 
     private void handleMovement() {
@@ -70,7 +65,8 @@ public class CarMovement extends TickerBehaviour {
     }
 
     private void handleEndOfRoad() {
-        carStatus = Status.INTERSECTION;
+        carAgent.getCar().setCarStatus(Car.Status.INTERSECTION);
+        this.carAgent.addBehaviour(new EndOfRoadInform(this.carAgent, this.carAgent.getCar().getCurrentRoad()));
         this.carAgent.getCar().updateCurrentNode();
         this.carAgent.getSubscriptionInitiator().cancelInform();
     }

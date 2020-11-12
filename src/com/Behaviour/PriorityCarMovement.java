@@ -39,14 +39,12 @@ public class PriorityCarMovement extends TickerBehaviour {
     }
 
     private void handleIntial() {
-        this.priorityCarAgent.addBehaviour(new SendInformPriorityCar(this.priorityCarAgent));
+        this.priorityCarAgent.addBehaviour(new SendInformPriorityCar(this.priorityCarAgent, true));
         this.carStatus = Status.ROAD;
     }
 
     private void handleIntersection() {
-        SendInformPriorityCar b = new SendInformPriorityCar(this.priorityCarAgent);
-        this.priorityCarAgent.addBehaviour(b);
-        priorityCarAgent.getCar().updateCarPath(priorityCarAgent.getCity(), b.getRoadInfo());
+        this.priorityCarAgent.addBehaviour(new SendInformPriorityCar(this.priorityCarAgent, false));
         this.carStatus = Status.ROAD;
     }
 
@@ -57,6 +55,7 @@ public class PriorityCarMovement extends TickerBehaviour {
 
     private void handleEndOfRoad() {
         carStatus = Status.INTERSECTION;
+        this.priorityCarAgent.addBehaviour(new PriorityEndOfRoadInform(this.priorityCarAgent, this.priorityCarAgent.getCar().getCurrentRoad()));
         this.priorityCarAgent.getCar().updateCurrentNode();
         this.priorityCarAgent.getSubscriptionInitiator().cancelInform();
     }

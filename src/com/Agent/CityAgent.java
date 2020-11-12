@@ -27,7 +27,7 @@ public class CityAgent extends AgentRegister {
     protected void setup() {
         register("weather-forecast");
         System.out.println("city agent");
-        addBehaviour(new CitySubscriptionResponder(this, this.manager));
-        addBehaviour(new CityWeatherChange(this, 300));
+        //addBehaviour(new CitySubscriptionResponder(this, this.manager));
+        //addBehaviour(new CityWeatherChange(this, 300));
     }
 }

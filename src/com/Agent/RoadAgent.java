@@ -15,7 +15,7 @@ import java.util.HashSet;
 public class RoadAgent  extends AgentRegister {
     private RoadInfo roadInfo;
     private DFAgentDescription dfd;
-    private HashSet<Car> currentCars; // current cars in the road
+    private HashSet<String> currentCars; // current cars in the road
     //private HashMap<String, Car> carsThatWishToBe;
     private HashSet<String> carsWishToBe = new HashSet<>();
     private float spaceOccupied; // sum of the length of current cars
@@ -34,6 +34,10 @@ public class RoadAgent  extends AgentRegister {
 
     public RoadInfo getRoadInfo() {
         return roadInfo;
+    }
+
+    public HashSet<String> getCurrentCars() {
+        return currentCars;
     }
 
     public void updateWishList(String carIdentifier, boolean add) {
@@ -76,5 +80,8 @@ public class RoadAgent  extends AgentRegister {
         addBehaviour(new RoadNetResponder(this, template));
         addBehaviour(new RoadSubscriptionResponder(this, this.manager));
         addBehaviour(new RoadSubscriptionInitiator(this, null));
+        addBehaviour(new EndOfRoadReceiver(this));
+        addBehaviour(new PriorityEndOfRoadReceiver(this));
+
     }
 }
