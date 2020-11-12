@@ -1,5 +1,6 @@
 package com.Behaviour;
 
+import com.Agent.CarAgent;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -13,14 +14,29 @@ public class sendPreference extends Behaviour {
     boolean firstMessageSent = false;
     MessageTemplate mt =
             MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+
+    private final CarAgent carAgent;
+
+    sendPreference(CarAgent a) {
+        this.carAgent = a;
+    }
+
     @Override
     public void action() {
 
         if (!firstMessageSent) {
+            String wishedRoad = "road" + carAgent.getCar().getCurrentNode() ;
+            if (carAgent.getCar().getNextNode() == -1) {
+                done = true;
+                return;
+            } else {
+                wishedRoad += carAgent.getCar().getNextNode();
+            }
+
             ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-            msg.addReceiver(new AID("road23", false));
+            msg.addReceiver(new AID(wishedRoad, false));
             msg.setContent("preference");
-            System.out.println(" >>>>>> Sending inform message do preferred road");
+            System.out.println(" >>>>>> Sending inform message to preferred " + wishedRoad);
             myAgent.send(msg);
             firstMessageSent = true;
         }

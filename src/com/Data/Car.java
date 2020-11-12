@@ -61,6 +61,11 @@ public class Car {
         System.out.println("[" + name + " " +  currentNode + " " + strategy+ "]");
     }
 
+    public int getNextNode() {
+        if (this.carPath.size() <= 1) return -1;
+        return this.carPath.get(1);
+    }
+
     public void calculateCarPath(Graph city) {
         this.carPath = strategy.buildRoute(this.currentNode, this.destNode, city);
 
