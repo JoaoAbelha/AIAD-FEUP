@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class Car {
 
-    private int currentVelocity;
+    private double currentVelocity;
     private final String name;
     private int currentNode;
     private final int destNode;
@@ -45,7 +45,7 @@ public class Car {
         return currentDistanceTravelled;
     }
 
-    public int getCurrentVelocity() {
+    public double getCurrentVelocity() {
         return currentVelocity;
     }
 
@@ -53,7 +53,7 @@ public class Car {
         this.currentNode = currentNode;
     }
 
-    public void setCurrentVelocity(int currentVelocity) {
+    public void setCurrentVelocity(double currentVelocity) {
         this.currentVelocity = currentVelocity;
     }
 

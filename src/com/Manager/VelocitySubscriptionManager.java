@@ -26,7 +26,7 @@ public class VelocitySubscriptionManager implements SubscriptionResponder.Subscr
         return true;
     }
 
-    public void notifyAll(int event) {
+    public void notifyAll(double event) {
         Iterator<SubscriptionResponder.Subscription> i = subscriptions.values().iterator();
         while (i.hasNext()) {
             try {

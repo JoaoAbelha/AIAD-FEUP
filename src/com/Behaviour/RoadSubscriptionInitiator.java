@@ -42,8 +42,8 @@ public class RoadSubscriptionInitiator extends SubscriptionInitiator {
     protected void handleInform(ACLMessage inform) {
         try {
             float velocity = (float) inform.getContentObject();
-            int roadVelocity = road.getRoadInfo().getRoadInitialVelocity();
-            road.getRoadInfo().setMaxVelocity((int) (velocity * roadVelocity));
+            double roadVelocity = road.getRoadInfo().getRoadInitialVelocity();
+            road.getRoadInfo().setMaxVelocity(velocity * roadVelocity);
             road.getManager().notifyAll(road.getRoadInfo().getMaxVelocity());
         } catch (UnreadableException e) {
             e.printStackTrace();

@@ -76,7 +76,7 @@ public class CarMovement extends TickerBehaviour {
         this.carAgent.getSubscriptionInitiator().cancelInform();
     }
 
-    private double kmph_to_mps(int kmph) {
-        return(int) (0.277778 * kmph);
+    private double kmph_to_mps(double kmph) {
+        return (0.277778 * kmph);
     }
 }

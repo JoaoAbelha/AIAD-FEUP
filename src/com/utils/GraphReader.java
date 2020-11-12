@@ -29,6 +29,6 @@ public class GraphReader extends FileReader {
         city.addEdges(Integer.parseInt(line[SRC_NODE]),
                 Integer.parseInt(line[DEST_NODE]),
                 Integer.parseInt(line[DIST]),
-                Integer.parseInt(line[MAX_VELOCITY]));
+                Double.parseDouble(line[MAX_VELOCITY]));
     }
 }

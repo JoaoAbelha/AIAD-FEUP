@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 public class RoadInfo implements Serializable {
     private final int distance;
-    private int roadInitialVelocity;
-    private int maxVelocity;
+    private double roadInitialVelocity;
+    private double maxVelocity;
     private int startNode;
     private int endNode;
 
-    RoadInfo(int distance, int maxVelocity, int startNode, int endNode) {
+    RoadInfo(int distance, double maxVelocity, int startNode, int endNode) {
         this.distance = distance;
         this.roadInitialVelocity = maxVelocity;
         this.maxVelocity = maxVelocity;
@@ -21,15 +21,15 @@ public class RoadInfo implements Serializable {
         return distance;
     }
 
-    public int getMaxVelocity() {
+    public double getMaxVelocity() {
         return maxVelocity;
     }
 
-    public void setMaxVelocity(int maxVelocity) {
+    public void setMaxVelocity(double maxVelocity) {
         this.maxVelocity = maxVelocity;
     }
 
-    public int getRoadInitialVelocity() {
+    public double getRoadInitialVelocity() {
         return roadInitialVelocity;
     }
 

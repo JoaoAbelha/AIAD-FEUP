@@ -17,7 +17,7 @@ public class PriorityCar {
     private ArrayList<Integer> carPath;
     private RoadInfo currentRoad;
     private double currentDistanceTravelled;
-    private int currentVelocity;
+    private double currentVelocity;
 
     public PriorityCar(String name, int src, int dest) {
         this.name = name;
@@ -65,7 +65,7 @@ public class PriorityCar {
         return currentDistanceTravelled;
     }
 
-    public int getCurrentVelocity() {
+    public double getCurrentVelocity() {
         return currentVelocity;
     }
 
@@ -77,7 +77,7 @@ public class PriorityCar {
         this.currentDistanceTravelled += distanceTravelled;
     }
 
-    public void setCurrentVelocity(int currentVelocity) {
+    public void setCurrentVelocity(double currentVelocity) {
         this.currentVelocity = currentVelocity;
     }
 }

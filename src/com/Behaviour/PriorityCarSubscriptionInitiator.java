@@ -52,7 +52,7 @@ public class PriorityCarSubscriptionInitiator extends SubscriptionInitiator {
             priorityCar.removeBehaviour(priorityCar.getSubscriptionInitiator());
         } else {
             try {
-                int maxVelocity = (int) inform.getContentObject();
+                double maxVelocity = (double) inform.getContentObject();
                 priorityCar.getCar().setCurrentVelocity(maxVelocity);
             } catch (UnreadableException e) {
                 e.printStackTrace();
