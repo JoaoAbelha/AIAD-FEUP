@@ -27,6 +27,8 @@ public class CityManager extends AgentCreator {
     private HashMap<Integer, String> weather = new HashMap<>();
 
 
+
+
     public CityManager() throws FileNotFoundException {
         super();
 
@@ -74,7 +76,8 @@ public class CityManager extends AgentCreator {
     @Override
     void createCity() {
         WeatherStation weatherStation = new WeatherStation(this.weatherVelocityRestriction, this.weather);
-        CityAgent cityAgent = new CityAgent(weatherStation);
+        System.out.println(this.graph);
+        CityAgent cityAgent = new CityAgent(weatherStation, this.graph);
         try {
             this.agentController = this.containerController.acceptNewAgent("city", cityAgent);
             this.agentController.start();
@@ -94,6 +97,7 @@ public class CityManager extends AgentCreator {
                 try {
                     System.out.println(src + " " + dest);
                     this.agentController = this.containerController.acceptNewAgent("road" + src + dest, roadAgent);
+
                     this.agentController.start();
                 } catch (StaleProxyException e) {
                     e.printStackTrace();
