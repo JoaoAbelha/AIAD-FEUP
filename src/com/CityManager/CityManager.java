@@ -122,10 +122,15 @@ public class CityManager extends AgentCreator {
 
     public static void main(String[] args) throws FileNotFoundException {
         CityManager cityManager = new CityManager();
-        cityManager.createCity();
-        cityManager.createAgentRoads();
-        cityManager.createAgentCars();
-        cityManager.createPriorityCars();
+
+       StronglyConnected X = new StronglyConnected(cityManager.graph.getEdges());
+       X.validateNodeNr();
+       X.check();
+        /*
+       cityManager.createCity();
+       cityManager.createAgentRoads();
+       cityManager.createAgentCars();
+       cityManager.createPriorityCars();*/
         System.out.println("city manager running...");
     }
 
