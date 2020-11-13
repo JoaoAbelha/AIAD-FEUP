@@ -19,6 +19,7 @@ public class PriorityCar {
     private RoadInfo currentRoad;
     private double currentDistanceTravelled;
     private double currentVelocity;
+    private Car.Status status;
 
     public PriorityCar(String name, int src, int dest) {
         this.name = name;
@@ -26,6 +27,7 @@ public class PriorityCar {
         this.destNode= dest;
         this.carPath = new ArrayList<>();
         this.currentVelocity = 0;
+        this.status = Car.Status.INTERSECTION;
     }
 
     /**
@@ -48,6 +50,14 @@ public class PriorityCar {
         this.carPath.remove(0);
         this.currentNode = this.carPath.get(0);
         this.currentRoad = null;
+    }
+
+    public Car.Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Car.Status status) {
+        this.status = status;
     }
 
     public int getCurrentNode() {

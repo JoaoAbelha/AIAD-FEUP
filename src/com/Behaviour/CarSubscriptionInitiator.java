@@ -13,6 +13,8 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
     private CarAgent car;
     private boolean cancel_inform;
     private String responderName;
+    private boolean ignorePriority;
+    private boolean ignoreWeather;
 
     public CarSubscriptionInitiator(CarAgent car, ACLMessage msg) {
         super(car, msg);
@@ -21,6 +23,8 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
         int src = car.getCar().getCurrentRoad().getStartNode();
         int dest = car.getCar().getCurrentRoad().getEndNode();
         this.responderName = "road" + src + dest;
+        this.ignorePriority = false;
+        this.ignoreWeather = false;
     }
 
     @Override
@@ -52,13 +56,28 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
         } else {
             String content = inform.getContent();
             String[] contentArray = content.split(":");
-            if(contentArray.length != 2) {
-                System.out.println("size != 2");
-                return;
+            if(contentArray.length == 2 || contentArray.length == 3) {
+                switch (contentArray[0]) {
+                    case "priority":
+                        if(car.getCar().getCurrentDistanceTravelled() >= Double.parseDouble(contentArray[1])) {
+                            car.getCar().setCurrentVelocity(0);
+                            ignorePriority = false;
+                            ignoreWeather = true;
+                        } else if(!ignorePriority){
+                            //System.out.println("priority car passed");
+                            car.getCar().setCurrentVelocity(Double.parseDouble(contentArray[2]));
+                            ignorePriority = true;
+                            ignoreWeather = false;
+                        }
+                        break;
+                    case "weather":
+                        if(ignoreWeather) return;
+                        double maxVelocity = Double.parseDouble(contentArray[1]);
+                        System.out.println(car.getCar().getName() + ": " + maxVelocity);
+                        car.getCar().setCurrentVelocity(maxVelocity);
+                        break;
+                }
             }
-            double maxVelocity = Double.parseDouble(contentArray[1]);
-            System.out.println(car.getCar().getName() + ": " + maxVelocity);
-            car.getCar().setCurrentVelocity(maxVelocity);
         }
     }
 

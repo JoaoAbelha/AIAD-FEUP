@@ -8,12 +8,12 @@ import jade.lang.acl.MessageTemplate;
 
 import java.io.IOException;
 
-public class ReceiveInformPriorityCard extends CyclicBehaviour {
+public class ReceiveInformPriorityCar extends CyclicBehaviour {
 
     private final RoadAgent roadAgent;
     MessageTemplate mt = null;
 
-    public ReceiveInformPriorityCard(Agent a) {
+    public ReceiveInformPriorityCar(Agent a) {
         roadAgent = (RoadAgent) a;
         //mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
         mt = MessageTemplate.MatchConversationId("IPC");
@@ -24,8 +24,8 @@ public class ReceiveInformPriorityCard extends CyclicBehaviour {
         ACLMessage msg = roadAgent.receive(mt);
         if(msg != null) {
             // update road agent
-            System.out.println("received msg from the priority car " + msg.getSender().getLocalName());
-            roadAgent.getManager().notifyAll("priority:" + 0);
+            //System.out.println("received msg from the priority car " + msg.getSender().getLocalName());
+            roadAgent.getManager().notifyAll("priority:" + 0 + ":" + 0);
             try {
                 ACLMessage reply = msg.createReply();
                 reply.setConversationId("IPC");

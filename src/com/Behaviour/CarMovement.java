@@ -54,7 +54,7 @@ public class CarMovement extends TickerBehaviour {
 
         int nrAgents = adjacentRoads.size();
         SequentialBehaviour negotiation = new SequentialBehaviour();
-        negotiation.addSubBehaviour(new sendPreference(this.carAgent));
+        negotiation.addSubBehaviour(new SendPreference(this.carAgent));
         negotiation.addSubBehaviour(new CarNetInitiator(this.carAgent, message, nrAgents));
         this.carAgent.addBehaviour(negotiation);
     }

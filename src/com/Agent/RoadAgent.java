@@ -1,7 +1,6 @@
 package com.Agent;
 
 import com.Behaviour.*;
-import com.Data.Car;
 import com.Data.RoadInfo;
 import com.Manager.VelocitySubscriptionManager;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -9,7 +8,6 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class RoadAgent  extends AgentRegister {
@@ -69,7 +67,7 @@ public class RoadAgent  extends AgentRegister {
     @Override
     protected void setup() {
         register("road");
-        addBehaviour(new ReceiveInformPriorityCard(this));
+        addBehaviour(new ReceiveInformPriorityCar(this));
         addBehaviour(new PreferenceListener(this));
         System.out.println("Road agent started");
         MessageTemplate template = MessageTemplate.and(
@@ -81,7 +79,7 @@ public class RoadAgent  extends AgentRegister {
         addBehaviour(new RoadSubscriptionResponder(this, this.manager));
         addBehaviour(new RoadSubscriptionInitiator(this, null));
         addBehaviour(new EndOfRoadReceiver(this));
-        addBehaviour(new PriorityEndOfRoadReceiver(this));
+        addBehaviour(new PriorityRoadReceiver(this));
 
     }
 }

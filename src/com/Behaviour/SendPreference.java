@@ -8,7 +8,7 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-public class sendPreference extends Behaviour {
+public class SendPreference extends Behaviour {
 
     boolean done = false;
     boolean firstMessageSent = false;
@@ -17,7 +17,7 @@ public class sendPreference extends Behaviour {
 
     private final CarAgent carAgent;
 
-    sendPreference(CarAgent a) {
+    SendPreference(CarAgent a) {
         this.carAgent = a;
     }
 
