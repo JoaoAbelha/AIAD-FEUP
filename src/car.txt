@@ -1,1 +1,3 @@
-volvo-v40 1 4 dijkstra 4.85
+volvo-v40 1 7 dijkstra 4.85
+ferrari 1 7 minIntersection 4.85
+kia 1 7 shortestgTime 4.85

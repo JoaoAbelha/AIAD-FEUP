@@ -1,9 +1,10 @@
 package com.utils;
 
 
+import java.io.Serializable;
+
 // Pair class
-public class Pair<U, V>
-{
+public class Pair<U, V> implements Serializable {
     public final U first;       // first field of a Pair
     public final V second;      // second field of a Pair
 

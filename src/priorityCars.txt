@@ -1,2 +1,0 @@
-ambulance 1 4
-police 1 4

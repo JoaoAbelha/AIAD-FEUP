@@ -31,7 +31,8 @@ public class CarReader extends FileReader {
             routeStrategy = Car.Strategy.MINIMUM_INTERSECTIONS;
         }
         else {
-            System.out.println("Unknown strategy " +  strategy + ". Not creating the agent...");
+            System.out.println("Unknown strategy " +  strategy + ".not creating agent with name" + line[NAME_NODE]);
+            return;
         }
 
 
