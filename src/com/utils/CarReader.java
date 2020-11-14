@@ -22,13 +22,13 @@ public class CarReader extends FileReader {
     public void readLine(String[] line) {
 
         String strategy = line[STRATEGY];
-        RouteStrategy routeStrategy = null;
+        Car.Strategy routeStrategy = null;
         if (strategy.equalsIgnoreCase("DIJKSTRA")) {
-            routeStrategy = new ShortestPath();
+            routeStrategy = Car.Strategy.SHORTEST_PATH;
         } else if (strategy.equalsIgnoreCase("shortestTime")) {
-            routeStrategy = new ShortestTime();
+            routeStrategy = Car.Strategy.SHORTEST_TIME;
         } else if (strategy.equalsIgnoreCase("minIntersection")){
-            routeStrategy = new MinInterseptions();
+            routeStrategy = Car.Strategy.MINIMUM_INTERSECTIONS;
         }
         else {
             System.out.println("Unknown strategy " +  strategy + ". Not creating the agent...");

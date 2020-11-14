@@ -2,11 +2,13 @@ package com.Behaviour;
 
 
 import com.Agent.RoadAgent;
+import com.Data.ContractNetCfp;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetResponder;
 
 import java.io.IOException;
@@ -20,37 +22,31 @@ public class RoadNetResponder extends ContractNetResponder {
         this.road = (RoadAgent) a;
     }
 
-
-    /**
-     * todos: not sure here
-     * */
-    private boolean performAction() {
-        // the action never fails
-        return true;
-    }
-
-
     @Override
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException {
         //System.out.println("Agent " + myAgent.getLocalName() + ": CFP received from " + cfp.getSender().getName() + ". Action is " + cfp.getContent());
-        int proposal = this.road.getUtility(cfp.getSender().getLocalName());
-        if (!road.isRoadFull()) {
-            // We provide a proposal
-            //System.out.println("Agent " + myAgent.getLocalName() + ": Proposing " + proposal);
-            ACLMessage propose = cfp.createReply();
-            propose.setPerformative(ACLMessage.PROPOSE);
-            propose.setContent(String.valueOf(proposal));
-            road.updateWishList(cfp.getSender().getLocalName(), false);
-            return propose;
-        } else {
-            ACLMessage refuse = cfp.createReply();
-            refuse.setPerformative(ACLMessage.REFUSE);
-            refuse.setContent("full-road");
-            System.out.println("Agent " + myAgent.getLocalName() + ": Refuse");
-            road.updateWishList(cfp.getSender().getLocalName(), false);
-            return refuse;
-           // throw new RefuseException("evaluation-failed");
+        try {
+            ContractNetCfp contractNetCfp = (ContractNetCfp) cfp.getContentObject();
+            double proposal = this.road.getUtility(contractNetCfp.getStrategy());
+            if (!road.isRoadFull()) {
+                //System.out.println("Agent " + myAgent.getLocalName() + ": Proposing " + proposal);
+                ACLMessage propose = cfp.createReply();
+                propose.setPerformative(ACLMessage.PROPOSE);
+                propose.setContent(String.valueOf(proposal));
+                return propose;
+            } else {
+                ACLMessage refuse = cfp.createReply();
+                refuse.setPerformative(ACLMessage.REFUSE);
+                refuse.setContent("full-road");
+                System.out.println("Agent " + myAgent.getLocalName() + ": Refuse");
+                return refuse;
+                // throw new RefuseException("evaluation-failed");
+            }
+        } catch (UnreadableException e) {
+            e.printStackTrace();
         }
+
+        return null;
     }
 
     /**
@@ -66,20 +62,14 @@ public class RoadNetResponder extends ContractNetResponder {
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
         //System.out.println("Agent "+ myAgent.getLocalName() +": Proposal accepted");
 
-        if (performAction()) {
-            try {
-                road.getCurrentCars().add(accept.getSender().getLocalName());
-                System.out.println("added car " + accept.getSender().getLocalName() + " - size: " + road.getCurrentCars().size());
-                ACLMessage inform = accept.createReply();
-                inform.setPerformative(ACLMessage.INFORM); // INFORM DONE
-                inform.setContentObject(road.getRoadInfo());
-                return inform;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        else {
-            throw new FailureException("unexpected-error");
+        try {
+            road.updateCars(accept.getSender().getLocalName(), Double.valueOf(accept.getContent()), true);
+            ACLMessage inform = accept.createReply();
+            inform.setPerformative(ACLMessage.INFORM); // INFORM DONE
+            inform.setContentObject(road.getRoadInfo());
+            return inform;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return null;

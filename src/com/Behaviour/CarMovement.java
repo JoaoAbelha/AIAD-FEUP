@@ -2,6 +2,7 @@ package com.Behaviour;
 
 import com.Agent.CarAgent;
 import com.Data.Car;
+import com.Data.PathRequest;
 import com.Data.RoadInfo;
 import jade.core.AID;
 import jade.core.behaviours.SequentialBehaviour;
@@ -9,12 +10,14 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
 public class CarMovement extends TickerBehaviour {
     private CarAgent carAgent = null;
     private long time;
+    private boolean requestInitialized = false;
 
     public CarMovement(CarAgent carAgent, long time) {
         super(carAgent, time);
@@ -42,21 +45,19 @@ public class CarMovement extends TickerBehaviour {
     }
 
     private void handleIntersection() {
-        ACLMessage message = new ACLMessage(ACLMessage.CFP);
-        message.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-        message.setReplyByDate(new Date(System.currentTimeMillis() + 10000)); // wait 10 seconds for reply
-        message.setContent("road-value?");
-
-        Map<Integer, RoadInfo> adjacentRoads = this.carAgent.getCity().getAdjacent(this.carAgent.getCar().getCurrentNode());
-        adjacentRoads.forEach((followingNode, roadInfo) -> {
-           message.addReceiver(new AID( "road"+ this.carAgent.getCar().getCurrentNode() + followingNode, false));
-        });
-
-        int nrAgents = adjacentRoads.size();
-        SequentialBehaviour negotiation = new SequentialBehaviour();
-        negotiation.addSubBehaviour(new SendPreference(this.carAgent));
-        negotiation.addSubBehaviour(new CarNetInitiator(this.carAgent, message, nrAgents));
-        this.carAgent.addBehaviour(negotiation);
+        try {
+            if(requestInitialized) return;
+            PathRequest pathRequest = new PathRequest(carAgent.getCar().getCurrentNode(), carAgent.getCar().getDestNode(), carAgent.getCar().getStrategy());
+            ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+            request.addReceiver(new AID(("city"), AID.ISLOCALNAME));
+            request.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+            request.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
+            request.setContentObject(pathRequest);
+            this.carAgent.addBehaviour(new CarRequestInitiator(this.carAgent, request));
+            this.requestInitialized = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleMovement() {
@@ -66,12 +67,22 @@ public class CarMovement extends TickerBehaviour {
 
     private void handleEndOfRoad() {
         carAgent.getCar().setCarStatus(Car.Status.INTERSECTION);
-        this.carAgent.addBehaviour(new EndOfRoadInform(this.carAgent, this.carAgent.getCar().getCurrentRoad()));
+        this.sendEnfOfRoad();
+        this.requestInitialized = false;
         this.carAgent.getCar().updateCurrentNode();
         this.carAgent.getSubscriptionInitiator().cancelInform();
     }
 
     private double kmph_to_mps(double kmph) {
         return (0.277778 * kmph);
+    }
+
+    private void sendEnfOfRoad() {
+        RoadInfo roadInfo = this.carAgent.getCar().getCurrentRoad();
+        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        msg.addReceiver(new AID("road" + roadInfo.getStartNode() + roadInfo.getEndNode(), false));
+        msg.setConversationId("EOR");
+        msg.setContent(String.valueOf(carAgent.getCar().getLength()));
+        myAgent.send(msg);
     }
 }

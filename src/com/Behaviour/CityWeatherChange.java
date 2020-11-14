@@ -3,6 +3,8 @@ package com.Behaviour;
 import com.Agent.CityAgent;
 import jade.core.behaviours.TickerBehaviour;
 
+import java.util.Map;
+
 public class CityWeatherChange extends TickerBehaviour{
     private CityAgent city = null;
     private int time;
@@ -19,6 +21,9 @@ public class CityWeatherChange extends TickerBehaviour{
         if(city.getWeatherStation().existsWeather(time)) {
             String weather = city.getWeatherStation().getWeather(time);
             float velocity = city.getWeatherStation().getVelocity(weather);
+            for(Map.Entry<String, Double> entry: city.getMaxVelocity().entrySet()) {
+                entry.setValue(entry.getValue() * velocity);
+            }
             city.getManager().notifyAll(velocity);
         }
     }

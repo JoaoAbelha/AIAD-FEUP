@@ -51,19 +51,13 @@ public class CityManager extends AgentCreator {
         GraphReader gr = new GraphReader("src/city.txt");
         gr.readFile();
         this.graph = gr.getInfo();
-
-        for(Car car : this.cars) {
-            System.out.println();
-            car.calculateCarPath(graph);
-        }
-
     }
 
     @Override
     void createAgentCars() {
         int unique = 0;
         for(Car car : this.cars) {
-            CarAgent carAgent = new CarAgent(car, this.graph);
+            CarAgent carAgent = new CarAgent(car);
             try {
                 this.agentController = this.containerController.acceptNewAgent("car" + String.valueOf(unique++), carAgent);
                 this.agentController.start();
@@ -124,10 +118,10 @@ public class CityManager extends AgentCreator {
         CityManager cityManager = new CityManager();
 
        CheckValidaty X = new CheckValidaty(cityManager.graph.getEdges());
-       X.validateNodeNr();
-       X.validateCars(cityManager.cars);
-       X.validatePriorityCars(cityManager.priorityCars);
-       X.check();
+       if (X.validateNodeNr()) System.exit(-1);
+       if (X.validateCars(cityManager.cars)) System.exit(-1);
+       if (!X.validatePriorityCars(cityManager.priorityCars)) System.exit(-1);
+       if (!X.check()) System.exit(-1);
         /*
        cityManager.createCity();
        cityManager.createAgentRoads();

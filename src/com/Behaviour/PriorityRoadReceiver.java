@@ -6,18 +6,21 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class PriorityRoadReceiver extends CyclicBehaviour {
 
     private final RoadAgent roadAgent;
     MessageTemplate mt = null;
-    private HashSet<String> priorityCars;
+    private HashMap<String, Double> priorityCars;
     private double minimumDistanceTravelled;
 
     public PriorityRoadReceiver(Agent a) {
         roadAgent = (RoadAgent) a;
-        priorityCars = new HashSet<>();
+        priorityCars = new HashMap<>();
         mt = MessageTemplate.MatchConversationId("PEOR");
         minimumDistanceTravelled = 0;
     }
@@ -27,19 +30,13 @@ public class PriorityRoadReceiver extends CyclicBehaviour {
         ACLMessage msg = roadAgent.receive(mt);
         if(msg != null) {
             double distanceTravelled = Double.parseDouble(msg.getContent());
+            priorityCars.put(msg.getSender().getLocalName(), distanceTravelled);
+            Collection<Double> distancesTravelled = this.priorityCars.values();
+            double min = Collections.min(distancesTravelled);
+            roadAgent.getManager().notifyAll("priority:" + min + ":" + roadAgent.getRoadInfo().getMaxVelocity());
 
-            if(!priorityCars.contains(msg.getSender().getLocalName())) {
-                priorityCars.add(msg.getSender().getLocalName());
-            } else if(distanceTravelled >= roadAgent.getRoadInfo().getDistance()) {
+            if(distanceTravelled >= roadAgent.getRoadInfo().getDistance()) {
                 priorityCars.remove(msg.getSender().getLocalName());
-            }
-
-            if(priorityCars.size() > 1) {
-                minimumDistanceTravelled = Math.min(minimumDistanceTravelled, distanceTravelled);
-                roadAgent.getManager().notifyAll("priority:" + minimumDistanceTravelled + ":" + roadAgent.getRoadInfo().getMaxVelocity());
-            } else {
-                minimumDistanceTravelled = distanceTravelled;
-                roadAgent.getManager().notifyAll("priority:" + distanceTravelled + ":" + roadAgent.getRoadInfo().getMaxVelocity());
             }
         } else {
             block();

@@ -14,7 +14,7 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
     private boolean cancel_inform;
     private String responderName;
     private boolean ignorePriority;
-    private boolean ignoreWeather;
+    private boolean ignoreRest;
 
     public CarSubscriptionInitiator(CarAgent car, ACLMessage msg) {
         super(car, msg);
@@ -24,7 +24,7 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
         int dest = car.getCar().getCurrentRoad().getEndNode();
         this.responderName = "road" + src + dest;
         this.ignorePriority = false;
-        this.ignoreWeather = false;
+        this.ignoreRest = false;
     }
 
     @Override
@@ -62,18 +62,16 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
                         if(car.getCar().getCurrentDistanceTravelled() >= Double.parseDouble(contentArray[1])) {
                             car.getCar().setCurrentVelocity(0);
                             ignorePriority = false;
-                            ignoreWeather = true;
-                        } else if(!ignorePriority){
-                            //System.out.println("priority car passed");
+                            ignoreRest = true;
+                        } else if(!ignorePriority) {
                             car.getCar().setCurrentVelocity(Double.parseDouble(contentArray[2]));
                             ignorePriority = true;
-                            ignoreWeather = false;
+                            ignoreRest = false;
                         }
                         break;
-                    case "weather":
-                        if(ignoreWeather) return;
+                    default:
+                        if(ignoreRest) return;
                         double maxVelocity = Double.parseDouble(contentArray[1]);
-                        System.out.println(car.getCar().getName() + ": " + maxVelocity);
                         car.getCar().setCurrentVelocity(maxVelocity);
                         break;
                 }

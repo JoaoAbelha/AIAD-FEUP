@@ -1,6 +1,7 @@
 package com.Agent;
 
 import com.Behaviour.*;
+import com.Data.Car;
 import com.Data.RoadInfo;
 import com.Manager.VelocitySubscriptionManager;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -14,9 +15,7 @@ public class RoadAgent  extends AgentRegister {
     private RoadInfo roadInfo;
     private DFAgentDescription dfd;
     private HashSet<String> currentCars; // current cars in the road
-    //private HashMap<String, Car> carsThatWishToBe;
-    private HashSet<String> carsWishToBe = new HashSet<>();
-    private float spaceOccupied; // sum of the length of current cars
+    private double spaceOccupied; // sum of the length of current cars
     private final float PERCENTAGE_SPACE_BETWEEN_CARS_IN_A_ROAD = 15;
     VelocitySubscriptionManager manager;
 
@@ -25,7 +24,6 @@ public class RoadAgent  extends AgentRegister {
 
         this.roadInfo = roadInfo;
         this.currentCars = new HashSet<>();
-        //this.carsThatWishToBe = new HashMap<>();
         this.spaceOccupied = 0;
         this.manager = new VelocitySubscriptionManager();
     }
@@ -37,38 +35,33 @@ public class RoadAgent  extends AgentRegister {
     public HashSet<String> getCurrentCars() {
         return currentCars;
     }
-
-    public void updateWishList(String carIdentifier, boolean add) {
-        //this.carsThatWishToBe.put()
-        if (add)
-            carsWishToBe.add(carIdentifier);
-        else
-            carsWishToBe.remove(carIdentifier);
-
-        //System.out.println(">>>Cars preferred by the road updated size " + carsWishToBe.size());
-    }
     
     public VelocitySubscriptionManager getManager() {
         return manager;
     }
 
-    /*
-    * todo: melhorar esta formula
-    * */
-    public int getUtility(String agent) {
-        return - currentCars.size() + (carsWishToBe.contains(agent)  ? 50 : 0) + (int) (Math.random() * 10);
+    public double getUtility(Car.Strategy strategy) {
+        double penalty = this.spaceOccupied / this.getRoadInfo().getDistance();
+        switch (strategy) {
+            case SHORTEST_PATH:
+                return roadInfo.getDistance() * (1 + penalty);
+            case SHORTEST_TIME:
+                double estimatedTime = this.roadInfo.getDistance() * 1.0 / this.roadInfo.getMaxVelocity();
+                return estimatedTime * (1 + penalty);
+            default:
+                return penalty;
+        }
     }
 
     public boolean isRoadFull() {
-        return spaceOccupied > this.roadInfo.getDistance() * (1 - PERCENTAGE_SPACE_BETWEEN_CARS_IN_A_ROAD/100.0) ;
+        return spaceOccupied > this.roadInfo.getDistance() * (1 - PERCENTAGE_SPACE_BETWEEN_CARS_IN_A_ROAD/100.0);
     }
 
 
     @Override
     protected void setup() {
         register("road");
-        addBehaviour(new ReceiveInformPriorityCar(this));
-        addBehaviour(new PreferenceListener(this));
+        //addBehaviour(new PreferenceListener(this));
         System.out.println("Road agent started");
         MessageTemplate template = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET),
@@ -78,8 +71,18 @@ public class RoadAgent  extends AgentRegister {
         addBehaviour(new RoadNetResponder(this, template));
         addBehaviour(new RoadSubscriptionResponder(this, this.manager));
         addBehaviour(new RoadSubscriptionInitiator(this, null));
+        addBehaviour(new ReceiveInformPriorityCar(this));
         addBehaviour(new EndOfRoadReceiver(this));
         addBehaviour(new PriorityRoadReceiver(this));
+    }
 
+    public void updateCars(String carName, Double length, boolean add) {
+        if(add) {
+            this.currentCars.add(carName);
+            this.spaceOccupied += length;
+        } else {
+            this.currentCars.remove(carName);
+            this.spaceOccupied -= length;
+        }
     }
 }

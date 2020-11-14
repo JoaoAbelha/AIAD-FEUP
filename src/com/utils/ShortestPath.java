@@ -56,7 +56,7 @@ public class ShortestPath implements RouteStrategy {
             for(Map.Entry<Integer, RoadInfo> adj : adjacently.entrySet()) {
                 Integer nodeDest = adj.getKey();
                 int distance = adj.getValue().getDistance();
-                System.out.print(nodeDest + " ");
+                //System.out.print(nodeDest + " ");
 
                 if (distances.get(nodeDest) > distances.get(Atop.second) + distance) {
                     distances.put(nodeDest , distances.get(Atop.second) + distance);
@@ -89,7 +89,7 @@ public class ShortestPath implements RouteStrategy {
         //for (Integer integer : solution) {
         //    System.out.print(integer + " ");
         //}
-        //System.out.println();
+        //  System.out.println();
 
         return solution;
     }

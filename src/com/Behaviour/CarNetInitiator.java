@@ -8,53 +8,39 @@ import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
+import javafx.util.Pair;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Vector;
 
 public class CarNetInitiator extends ContractNetInitiator {
-
-    private int nrResponders;
     private CarAgent car;
 
-    public CarNetInitiator(Agent a, ACLMessage cfp, int nrResponders) {
+    public CarNetInitiator(Agent a, ACLMessage cfp) {
         super(a, cfp);
-        this.nrResponders = nrResponders;
         this.car = (CarAgent) a;
     }
 
     @Override
     protected void handlePropose(ACLMessage propose, Vector acceptances) {
-        //System.out.println("Agent "+propose.getSender().getName()+" proposed "+propose.getContent());
+        super.handlePropose(propose, acceptances);
     }
 
     @Override
     protected void handleRefuse(ACLMessage refuse) {
-        //System.out.println("Agent "+refuse.getSender().getName()+" refused");
+        super.handleRefuse(refuse);
     }
 
     @Override
     protected void handleFailure(ACLMessage failure) {
-        if (failure.getSender().equals(myAgent.getAMS())) {
-            // FAILURE notification from the JADE runtime: the receiver does not exist
-            //System.out.println("Responder does not exist");
-        }
-        else {
-            //System.out.println("Agent "+failure.getSender().getName()+" failed");
-        }
-        // Immediate failure --> we will not receive a response from this agent
-        nrResponders--;
+        super.handleFailure(failure);
     }
 
     @Override
     protected void handleAllResponses(Vector responses, Vector acceptances) {
-        if (responses.size() < nrResponders) {
-            // Some responder didn't reply within the specified timeout
-            //System.out.println("Timeout expired: missing "+(nrResponders - responses.size())+" responses");
-        }
-        // Evaluate proposals. Chooses the one with the highest value
-        //todo: can receive refuses (roads are full)
-        int bestProposal = -1;
+        double bestProposal = Double.POSITIVE_INFINITY;
         AID bestProposer = null;
         ACLMessage accept = null;
         Enumeration e = responses.elements();
@@ -64,37 +50,52 @@ public class CarNetInitiator extends ContractNetInitiator {
                 ACLMessage reply = msg.createReply();
                 reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
                 acceptances.addElement(reply);
-                int proposal = Integer.parseInt(msg.getContent());
-                if (proposal > bestProposal) {
-                    bestProposal = proposal;
+                double proposal = Double.valueOf(msg.getContent());
+                double result = analyzeProposal(proposal, msg.getSender().getLocalName());
+                if (result < bestProposal) {
+                    bestProposal = result;
                     bestProposer = msg.getSender();
                     accept = reply;
                 }
             }
-            else if (msg.getPerformative() == ACLMessage.REFUSE) {
-                //System.out.println(myAgent.getName() + "was refused by a full road " + msg.getSender().getName());
-            }
+
         }
         // Accept the proposal of the best proposer
         if (accept != null) {
-            //System.out.println("Accepting proposal "+bestProposal+" from responder "+bestProposer.getName());
+            System.out.println("Accepting proposal "+bestProposal+" from responder "+bestProposer.getLocalName());
             accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+            accept.setContent(String.valueOf(car.getCar().getLength()));
+        }
+    }
+
+    private double analyzeProposal(double proposal, String name) {
+        double result = proposal;
+        for(Pair<Double, Integer> road: car.getCurrentPathResponse().getPaths().get(name)) {
+            switch (car.getCar().getStrategy()) {
+                case SHORTEST_PATH:
+                    result += road.getValue();
+                    break;
+                case SHORTEST_TIME:
+                    result += road.getValue() * 1.0 / road.getKey();
+                    break;
+                case MINIMUM_INTERSECTIONS:
+                    result += 1;
+                    break;
+            }
         }
 
+        return result;
     }
 
     @Override
     protected void handleInform(ACLMessage inform) {
         try {
             RoadInfo roadInfo = (RoadInfo) inform.getContentObject();
-            car.getCar().updateCarPath(car.getCity(), roadInfo);
+            car.getCar().updateCarPath(roadInfo);
             car.updateSubscriptionInitiator();
             car.getCar().setCarStatus(Car.Status.ROAD);
         } catch (UnreadableException e) {
             e.printStackTrace();
         }
     }
-
-    // todo:
-    // handleFailure function nao existe pq?
 }

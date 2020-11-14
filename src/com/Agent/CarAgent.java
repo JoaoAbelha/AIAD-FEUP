@@ -4,30 +4,30 @@ import com.Behaviour.CarMovement;
 import com.Behaviour.CarSubscriptionInitiator;
 import com.Data.Car;
 import com.Data.Graph;
+import com.Data.PathRequest;
+import com.Data.PathResponse;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 
 public class CarAgent extends AgentRegister {
-
     private DFAgentDescription dfd;
     private final Car car;
-    private final Graph city; // since all agents know all the city
     private CarSubscriptionInitiator subscriptionInitiator;
+    private PathResponse currentPathResponse;
 
-    public CarAgent(Car car, Graph city) {
+    public CarAgent(Car car) {
         this.car = car;
-        this.city = city;
     }
 
     public Car getCar() {
         return car;
     }
 
-    public Graph getCity() {
-        return city;
-    }
-
     public CarSubscriptionInitiator getSubscriptionInitiator() {
         return subscriptionInitiator;
+    }
+
+    public PathResponse getCurrentPathResponse() {
+        return currentPathResponse;
     }
 
     public void updateSubscriptionInitiator() {
@@ -35,13 +35,14 @@ public class CarAgent extends AgentRegister {
         addBehaviour(subscriptionInitiator);
     }
 
+    public void updatePathResponse(PathResponse pathResponse) {
+        this.currentPathResponse = pathResponse;
+    }
+
     @Override
     protected void setup() {
         register(car.getName());
-        car.calculateCarPath(this.city);
         System.out.println("Car agent started");
         addBehaviour(new CarMovement(this, 300));
     }
-
-
 }
