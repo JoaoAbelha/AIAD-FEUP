@@ -1,5 +1,7 @@
 package com.utils;
 
+import com.Data.Car;
+import com.Data.PriorityCar;
 import com.Data.RoadInfo;
 
 import java.util.Collections;
@@ -7,14 +9,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-public class StronglyConnected {
+public class CheckValidaty {
 
     HashSet<Integer> nodes = new HashSet<>();
     HashSet<Integer> visitedNodes = new HashSet<>();
     Map<Integer, Map<Integer, RoadInfo>> graph;
 
 
-    public StronglyConnected(Map<Integer, Map<Integer, RoadInfo>> graph) {
+    public CheckValidaty(Map<Integer, Map<Integer, RoadInfo>> graph) {
         this.graph = graph;
 
         for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : graph.entrySet()) {
@@ -98,5 +100,35 @@ public class StronglyConnected {
 
         return true;
 
+    }
+
+    public boolean validateCars(HashSet<Car> cars) {
+        for(Car car : cars) {
+            if (!this.nodes.contains(car.getCurrentNode())) {
+                System.out.println("The car " + car.getName() + " can not start at the non existent node " + car.getCurrentNode());
+                return false;
+            }
+
+            if(! this.nodes.contains(car.getDestNode())) {
+                System.out.println("The car " + car.getName() + " can not have dest at a non existent node " + car.getDestNode());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean validatePriorityCars(HashSet<PriorityCar> cars) {
+        for(PriorityCar car : cars) {
+            if (!this.nodes.contains(car.getCurrentNode())) {
+                System.out.println("The car " + car.getName() + " can not start at the non existent node " + car.getCurrentNode());
+                return false;
+            }
+
+            if(! this.nodes.contains(car.getDestNode())) {
+                System.out.println("The car " + car.getName() + " can not have dest at a non existent node " + car.getDestNode());
+                return false;
+            }
+        }
+        return true;
     }
 }
