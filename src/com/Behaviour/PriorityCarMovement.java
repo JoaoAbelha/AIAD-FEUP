@@ -60,7 +60,7 @@ public class PriorityCarMovement extends TickerBehaviour {
     private void informDistanceTravelled() {
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
         RoadInfo roadInfo = priorityCarAgent.getCar().getCurrentRoad();
-        msg.addReceiver(new AID("road" + roadInfo.getStartNode() + roadInfo.getEndNode(), false));
+        msg.addReceiver(new AID("road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode(), false));
         msg.setConversationId("PEOR");
         msg.setContent(String.valueOf(priorityCarAgent.getCar().getCurrentDistanceTravelled()));
         myAgent.send(msg);

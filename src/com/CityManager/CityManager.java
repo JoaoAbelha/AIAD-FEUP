@@ -90,7 +90,7 @@ public class CityManager extends AgentCreator {
                 RoadAgent roadAgent = new RoadAgent(adj.getValue());
                 try {
                     System.out.println(src + " " + dest);
-                    this.agentController = this.containerController.acceptNewAgent("road" + src + dest, roadAgent);
+                    this.agentController = this.containerController.acceptNewAgent("road" + src + "-" + dest, roadAgent);
 
                     this.agentController.start();
                 } catch (StaleProxyException e) {
@@ -117,16 +117,16 @@ public class CityManager extends AgentCreator {
     public static void main(String[] args) throws FileNotFoundException {
         CityManager cityManager = new CityManager();
 
-       CheckValidaty X = new CheckValidaty(cityManager.graph.getEdges());
-       if (!X.validateNodeNr()) return;
-       if (!X.validateCars(cityManager.cars)) return;
-       if (!X.validatePriorityCars(cityManager.priorityCars)) return;
-       if (!X.check()) return;
+        CheckValidaty X = new CheckValidaty(cityManager.graph.getEdges());
+        if (!X.validateNodeNr()) return;
+        if (!X.validateCars(cityManager.cars)) return;
+        if (!X.validatePriorityCars(cityManager.priorityCars)) return;
+        if (!X.check()) return;
 
-       cityManager.createCity();
-       cityManager.createAgentRoads();
-       cityManager.createAgentCars();
-       cityManager.createPriorityCars();
+        cityManager.createCity();
+        cityManager.createAgentRoads();
+        cityManager.createAgentCars();
+        cityManager.createPriorityCars();
         System.out.println("city manager running...");
     }
 

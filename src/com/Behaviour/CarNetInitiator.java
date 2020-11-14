@@ -15,10 +15,12 @@ import java.util.Vector;
 
 public class CarNetInitiator extends ContractNetInitiator {
     private CarAgent car;
+    private CarMovement carMovement;
 
-    public CarNetInitiator(Agent a, ACLMessage cfp) {
+    public CarNetInitiator(Agent a, ACLMessage cfp, CarMovement carMovement) {
         super(a, cfp);
         this.car = (CarAgent) a;
+        this.carMovement = carMovement;
     }
 
     @Override
@@ -29,11 +31,13 @@ public class CarNetInitiator extends ContractNetInitiator {
     @Override
     protected void handleRefuse(ACLMessage refuse) {
         super.handleRefuse(refuse);
+        this.carMovement.setRestartContractNet(true);
     }
 
     @Override
     protected void handleFailure(ACLMessage failure) {
         super.handleFailure(failure);
+        this.carMovement.setRestartContractNet(true);
     }
 
     @Override

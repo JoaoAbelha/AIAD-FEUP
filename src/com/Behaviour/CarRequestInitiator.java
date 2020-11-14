@@ -4,7 +4,6 @@ import com.Agent.CarAgent;
 import com.Data.ContractNetCfp;
 import com.Data.PathResponse;
 import jade.core.AID;
-
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -15,10 +14,12 @@ import java.util.Date;
 
 public class CarRequestInitiator extends AchieveREInitiator {
     private final CarAgent carAgent;
+    private CarMovement carMovement;
 
-    public CarRequestInitiator(CarAgent carAgent, ACLMessage msg) {
+    public CarRequestInitiator(CarAgent carAgent, ACLMessage msg, CarMovement carMovement) {
         super(carAgent, msg);
         this.carAgent = carAgent;
+        this.carMovement = carMovement;
     }
 
     @Override
@@ -36,17 +37,8 @@ public class CarRequestInitiator extends AchieveREInitiator {
         try {
             PathResponse response = (PathResponse) inform.getContentObject();
             this.carAgent.updatePathResponse(response);
-            ContractNetCfp cfp = new ContractNetCfp(carAgent.getCar().getStrategy(), carAgent.getCar().getLength());
-
-            ACLMessage contractNet = new ACLMessage(ACLMessage.CFP);
-            contractNet.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-            contractNet.setReplyByDate(new Date(System.currentTimeMillis() + 10000)); // wait 10 seconds for reply
-            contractNet.setContentObject(cfp);
-            for (String roadName : response.getPaths().keySet())
-                contractNet.addReceiver(new AID(roadName, AID.ISLOCALNAME));
-
-            carAgent.addBehaviour(new CarNetInitiator(this.carAgent, contractNet));
-        } catch (UnreadableException | IOException e) {
+            this.carMovement.carContractNet();
+        } catch (UnreadableException e) {
             e.printStackTrace();
         }
     }

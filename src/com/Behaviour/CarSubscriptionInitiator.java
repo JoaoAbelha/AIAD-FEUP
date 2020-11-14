@@ -22,7 +22,7 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
         this.cancel_inform = false;
         int src = car.getCar().getCurrentRoad().getStartNode();
         int dest = car.getCar().getCurrentRoad().getEndNode();
-        this.responderName = "road" + src + dest;
+        this.responderName = "road" + src + "-" + dest;
         this.ignorePriority = false;
         this.ignoreRest = false;
     }

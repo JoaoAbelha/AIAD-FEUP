@@ -18,7 +18,7 @@ public class PriorityRoadInform extends OneShotBehaviour {
     @Override
     public void action() {
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-        msg.addReceiver(new AID("road" + roadInfo.getStartNode() + roadInfo.getEndNode(), false));
+        msg.addReceiver(new AID("road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode(), false));
         msg.setConversationId("PEOR");
         msg.setContent(String.valueOf(priorityCarAgent.getCar().getCurrentDistanceTravelled()));
         //System.out.println(" >>>>>> Sending inform message to preferred " + wishedRoad);

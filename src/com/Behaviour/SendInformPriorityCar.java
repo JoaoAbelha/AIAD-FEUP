@@ -24,7 +24,7 @@ public class SendInformPriorityCar extends OneShotBehaviour {
     @Override
     public void action() {
         if (!firstMessageSent) {
-            String roadToInform = "road" + agent.getCar().getCurrentNode();
+            String roadToInform = "road" + agent.getCar().getCurrentNode() + "-";
             if (agent.getCar().getNextNode() == -1) {
                 done = true;
                 return;

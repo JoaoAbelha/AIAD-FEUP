@@ -39,8 +39,8 @@ public class CityAgent extends AgentRegister {
                 Integer dest= adj.getKey();
                 RoadInfo roadInfo = adj.getValue();
                 System.out.println(src + " " + dest);
-                this.maxVelocity.put("road" + src + dest, roadInfo.getMaxVelocity());
-                this.distances.put("road" + src + dest, roadInfo.getDistance());
+                this.maxVelocity.put("road" + src + "-" + dest, roadInfo.getMaxVelocity());
+                this.distances.put("road" + src + "-" + dest, roadInfo.getDistance());
                 adjacent.add(dest);
             }
             adjacentRoads.put(src, adjacent);
@@ -100,7 +100,7 @@ public class CityAgent extends AgentRegister {
         ArrayList<Integer> adjacent = adjacentRoads.get(request.getStartNode());
         for(Integer node : adjacent) {
             ArrayList<Integer> path = new ShortestPath().buildRoute(node, request.getEndNode(), this.city);
-            String roadName = "road" + request.getStartNode() + node;
+            String roadName = "road" + request.getStartNode() + "-" + node;
             response.addPath(roadName, getRoadInfo(path));
         }
         return response;
@@ -111,7 +111,7 @@ public class CityAgent extends AgentRegister {
         ArrayList<Integer> adjacent = adjacentRoads.get(request.getStartNode());
         for(Integer node : adjacent) {
             ArrayList<Integer> path = new ShortestTime().buildRoute(node, request.getEndNode(), this.city);
-            String roadName = "road" + request.getStartNode() + node;
+            String roadName = "road" + request.getStartNode() + "-" + node;
             response.addPath(roadName, getRoadInfo(path));
         }
         return response;
@@ -122,7 +122,7 @@ public class CityAgent extends AgentRegister {
         ArrayList<Integer> adjacent = adjacentRoads.get(request.getStartNode());
         for(Integer node : adjacent) {
             ArrayList<Integer> path = new MinInterseptions().buildRoute(node, request.getEndNode(), this.city);
-            String roadName = "road" + request.getStartNode() + node;
+            String roadName = "road" + request.getStartNode() + "-" + node;
             response.addPath(roadName, getRoadInfo(path));
         }
         return response;
@@ -132,7 +132,7 @@ public class CityAgent extends AgentRegister {
         ArrayList<Pair<Double, Integer>> roadsInfos = new ArrayList<>();
 
         for(int i = 0; i < path.size() - 1; i++) {
-            String name = "road" + path.get(i) + path.get(i + 1);
+            String name = "road" + path.get(i) + "-" + path.get(i + 1);
             double maxVelocity = this.maxVelocity.get(name);
             int distance = this.distances.get(name);
             roadsInfos.add(new Pair<>(maxVelocity, distance));
