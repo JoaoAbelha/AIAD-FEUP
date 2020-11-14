@@ -53,10 +53,13 @@ public class RoadAgent  extends AgentRegister {
         }
     }
 
-    public boolean isRoadFull() {
-        return spaceOccupied > this.roadInfo.getDistance() * (1 - PERCENTAGE_SPACE_BETWEEN_CARS_IN_A_ROAD/100.0);
+    public boolean isRoadFull(Double length) {
+        return spaceOccupied + length > this.roadInfo.getDistance() * (1 - PERCENTAGE_SPACE_BETWEEN_CARS_IN_A_ROAD/100.0);
     }
 
+    public double getSpaceOccupied() {
+        return spaceOccupied;
+    }
 
     @Override
     protected void setup() {
@@ -77,6 +80,7 @@ public class RoadAgent  extends AgentRegister {
     }
 
     public void updateCars(String carName, Double length, boolean add) {
+        System.out.println("Space occupied:" +  this.spaceOccupied + " out of " + this.roadInfo.getDistance());
         if(add) {
             this.currentCars.add(carName);
             this.spaceOccupied += length;

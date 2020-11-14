@@ -40,6 +40,7 @@ public class CarMovement extends TickerBehaviour {
                 this.handleMovement();
             }
         } else if(carAgent.getCar().getCarStatus().equals(Car.Status.INTERSECTION)) {
+           // System.out.println(carAgent.getCar().getName() + " in the intersection");
             this.handleIntersection();
         }
     }

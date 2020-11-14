@@ -28,7 +28,7 @@ public class RoadNetResponder extends ContractNetResponder {
         try {
             ContractNetCfp contractNetCfp = (ContractNetCfp) cfp.getContentObject();
             double proposal = this.road.getUtility(contractNetCfp.getStrategy());
-            if (!road.isRoadFull()) {
+            if (!road.isRoadFull(contractNetCfp.getLength())) {
                 //System.out.println("Agent " + myAgent.getLocalName() + ": Proposing " + proposal);
                 ACLMessage propose = cfp.createReply();
                 propose.setPerformative(ACLMessage.PROPOSE);
@@ -61,7 +61,10 @@ public class RoadNetResponder extends ContractNetResponder {
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
         //System.out.println("Agent "+ myAgent.getLocalName() +": Proposal accepted");
-
+       // System.out.println("<>>>> handle proposal: " + road.getSpaceOccupied());
+        //if (road.isRoadFull(Double.valueOf(accept.getContent()))) {
+          //  System.out.println(">>>>>>>>>>>problem found bro");
+        //}
         try {
             road.updateCars(accept.getSender().getLocalName(), Double.valueOf(accept.getContent()), true);
             ACLMessage inform = accept.createReply();

@@ -10,9 +10,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Vector;
 
 public class CarNetInitiator extends ContractNetInitiator {
@@ -50,7 +48,7 @@ public class CarNetInitiator extends ContractNetInitiator {
                 ACLMessage reply = msg.createReply();
                 reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
                 acceptances.addElement(reply);
-                double proposal = Double.valueOf(msg.getContent());
+                double proposal = Double.parseDouble(msg.getContent());
                 double result = analyzeProposal(proposal, msg.getSender().getLocalName());
                 if (result < bestProposal) {
                     bestProposal = result;
