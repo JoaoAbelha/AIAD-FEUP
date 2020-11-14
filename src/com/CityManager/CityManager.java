@@ -106,7 +106,7 @@ public class CityManager extends AgentCreator {
         for(PriorityCar car : this.priorityCars) {
             PriorityCarAgent carAgent = new PriorityCarAgent(car, this.graph);
             try {
-                this.agentController = this.containerController.acceptNewAgent("priorityCar" + String.valueOf(unique++), carAgent);
+                this.agentController = this.containerController.acceptNewAgent("priorityCar" + (unique++), carAgent);
                 this.agentController.start();
             } catch (StaleProxyException e) {
                 e.printStackTrace();
@@ -118,15 +118,15 @@ public class CityManager extends AgentCreator {
         CityManager cityManager = new CityManager();
 
        CheckValidaty X = new CheckValidaty(cityManager.graph.getEdges());
-       if (X.validateNodeNr()) System.exit(-1);
-       if (X.validateCars(cityManager.cars)) System.exit(-1);
-       if (!X.validatePriorityCars(cityManager.priorityCars)) System.exit(-1);
-       if (!X.check()) System.exit(-1);
-        /*
+       if (!X.validateNodeNr()) return;
+       if (!X.validateCars(cityManager.cars)) return;
+       if (!X.validatePriorityCars(cityManager.priorityCars)) return;
+       if (!X.check()) return;
+
        cityManager.createCity();
        cityManager.createAgentRoads();
        cityManager.createAgentCars();
-       cityManager.createPriorityCars();*/
+       cityManager.createPriorityCars();
         System.out.println("city manager running...");
     }
 

@@ -1,6 +1,7 @@
 package com.Data;
 
-import javafx.util.Pair;
+
+import com.utils.Pair;
 
 import java.io.Serializable;
 import java.util.ArrayList;

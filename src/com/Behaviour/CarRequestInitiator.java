@@ -1,24 +1,17 @@
 package com.Behaviour;
 
 import com.Agent.CarAgent;
-import com.Data.Car;
 import com.Data.ContractNetCfp;
 import com.Data.PathResponse;
 import jade.core.AID;
-import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.OneShotBehaviour;
+
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREInitiator;
-import javafx.util.Pair;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 
 public class CarRequestInitiator extends AchieveREInitiator {
     private final CarAgent carAgent;

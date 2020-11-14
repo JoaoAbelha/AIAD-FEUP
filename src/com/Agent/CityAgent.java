@@ -2,18 +2,17 @@ package com.Agent;
 
 
 import com.Behaviour.CityRequestResponder;
-import com.Behaviour.CitySubscriptionInitiator;
 import com.Behaviour.CitySubscriptionResponder;
 import com.Behaviour.CityWeatherChange;
 import com.Data.*;
 import com.Manager.WeatherSubscriptionManager;
 import com.utils.MinInterseptions;
+import com.utils.Pair;
 import com.utils.ShortestPath;
 import com.utils.ShortestTime;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -3,12 +3,12 @@ package com.Behaviour;
 import com.Agent.CarAgent;
 import com.Data.Car;
 import com.Data.RoadInfo;
+import com.utils.Pair;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
