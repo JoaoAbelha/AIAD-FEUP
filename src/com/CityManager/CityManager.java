@@ -135,6 +135,9 @@ public class CityManager extends AgentCreator {
 
     private void cleanLogFiles() {
         File dir = new File("logs/");
+        if (!dir.exists()){
+            dir.mkdir();
+        }
         for (File file: dir.listFiles())
             if (!file.isDirectory())
                 file.delete();
