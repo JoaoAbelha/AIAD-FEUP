@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class CityAgent extends AgentRegister {
-    private static Logger LOGGER = null;
+    private Logger LOGGER = null;
     private Handler fileHandler;
     WeatherSubscriptionManager manager;
     WeatherStation weatherStation;
@@ -68,7 +68,7 @@ public class CityAgent extends AgentRegister {
         }
     }
 
-    public static Logger getLOGGER() {
+    public Logger getLOGGER() {
         return LOGGER;
     }
 

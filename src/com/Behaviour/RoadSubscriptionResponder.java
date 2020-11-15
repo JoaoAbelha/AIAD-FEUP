@@ -20,12 +20,14 @@ public class RoadSubscriptionResponder extends SubscriptionResponder {
         ACLMessage decision_result = subscription.createReply();
         try {
             super.handleSubscription(subscription);
-            //System.out.println("subcriber added");
             decision_result.setPerformative(ACLMessage.AGREE);
+            road.getLOGGER().info("Received valid subscription from " + subscription.getSender().getLocalName() + ". Sending Agree" );
         } catch (RefuseException e) {
             decision_result.setPerformative(ACLMessage.REFUSE);
+            road.getLOGGER().info("Received invalid subscription from " + subscription.getSender().getLocalName() + ". Sending Refuse" );
         } catch (NotUnderstoodException e) {
             decision_result.setPerformative(ACLMessage.NOT_UNDERSTOOD);
+            road.getLOGGER().info("Received invalid subscription from " + subscription.getSender().getLocalName() + ". Sending Not Understood" );
         }
         return decision_result;
     }
@@ -33,7 +35,7 @@ public class RoadSubscriptionResponder extends SubscriptionResponder {
     @Override
     protected ACLMessage handleCancel(ACLMessage cancel) throws FailureException {
         super.handleCancel(cancel);
-        //System.out.println("subscriber removed");
+        road.getLOGGER().info(cancel.getSender().getLocalName() + " canceled its subscription" );
         ACLMessage cancel_response = cancel.createReply();
         cancel_response.setPerformative(ACLMessage.INFORM);
         return cancel_response;

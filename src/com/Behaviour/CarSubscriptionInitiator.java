@@ -36,6 +36,7 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
         subscription.setProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
         Vector l = new Vector(1);
         l.addElement(subscription);
+        car.getLOGGER().info("Starting velocity subscription with " + responderName);
         //System.out.println("subscription started");
         return l;
     }
@@ -43,16 +44,20 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
     @Override
     protected void handleAgree(ACLMessage agree) {
         super.handleAgree(agree);
+        car.getLOGGER().info("Velocity subscription with " + responderName + " accepted");
     }
 
     @Override
     protected void handleRefuse(ACLMessage refuse) {
         super.handleRefuse(refuse);
+        car.getLOGGER().info("Velocity subscription with " + responderName + " refused");
+
     }
 
     @Override
     protected void handleInform(ACLMessage inform) {
         if (cancel_inform) {
+            car.getLOGGER().info("Subscription with " + responderName +" cancelled successfully");
             cancellationCompleted(inform.getSender());
             car.removeBehaviour(car.getSubscriptionInitiator());
         } else {
@@ -62,10 +67,12 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
                 switch (contentArray[0]) {
                     case "priority":
                         if(!isBehind && !ignorePriority) {
+                            car.getLOGGER().info("Priority car in front of me on road " + responderName + ". Moving again");
                             car.getCar().setCurrentVelocity(Double.parseDouble(contentArray[2]));
                             ignoreRest = false;
                             ignorePriority = true;
                         } else if(car.getCar().getCurrentDistanceTravelled() >= Double.parseDouble(contentArray[1])) {
+                            car.getLOGGER().info("Priority car behind me on road " + responderName + ". Stopping");
                             car.getCar().setCurrentVelocity(0);
                             ignorePriority = false;
                             ignoreRest = true;
@@ -78,6 +85,7 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
                         if(ignoreRest) return;
                         double maxVelocity = Double.parseDouble(contentArray[1]);
                         car.getCar().setCurrentVelocity(maxVelocity);
+                        car.getLOGGER().info("Notification with velocity change in " + responderName +". Setting velocity to " + maxVelocity);
                         break;
                 }
             }
@@ -85,6 +93,7 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
     }
 
     public void cancelInform() {
+        car.getLOGGER().info("Canceling subscription with " + responderName);
         cancel(new AID((responderName), AID.ISLOCALNAME), false);
         this.cancel_inform = true;
     }

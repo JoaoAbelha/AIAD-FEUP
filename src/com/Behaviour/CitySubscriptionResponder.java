@@ -22,9 +22,12 @@ public class CitySubscriptionResponder extends SubscriptionResponder {
             super.handleSubscription(subscription);
             //System.out.println("subcriber added");
             decision_result.setPerformative(ACLMessage.AGREE);
+            city.getLOGGER().info("Received valid subscription from " + subscription.getSender().getLocalName() + ". Sending Agree" );
         } catch (RefuseException e) {
+            city.getLOGGER().info("Received invalid subscription from " + subscription.getSender().getLocalName() + ". Sending Refuse" );
             decision_result.setPerformative(ACLMessage.REFUSE);
         } catch (NotUnderstoodException e) {
+            city.getLOGGER().info("Received invalid subscription from " + subscription.getSender().getLocalName() + ". Sending Not Understood" );
             decision_result.setPerformative(ACLMessage.NOT_UNDERSTOOD);
         }
         return decision_result;
@@ -33,7 +36,7 @@ public class CitySubscriptionResponder extends SubscriptionResponder {
     @Override
     protected ACLMessage handleCancel(ACLMessage cancel) throws FailureException {
         super.handleCancel(cancel);
-        //System.out.println("subscriber removed");
+        city.getLOGGER().info(cancel.getSender().getLocalName() + " canceled its subscription" );
         ACLMessage cancel_response = cancel.createReply();
         cancel_response.setPerformative(ACLMessage.INFORM);
         return cancel_response;

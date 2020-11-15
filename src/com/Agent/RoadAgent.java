@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class RoadAgent  extends AgentRegister {
-    private static Logger LOGGER = null;
+    private Logger LOGGER = null;
     private Handler fileHandler;
     private RoadInfo roadInfo;
     private DFAgentDescription dfd;
@@ -48,7 +48,7 @@ public class RoadAgent  extends AgentRegister {
         }
     }
 
-    public static Logger getLOGGER() {
+    public Logger getLOGGER() {
         return LOGGER;
     }
 

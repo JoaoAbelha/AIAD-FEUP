@@ -33,10 +33,10 @@ public class PriorityRoadReceiver extends CyclicBehaviour {
             priorityCars.put(msg.getSender().getLocalName(), distanceTravelled);
             Collection<Double> distancesTravelled = this.priorityCars.values();
             double min = Collections.min(distancesTravelled);
-            //System.out.println("MINMIN: " + min);
             roadAgent.getManager().notifyAll("priority:" + min + ":" + roadAgent.getRoadInfo().getMaxVelocity(),"road" + roadAgent.getRoadInfo().getStartNode() + "-" + roadAgent.getRoadInfo().getEndNode());
 
             if(distanceTravelled >= roadAgent.getRoadInfo().getDistance()) {
+                roadAgent.getLOGGER().info("Priority car " + msg.getSender().getLocalName() + " reached end of road");
                 priorityCars.remove(msg.getSender().getLocalName());
             }
         } else {

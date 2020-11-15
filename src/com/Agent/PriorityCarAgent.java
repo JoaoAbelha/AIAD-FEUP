@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class PriorityCarAgent extends AgentRegister {
-    private static Logger LOGGER = null;
+    private Logger LOGGER = null;
     private Handler fileHandler;
     private final PriorityCar car;
     private final Graph city; // since all agents know all the city
@@ -37,7 +37,7 @@ public class PriorityCarAgent extends AgentRegister {
         }
     }
 
-    public static Logger getLOGGER() {
+    public Logger getLOGGER() {
         return LOGGER;
     }
 

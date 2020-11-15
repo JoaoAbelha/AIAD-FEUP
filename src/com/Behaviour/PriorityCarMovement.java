@@ -24,7 +24,7 @@ public class PriorityCarMovement extends TickerBehaviour {
     @Override
     protected void onTick() {
         if(priorityCarAgent.getCar().getCurrentNode() == priorityCarAgent.getCar().getDestNode()) {
-            System.out.println("Dest node pc");
+            priorityCarAgent.getLOGGER().info("Priority car arrived at destination");
             priorityCarAgent.unregister();
             return;
         }
@@ -55,6 +55,7 @@ public class PriorityCarMovement extends TickerBehaviour {
         request.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
         request.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
         request.setContent(String.valueOf(priorityCarAgent.getCar().getCurrentNode()));
+        priorityCarAgent.getLOGGER().info("Sending request to " + roadToInform + " to stop all cars");
         this.priorityCarAgent.addBehaviour(new PriorityCarRequestInitiator(this.priorityCarAgent, request, this));
         this.requestInitilized = true;
     }
@@ -69,6 +70,7 @@ public class PriorityCarMovement extends TickerBehaviour {
         priorityCarAgent.getCar().setStatus(Car.Status.INTERSECTION);
         this.priorityCarAgent.getCar().updateCurrentNode();
         this.priorityCarAgent.getSubscriptionInitiator().cancelInform();
+        priorityCarAgent.getLOGGER().info(priorityCarAgent.getCar().getName() + " reached end of road");
         this.requestInitilized = false;
     }
 

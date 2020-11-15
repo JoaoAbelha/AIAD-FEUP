@@ -27,19 +27,22 @@ public class PriorityCarRequestInitiator extends AchieveREInitiator {
     @Override
     protected void handleRefuse(ACLMessage refuse) {
         carMovement.setRequestInitilized(false);
+        agent.getLOGGER().info(refuse.getSender().getLocalName() + " refused request");
     }
 
     @Override
     protected void handleAgree(ACLMessage agree) {
         super.handleAgree(agree);
+        agent.getLOGGER().info(agree.getSender().getLocalName() + " agreed with the request");
+
     }
 
     @Override
     protected void handleInform(ACLMessage inform) {
         try {
             RoadInfo roadInfo = (RoadInfo) inform.getContentObject();
-            System.out.println("RECEIVED ACK FROM road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode());
             this.agent.getCar().updateCarPath(agent.getCity(), roadInfo);
+            agent.getLOGGER().info(agent.getCar().getName() + " driving on road " + roadInfo.getStartNode() + "-" + roadInfo.getEndNode());
             this.agent.getCar().setStatus(Car.Status.ROAD);
             this.agent.updateSubscriptionInitiator();
         } catch (UnreadableException e) {

@@ -1,0 +1,24 @@
+nov. 15, 2020 10:00:15 DA MANHÃ com.Agent.RoadAgent setup
+INFO: Agent Started
+nov. 15, 2020 10:00:15 DA MANHÃ com.Behaviour.RoadSubscriptionInitiator prepareSubscriptions
+INFO: Starting weather subscription with city
+nov. 15, 2020 10:00:16 DA MANHÃ com.Behaviour.RoadSubscriptionInitiator handleAgree
+INFO: Velocity subscription with city accepted
+nov. 15, 2020 10:00:16 DA MANHÃ com.Behaviour.RoadRequestResponder handleRequest
+INFO: Received valid priority car request from ambulance_first. Sending Agree
+nov. 15, 2020 10:00:16 DA MANHÃ com.Behaviour.RoadRequestResponder prepareResultNotification
+INFO: Stopping all cars and sending my information to ambulance_first
+nov. 15, 2020 10:00:16 DA MANHÃ com.Behaviour.RoadSubscriptionResponder handleSubscription
+INFO: Received valid subscription from ambulance_first. Sending Agree
+nov. 15, 2020 10:00:18 DA MANHÃ com.Behaviour.PriorityRoadReceiver action
+INFO: Priority car ambulance_first reached end of road
+nov. 15, 2020 10:00:18 DA MANHÃ com.Behaviour.RoadSubscriptionResponder handleCancel
+INFO: ambulance_first canceled its subscription
+nov. 15, 2020 10:00:18 DA MANHÃ com.Behaviour.RoadSubscriptionInitiator handleInform
+INFO: Notification with weather change. Sending notification to all cars in the road
+nov. 15, 2020 10:00:21 DA MANHÃ com.Behaviour.RoadSubscriptionInitiator handleInform
+INFO: Notification with weather change. Sending notification to all cars in the road
+nov. 15, 2020 10:00:24 DA MANHÃ com.Behaviour.RoadSubscriptionInitiator handleInform
+INFO: Notification with weather change. Sending notification to all cars in the road
+nov. 15, 2020 10:00:30 DA MANHÃ com.Behaviour.RoadSubscriptionInitiator handleInform
+INFO: Notification with weather change. Sending notification to all cars in the road

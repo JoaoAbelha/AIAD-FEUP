@@ -29,8 +29,10 @@ public class CityRequestResponder extends AchieveREResponder {
             ACLMessage reply = request.createReply();
             this.request = (PathRequest) request.getContentObject();
             if(city.existsNode(this.request.getStartNode())) {
+                city.getLOGGER().info("Received valid path request from " +request.getSender().getLocalName() + ". Sending Agree");
                 reply.setPerformative(ACLMessage.AGREE);
             } else {
+                city.getLOGGER().info("Received invalid path request from " +request.getSender().getLocalName() + ". Sending Refuse");
                 reply.setPerformative(ACLMessage.REFUSE);
             }
 
@@ -49,6 +51,7 @@ public class CityRequestResponder extends AchieveREResponder {
             inform.setPerformative(ACLMessage.INFORM);
             PathResponse pathResponse = city.calculatePath(this.request);
             inform.setContentObject(pathResponse);
+            city.getLOGGER().info("Calculated paths for " + request.getSender().getLocalName() + ". Sending " + pathResponse.getPaths().size() + " possible best paths");
             return inform;
         } catch (IOException e) {
             e.printStackTrace();

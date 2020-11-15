@@ -60,7 +60,7 @@ public class CityManager extends AgentCreator {
         for(Car car : this.cars) {
             CarAgent carAgent = new CarAgent(car);
             try {
-                this.agentController = this.containerController.acceptNewAgent("car" + String.valueOf(unique++), carAgent);
+                this.agentController = this.containerController.acceptNewAgent(car.getName(), carAgent);
                 this.agentController.start();
             } catch (StaleProxyException e) {
                 e.printStackTrace();
@@ -107,7 +107,7 @@ public class CityManager extends AgentCreator {
         for(PriorityCar car : this.priorityCars) {
             PriorityCarAgent carAgent = new PriorityCarAgent(car, this.graph);
             try {
-                this.agentController = this.containerController.acceptNewAgent("priorityCar" + (unique++), carAgent);
+                this.agentController = this.containerController.acceptNewAgent(car.getName(), carAgent);
                 this.agentController.start();
             } catch (StaleProxyException e) {
                 e.printStackTrace();

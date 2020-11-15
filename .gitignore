@@ -18,3 +18,5 @@ AIAD-FEUP.iml
 # Gradle:
 .idea/gradle.xml
 .idea/libraries
+
+logs/

@@ -100,8 +100,6 @@ public class Car {
         this.currentVelocity = currentRoad.getMaxVelocity();
         this.currentDistanceTravelled = 0;
         this.carPath.add(roadInfo.getEndNode());
-
-        System.out.println(this.name + " driving on road " + roadInfo.getStartNode() + "->" + roadInfo.getEndNode());
     }
 
     public void addDistanceTravelled(double distanceTravelled) {

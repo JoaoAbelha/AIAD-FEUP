@@ -33,7 +33,7 @@ public class CarNetInitiator extends ContractNetInitiator {
     @Override
     protected void handleRefuse(ACLMessage refuse) {
         super.handleRefuse(refuse);
-        this.carMovement.setRestartContractNet(true);
+        car.getLOGGER().info("Received refuse from " + refuse.getSender().getLocalName());
     }
 
     @Override
@@ -45,6 +45,7 @@ public class CarNetInitiator extends ContractNetInitiator {
     @Override
     protected void handleAllResponses(Vector responses, Vector acceptances) {
         double bestProposal = Double.POSITIVE_INFINITY;
+        double bestResult = Double.POSITIVE_INFINITY;
         AID bestProposer = null;
         ACLMessage accept = null;
         Enumeration e = responses.elements();
@@ -56,8 +57,9 @@ public class CarNetInitiator extends ContractNetInitiator {
                 acceptances.addElement(reply);
                 double proposal = Double.parseDouble(msg.getContent());
                 double result = analyzeProposal(proposal, msg.getSender().getLocalName());
-                if (result < bestProposal) {
-                    bestProposal = result;
+                if (result < bestResult) {
+                    bestResult = result;
+                    bestProposal = proposal;
                     bestProposer = msg.getSender();
                     accept = reply;
                 }
@@ -66,9 +68,11 @@ public class CarNetInitiator extends ContractNetInitiator {
         }
         // Accept the proposal of the best proposer
         if (accept != null) {
-            System.out.println("Accepting proposal "+bestProposal+" from responder "+bestProposer.getLocalName());
+            car.getLOGGER().info("Accepting proposal " + bestProposal + " from responder " + bestProposer.getLocalName() + " with estimated result of " + bestResult);
             accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
             accept.setContent(String.valueOf(car.getCar().getLength()));
+        } else {
+            this.carMovement.setRestartContractNet(true);
         }
     }
 
@@ -96,6 +100,7 @@ public class CarNetInitiator extends ContractNetInitiator {
         try {
             RoadInfo roadInfo = (RoadInfo) inform.getContentObject();
             car.getCar().updateCarPath(roadInfo);
+            car.getLOGGER().info(car.getCar().getName() + " driving on road " + roadInfo.getStartNode() + "-" + roadInfo.getEndNode());
             car.updateSubscriptionInitiator();
             car.getCar().setCarStatus(Car.Status.ROAD);
         } catch (UnreadableException e) {

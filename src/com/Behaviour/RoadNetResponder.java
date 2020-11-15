@@ -24,12 +24,12 @@ public class RoadNetResponder extends ContractNetResponder {
 
     @Override
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException {
-        //System.out.println("Agent " + myAgent.getLocalName() + ": CFP received from " + cfp.getSender().getName() + ". Action is " + cfp.getContent());
+        road.getLOGGER().info("Received CFP from " + cfp.getSender().getLocalName());
         try {
             ContractNetCfp contractNetCfp = (ContractNetCfp) cfp.getContentObject();
             double proposal = this.road.getUtility(contractNetCfp.getStrategy());
             if (!road.isRoadFull(contractNetCfp.getLength())) {
-                //System.out.println("Agent " + myAgent.getLocalName() + ": Proposing " + proposal);
+                road.getLOGGER().info("Road is not full. Sending proposal with value " + proposal + " to " + cfp.getSender().getLocalName());
                 ACLMessage propose = cfp.createReply();
                 propose.setPerformative(ACLMessage.PROPOSE);
                 propose.setContent(String.valueOf(proposal));
@@ -38,9 +38,8 @@ public class RoadNetResponder extends ContractNetResponder {
                 ACLMessage refuse = cfp.createReply();
                 refuse.setPerformative(ACLMessage.REFUSE);
                 refuse.setContent("full-road");
-                System.out.println("Agent " + myAgent.getLocalName() + ": Refuse");
+                road.getLOGGER().info("Road is full. Sending refuse to " + cfp.getSender().getLocalName());
                 return refuse;
-                // throw new RefuseException("evaluation-failed");
             }
         } catch (UnreadableException e) {
             e.printStackTrace();
@@ -67,6 +66,7 @@ public class RoadNetResponder extends ContractNetResponder {
         //}
         try {
             road.updateCars(accept.getSender().getLocalName(), Double.valueOf(accept.getContent()), true);
+            road.getLOGGER().info(accept.getSender().getLocalName() + " accepted my proposal. Sending my information");
             ACLMessage inform = accept.createReply();
             inform.setPerformative(ACLMessage.INFORM); // INFORM DONE
             inform.setContentObject(road.getRoadInfo());
@@ -80,6 +80,6 @@ public class RoadNetResponder extends ContractNetResponder {
 
     @Override
     protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
-        //System.out.println("Agent "+ myAgent.getLocalName() +": Proposal rejected");
+        road.getLOGGER().info(reject.getSender().getLocalName() + " reject my proposal");
     }
 }

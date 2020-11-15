@@ -20,6 +20,7 @@ public class CityWeatherChange extends TickerBehaviour{
         time++;
         if(city.getWeatherStation().existsWeather(time)) {
             String weather = city.getWeatherStation().getWeather(time);
+            city.getLOGGER().info("Weather change to " + weather+". Notifying all subscribers" );
             float velocity = city.getWeatherStation().getVelocity(weather);
             for(Map.Entry<String, Double> entry: city.getMaxVelocity().entrySet()) {
                 entry.setValue(entry.getValue() * velocity);

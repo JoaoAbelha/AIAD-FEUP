@@ -1,2 +1,24 @@
-nov. 15, 2020 8:47:45 DA MANHÃ com.Agent.CityAgent setup
+nov. 15, 2020 10:00:15 DA MANHÃ com.Agent.CityAgent setup
 INFO: Agent Started
+nov. 15, 2020 10:00:15 DA MANHÃ com.Behaviour.CitySubscriptionResponder handleSubscription
+INFO: Received valid subscription from road1-3. Sending Agree
+nov. 15, 2020 10:00:16 DA MANHÃ com.Behaviour.CitySubscriptionResponder handleSubscription
+INFO: Received valid subscription from road3-2. Sending Agree
+nov. 15, 2020 10:00:16 DA MANHÃ com.Behaviour.CitySubscriptionResponder handleSubscription
+INFO: Received valid subscription from road2-1. Sending Agree
+nov. 15, 2020 10:00:16 DA MANHÃ com.Behaviour.CityRequestResponder handleRequest
+INFO: Received valid path request from volvo-v40. Sending Agree
+nov. 15, 2020 10:00:16 DA MANHÃ com.Behaviour.CityRequestResponder prepareResultNotification
+INFO: Calculated paths for volvo-v40. Sending 1 possible best paths
+nov. 15, 2020 10:00:16 DA MANHÃ com.Behaviour.CityRequestResponder handleRequest
+INFO: Received valid path request from volvo-v41. Sending Agree
+nov. 15, 2020 10:00:16 DA MANHÃ com.Behaviour.CityRequestResponder prepareResultNotification
+INFO: Calculated paths for volvo-v41. Sending 1 possible best paths
+nov. 15, 2020 10:00:18 DA MANHÃ com.Behaviour.CityWeatherChange onTick
+INFO: Weather change to rain. Notifying all subscribers
+nov. 15, 2020 10:00:21 DA MANHÃ com.Behaviour.CityWeatherChange onTick
+INFO: Weather change to cloudy. Notifying all subscribers
+nov. 15, 2020 10:00:24 DA MANHÃ com.Behaviour.CityWeatherChange onTick
+INFO: Weather change to sun. Notifying all subscribers
+nov. 15, 2020 10:00:30 DA MANHÃ com.Behaviour.CityWeatherChange onTick
+INFO: Weather change to rain. Notifying all subscribers

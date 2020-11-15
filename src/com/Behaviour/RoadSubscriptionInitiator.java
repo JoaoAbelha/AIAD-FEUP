@@ -24,17 +24,21 @@ public class RoadSubscriptionInitiator extends SubscriptionInitiator {
         subscription.setProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
         Vector l = new Vector(1);
         l.addElement(subscription);
+        road.getLOGGER().info("Starting weather subscription with city");
+
         //System.out.println("subscription started");
         return l;
     }
 
     @Override
     protected void handleAgree(ACLMessage agree) {
+        road.getLOGGER().info("Velocity subscription with city accepted");
         super.handleAgree(agree);
     }
 
     @Override
     protected void handleRefuse(ACLMessage refuse) {
+        road.getLOGGER().info("Velocity subscription with city refused");
         super.handleRefuse(refuse);
     }
 
@@ -44,6 +48,7 @@ public class RoadSubscriptionInitiator extends SubscriptionInitiator {
             float velocity = (float) inform.getContentObject();
             double roadVelocity = road.getRoadInfo().getRoadInitialVelocity();
             road.getRoadInfo().setMaxVelocity(velocity * roadVelocity);
+            road.getLOGGER().info("Notification with weather change. Sending notification to all cars in the road");
             road.getManager().notifyAll("weather:" + road.getRoadInfo().getMaxVelocity(), "road" + road.getRoadInfo().getStartNode() + "-" + road.getRoadInfo().getEndNode());
         } catch (UnreadableException e) {
             e.printStackTrace();

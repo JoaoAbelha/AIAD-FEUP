@@ -28,8 +28,10 @@ public class RoadRequestResponder extends AchieveREResponder {
         ACLMessage reply = request.createReply();
         int node = Integer.parseInt(request.getContent());
         if(roadAgent.getRoadInfo().getStartNode() == node) {
+            roadAgent.getLOGGER().info("Received valid priority car request from " +request.getSender().getLocalName() + ". Sending Agree");
             reply.setPerformative(ACLMessage.AGREE);
         } else {
+            roadAgent.getLOGGER().info("Received invalid priority car request from " + request.getSender().getLocalName() + ". Sending Refuse");
             reply.setPerformative(ACLMessage.REFUSE);
         }
 
@@ -39,6 +41,7 @@ public class RoadRequestResponder extends AchieveREResponder {
     @Override
     protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
         try {
+            roadAgent.getLOGGER().info("Stopping all cars and sending my information to " + request.getSender().getLocalName());
             roadAgent.getManager().notifyAll("priority:" + 0 + ":" + 0, "road" + roadAgent.getRoadInfo().getStartNode() + "-" + roadAgent.getRoadInfo().getEndNode());
             ACLMessage inform = request.createReply();
             inform.setPerformative(ACLMessage.INFORM);
