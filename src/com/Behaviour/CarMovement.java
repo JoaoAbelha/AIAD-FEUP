@@ -30,7 +30,7 @@ public class CarMovement extends TickerBehaviour {
     @Override
     protected void onTick() {
         if(carAgent.getCar().getCurrentNode() == carAgent.getCar().getDestNode()) {
-            System.out.println("Dest node" + carAgent.getCar().getName());
+            carAgent.getLOGGER().info("Car arrived at destination");
             carAgent.unregister();
             return;
         }
@@ -47,16 +47,11 @@ public class CarMovement extends TickerBehaviour {
         }
     }
 
-    public void setRequestInitialized(boolean requestInitialized) {
-        this.requestInitialized = requestInitialized;
-    }
-
     public void setRestartContractNet(boolean restartContractNet) {
         this.restartContractNet = restartContractNet;
     }
 
     private void handleIntersection() {
-        System.out.println(carAgent.getCar().getName() + ": intersection"  );
         if(!requestInitialized) {
             this.carRequest();
         } else if(restartContractNet) {
@@ -90,6 +85,7 @@ public class CarMovement extends TickerBehaviour {
             request.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
             request.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
             request.setContentObject(pathRequest);
+            carAgent.getLOGGER().info("Starting request with city to get possible paths in node " + carAgent.getCar().getCurrentNode());
             this.carAgent.addBehaviour(new CarRequestInitiator(this.carAgent, request, this));
             this.requestInitialized = true;
         } catch (IOException e) {
@@ -106,6 +102,7 @@ public class CarMovement extends TickerBehaviour {
             contractNet.setContentObject(cfp);
             for (String roadName : carAgent.getCurrentPathResponse().getPaths().keySet())
                 contractNet.addReceiver(new AID(roadName, AID.ISLOCALNAME));
+            carAgent.getLOGGER().info("Starting contract net with roads in the intersection");
             carAgent.addBehaviour(new CarNetInitiator(this.carAgent, contractNet, this));
             restartContractNet = false;
         } catch (IOException e) {
@@ -116,9 +113,11 @@ public class CarMovement extends TickerBehaviour {
     private void sendEnfOfRoad() {
         RoadInfo roadInfo = this.carAgent.getCar().getCurrentRoad();
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-        msg.addReceiver(new AID("road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode(), false));
+        String roadName = "road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode();
+        msg.addReceiver(new AID(roadName, false));
         msg.setConversationId("EOR");
         msg.setContent(String.valueOf(carAgent.getCar().getLength()));
+        carAgent.getLOGGER().info("Car reached end of " + roadName + " sending EOF message");
         myAgent.send(msg);
     }
 }

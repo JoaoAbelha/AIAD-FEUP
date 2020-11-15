@@ -12,6 +12,7 @@ import com.Data.WeatherStation;
 import com.utils.*;
 import jade.wrapper.StaleProxyException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -123,11 +124,20 @@ public class CityManager extends AgentCreator {
         if (!X.validatePriorityCars(cityManager.priorityCars)) return;
         if (!X.check()) return;
 
+        cityManager.cleanLogFiles();
+
         cityManager.createCity();
         cityManager.createAgentRoads();
         cityManager.createAgentCars();
         cityManager.createPriorityCars();
         System.out.println("city manager running...");
+    }
+
+    private void cleanLogFiles() {
+        File dir = new File("logs/");
+        for (File file: dir.listFiles())
+            if (!file.isDirectory())
+                file.delete();
     }
 
 }

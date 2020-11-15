@@ -26,13 +26,14 @@ public class VelocitySubscriptionManager implements SubscriptionResponder.Subscr
         return true;
     }
 
-    public void notifyAll(String content) {
+    public void notifyAll(String content, String roadName) {
         Iterator<SubscriptionResponder.Subscription> i = subscriptions.values().iterator();
         while (i.hasNext()) {
             SubscriptionResponder.Subscription s = (SubscriptionResponder.Subscription) i.next();
             ACLMessage notification = new ACLMessage(ACLMessage.INFORM);
             notification.setContent(content);
             s.notify(notification);
+            System.out.println(roadName + " notify: " + content + ":" + s.getMessage().getSender().getLocalName());
         }
     }
 }

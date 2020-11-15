@@ -13,6 +13,7 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
     private CarAgent car;
     private boolean cancel_inform;
     private String responderName;
+    private boolean isBehind;
     private boolean ignorePriority;
     private boolean ignoreRest;
 
@@ -23,6 +24,7 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
         int src = car.getCar().getCurrentRoad().getStartNode();
         int dest = car.getCar().getCurrentRoad().getEndNode();
         this.responderName = "road" + src + "-" + dest;
+        this.isBehind = true;
         this.ignorePriority = false;
         this.ignoreRest = false;
     }
@@ -59,14 +61,17 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
             if(contentArray.length == 2 || contentArray.length == 3) {
                 switch (contentArray[0]) {
                     case "priority":
-                        if(car.getCar().getCurrentDistanceTravelled() >= Double.parseDouble(contentArray[1])) {
+                        if(!isBehind && !ignorePriority) {
+                            car.getCar().setCurrentVelocity(Double.parseDouble(contentArray[2]));
+                            ignoreRest = false;
+                            ignorePriority = true;
+                        } else if(car.getCar().getCurrentDistanceTravelled() >= Double.parseDouble(contentArray[1])) {
                             car.getCar().setCurrentVelocity(0);
                             ignorePriority = false;
                             ignoreRest = true;
-                        } else if(!ignorePriority) {
-                            car.getCar().setCurrentVelocity(Double.parseDouble(contentArray[2]));
-                            ignorePriority = true;
-                            ignoreRest = false;
+                            isBehind = true;
+                        } else {
+                            isBehind = false;
                         }
                         break;
                     default:

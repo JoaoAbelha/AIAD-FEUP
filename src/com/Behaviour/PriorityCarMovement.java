@@ -5,11 +5,15 @@ import com.Data.Car;
 import com.Data.RoadInfo;
 import jade.core.AID;
 import jade.core.behaviours.TickerBehaviour;
+import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+
+import java.util.Date;
 
 public class PriorityCarMovement extends TickerBehaviour {
     private PriorityCarAgent priorityCarAgent = null;
     private long time;
+    private boolean requestInitilized = false;
 
     public PriorityCarMovement(PriorityCarAgent priorityCarAgent, long time) {
         super(priorityCarAgent, time);
@@ -36,21 +40,36 @@ public class PriorityCarMovement extends TickerBehaviour {
         }
     }
 
+    public void setRequestInitilized(boolean requestInitilized) {
+        this.requestInitilized = requestInitilized;
+    }
+
     private void handleIntersection() {
-        this.priorityCarAgent.addBehaviour(new SendInformPriorityCar(this.priorityCarAgent));
+        if(requestInitilized) return;
+
+        int nextNode = priorityCarAgent.getCar().getNextNode();
+        if(nextNode == -1) return;
+        String roadToInform = "road" + priorityCarAgent.getCar().getCurrentNode() + "-" + nextNode;
+        ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+        request.addReceiver(new AID((roadToInform), AID.ISLOCALNAME));
+        request.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+        request.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
+        request.setContent(String.valueOf(priorityCarAgent.getCar().getCurrentNode()));
+        this.priorityCarAgent.addBehaviour(new PriorityCarRequestInitiator(this.priorityCarAgent, request, this));
+        this.requestInitilized = true;
     }
 
     private void handleMovement() {
         double distanceTravelled = this.time / 1000.0 * this.kmph_to_mps(priorityCarAgent.getCar().getCurrentVelocity());
         priorityCarAgent.getCar().addDistanceTravelled(distanceTravelled);
         informDistanceTravelled();
-        //this.priorityCarAgent.addBehaviour(new PriorityRoadInform(this.priorityCarAgent, this.priorityCarAgent.getCar().getCurrentRoad()));
     }
 
     private void handleEndOfRoad() {
         priorityCarAgent.getCar().setStatus(Car.Status.INTERSECTION);
         this.priorityCarAgent.getCar().updateCurrentNode();
         this.priorityCarAgent.getSubscriptionInitiator().cancelInform();
+        this.requestInitilized = false;
     }
 
     private double kmph_to_mps(double kmph) {

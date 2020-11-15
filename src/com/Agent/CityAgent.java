@@ -14,12 +14,19 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class CityAgent extends AgentRegister {
+    private static Logger LOGGER = null;
+    private Handler fileHandler;
     WeatherSubscriptionManager manager;
     WeatherStation weatherStation;
     Graph city;
@@ -31,6 +38,7 @@ public class CityAgent extends AgentRegister {
         this.manager = new WeatherSubscriptionManager();
         this.weatherStation = weatherStation;
         this.city = city;
+        this.setupLogger();
         for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : city.getEdges().entrySet()) {
             ArrayList<Integer> adjacent = new ArrayList<>();
             Integer src = entry.getKey();
@@ -45,6 +53,23 @@ public class CityAgent extends AgentRegister {
             }
             adjacentRoads.put(src, adjacent);
         }
+    }
+
+    private void setupLogger() {
+        try {
+            LOGGER = Logger.getLogger("city");
+            fileHandler = new FileHandler("logs/city.log");
+            LOGGER.addHandler(fileHandler);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fileHandler.setFormatter(formatter);
+            LOGGER.setUseParentHandlers(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Logger getLOGGER() {
+        return LOGGER;
     }
 
     public Set<String> getRoads() {
@@ -66,7 +91,7 @@ public class CityAgent extends AgentRegister {
     @Override
     protected void setup() {
         register("city");
-        System.out.println("city agent");
+        LOGGER.info("Agent Started");
 
         MessageTemplate template = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),

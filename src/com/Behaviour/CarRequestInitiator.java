@@ -24,6 +24,7 @@ public class CarRequestInitiator extends AchieveREInitiator {
 
     @Override
     protected void handleRefuse(ACLMessage refuse) {
+        carAgent.getLOGGER().severe("City refused request. Car currentNode - " + carAgent.getCar().getCurrentNode() + " does not exist");
         carAgent.unregister();
     }
 
@@ -37,6 +38,7 @@ public class CarRequestInitiator extends AchieveREInitiator {
         try {
             PathResponse response = (PathResponse) inform.getContentObject();
             this.carAgent.updatePathResponse(response);
+            carAgent.getLOGGER().info("City returned " + response.getPaths().size() + " possible paths");
             this.carMovement.carContractNet();
         } catch (UnreadableException e) {
             e.printStackTrace();

@@ -9,9 +9,16 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class RoadAgent  extends AgentRegister {
+    private static Logger LOGGER = null;
+    private Handler fileHandler;
     private RoadInfo roadInfo;
     private DFAgentDescription dfd;
     private HashSet<String> currentCars; // current cars in the road
@@ -21,11 +28,28 @@ public class RoadAgent  extends AgentRegister {
 
 
     public RoadAgent(RoadInfo roadInfo) {
-
         this.roadInfo = roadInfo;
         this.currentCars = new HashSet<>();
         this.spaceOccupied = 0;
         this.manager = new VelocitySubscriptionManager();
+        this.setupLogger();
+    }
+
+    private void setupLogger() {
+        try {
+            LOGGER = Logger.getLogger("road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode());
+            fileHandler = new FileHandler("logs/" + "road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode() + ".log");
+            LOGGER.addHandler(fileHandler);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fileHandler.setFormatter(formatter);
+            LOGGER.setUseParentHandlers(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Logger getLOGGER() {
+        return LOGGER;
     }
 
     public RoadInfo getRoadInfo() {
@@ -64,17 +88,21 @@ public class RoadAgent  extends AgentRegister {
     @Override
     protected void setup() {
         register("road");
-        //addBehaviour(new PreferenceListener(this));
-        System.out.println("Road agent started");
+        LOGGER.info("Agent Started");
         MessageTemplate template = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET),
                 MessageTemplate.MatchPerformative(ACLMessage.CFP)
         );
 
+        MessageTemplate request_template = MessageTemplate.and(
+                MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
+                MessageTemplate.MatchPerformative(ACLMessage.REQUEST)
+        );
+
         addBehaviour(new RoadNetResponder(this, template));
         addBehaviour(new RoadSubscriptionResponder(this, this.manager));
         addBehaviour(new RoadSubscriptionInitiator(this, null));
-        addBehaviour(new ReceiveInformPriorityCar(this));
+        addBehaviour(new RoadRequestResponder(this, request_template));
         addBehaviour(new EndOfRoadReceiver(this));
         addBehaviour(new PriorityRoadReceiver(this));
     }

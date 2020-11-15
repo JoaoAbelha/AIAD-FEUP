@@ -25,6 +25,8 @@ public class CarNetInitiator extends ContractNetInitiator {
 
     @Override
     protected void handlePropose(ACLMessage propose, Vector acceptances) {
+        double proposal = Double.parseDouble(propose.getContent());
+        car.getLOGGER().info("Received proposal from " + propose.getSender().getLocalName() + " with value " + proposal);
         super.handlePropose(propose, acceptances);
     }
 

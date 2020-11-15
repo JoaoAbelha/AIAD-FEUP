@@ -1,0 +1,14 @@
+nov. 15, 2020 8:47:45 DA MANHÃ com.Agent.CarAgent setup
+INFO: Agent Started
+nov. 15, 2020 8:47:46 DA MANHÃ com.Behaviour.CarMovement carRequest
+INFO: Starting request with city to get possible paths in node 3
+nov. 15, 2020 8:47:46 DA MANHÃ com.Behaviour.CarRequestInitiator handleInform
+INFO: City returned 1 possible paths
+nov. 15, 2020 8:47:46 DA MANHÃ com.Behaviour.CarMovement carContractNet
+INFO: Starting contract net with roads in the intersection
+nov. 15, 2020 8:47:46 DA MANHÃ com.Behaviour.CarNetInitiator handlePropose
+INFO: Received proposal from road3-2 with value 100.0
+nov. 15, 2020 8:47:58 DA MANHÃ com.Behaviour.CarMovement sendEnfOfRoad
+INFO: Car reached end of road3-2sending EOF message
+nov. 15, 2020 8:47:58 DA MANHÃ com.Behaviour.CarMovement onTick
+INFO: Car arrived at destination

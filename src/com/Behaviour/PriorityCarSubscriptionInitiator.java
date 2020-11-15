@@ -54,6 +54,7 @@ public class PriorityCarSubscriptionInitiator extends SubscriptionInitiator {
         } else {
             String content = inform.getContent();
             String[] contentArray = content.split(":");
+            //System.out.println("prioritycar : " + content);
             if(contentArray.length != 2) return;
             double maxVelocity = Double.parseDouble(contentArray[1]);
             priorityCar.getCar().setCurrentVelocity(maxVelocity);

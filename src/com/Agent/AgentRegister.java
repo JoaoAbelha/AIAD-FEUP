@@ -6,8 +6,9 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 
-public class AgentRegister extends Agent {
+import java.util.logging.Logger;
 
+public class AgentRegister extends Agent {
     protected DFAgentDescription dfd;
 
     public void register(String type) {

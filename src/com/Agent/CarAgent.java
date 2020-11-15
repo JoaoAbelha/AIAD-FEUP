@@ -8,7 +8,15 @@ import com.Data.PathRequest;
 import com.Data.PathResponse;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
 public class CarAgent extends AgentRegister {
+    private Logger LOGGER = null;
+    private Handler fileHandler;
     private DFAgentDescription dfd;
     private final Car car;
     private CarSubscriptionInitiator subscriptionInitiator;
@@ -16,6 +24,24 @@ public class CarAgent extends AgentRegister {
 
     public CarAgent(Car car) {
         this.car = car;
+        this.setupLogger();
+    }
+
+    private void setupLogger() {
+        try {
+            LOGGER = Logger.getLogger(this.car.getName());
+            fileHandler = new FileHandler("logs/" + car.getName() + ".log");
+            LOGGER.addHandler(fileHandler);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fileHandler.setFormatter(formatter);
+            LOGGER.setUseParentHandlers(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Logger getLOGGER() {
+        return LOGGER;
     }
 
     public Car getCar() {
@@ -42,7 +68,7 @@ public class CarAgent extends AgentRegister {
     @Override
     protected void setup() {
         register(car.getName());
-        System.out.println("Car agent started");
+        LOGGER.info("Agent Started");
         addBehaviour(new CarMovement(this, 300));
     }
 }

@@ -1,6 +1,2 @@
-volvo-v40 1 2 dijkstra 4.85
-ferrari 1 2 minIntersection 4.85
-porsche 1 2 shortestTime 4.85
-smart 1 2 minIntersection 3
-audi 1 2 dijkstra 4.4
-go 1 2 dijkstra 5
+volvo-v41 3 2 dijkstra 4.85
+volvo-v40 3 2 dijkstra 4.85
