@@ -27,29 +27,26 @@ public class CityManager extends AgentCreator {
     private HashMap<String, Float> weatherVelocityRestriction;
     private HashMap<Integer, String> weather = new HashMap<>();
 
-
-
-
-    public CityManager() throws FileNotFoundException {
+    public CityManager(String arg) throws FileNotFoundException {
         super();
 
-        CarReader r = new CarReader("src/car.txt");
+        CarReader r = new CarReader("src/" + arg + "/car.txt");
         r.readFile();
         this.cars = r.getInfo();
 
-        PriorityCarReader pr = new PriorityCarReader("src/priorityCars.txt");
+        PriorityCarReader pr = new PriorityCarReader("src/"+ arg + "/priorityCars.txt");
         pr.readFile();
         this.priorityCars = pr.getInfo();
 
-        TypeWeatherReader twr = new TypeWeatherReader("src/typeWeather.txt");
+        TypeWeatherReader twr = new TypeWeatherReader("src/"+ arg + "/typeWeather.txt");
         twr.readFile();
         this.weatherVelocityRestriction = twr.getInfo();
 
-        WeatherReader wr = new WeatherReader("src/weather.txt");
+        WeatherReader wr = new WeatherReader("src/"+ arg + "/weather.txt");
         wr.readFile();
         this.weather = wr.getInfo();
 
-        GraphReader gr = new GraphReader("src/city.txt");
+        GraphReader gr = new GraphReader("src/"+ arg + "/city.txt");
         gr.readFile();
         this.graph = gr.getInfo();
     }
@@ -116,8 +113,18 @@ public class CityManager extends AgentCreator {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        CityManager cityManager = new CityManager();
+        if(args.length != 1) {
+            System.err.println("Missing name of folder with input files");
+            return;
+        }
 
+        File dir = new File("src/" + args[0] + "/");
+        if (!dir.exists()){
+            System.err.println("Folder does not exist");
+            return;
+        }
+
+        CityManager cityManager = new CityManager(args[0]);
         CheckValidaty X = new CheckValidaty(cityManager.graph.getEdges());
         if (!X.validateNodeNr()) return;
         if (!X.validateCars(cityManager.cars)) return;
