@@ -6,10 +6,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 public class PriorityRoadReceiver extends CyclicBehaviour {
 
@@ -29,15 +26,22 @@ public class PriorityRoadReceiver extends CyclicBehaviour {
     public void action() {
         ACLMessage msg = roadAgent.receive(mt);
         if(msg != null) {
-            double distanceTravelled = Double.parseDouble(msg.getContent());
-            priorityCars.put(msg.getSender().getLocalName(), distanceTravelled);
-            Collection<Double> distancesTravelled = this.priorityCars.values();
-            double min = Collections.min(distancesTravelled);
-            roadAgent.getManager().notifyAll("priority:" + min + ":" + roadAgent.getRoadInfo().getMaxVelocity(),"road" + roadAgent.getRoadInfo().getStartNode() + "-" + roadAgent.getRoadInfo().getEndNode());
-
-            if(distanceTravelled >= roadAgent.getRoadInfo().getDistance()) {
-                roadAgent.getLOGGER().info("Priority car " + msg.getSender().getLocalName() + " reached end of road");
-                priorityCars.remove(msg.getSender().getLocalName());
+            switch (msg.getContent()) {
+                case "EOF":
+                    roadAgent.getLOGGER().info("Priority car " + msg.getSender().getLocalName() + " reached end of road");
+                    priorityCars.remove(msg.getSender().getLocalName());
+                    Collection<Double> distancesTravelled = this.priorityCars.values();
+                    if(distancesTravelled.size() == 0) return;
+                    double min = Collections.min(distancesTravelled);
+                    roadAgent.getManager().notifyAll("priority:" + min + ":" + roadAgent.getRoadInfo().getMaxVelocity(),"road" + roadAgent.getRoadInfo().getStartNode() + "-" + roadAgent.getRoadInfo().getEndNode());
+                    break;
+                default:
+                    double distanceTravelled = Double.parseDouble(msg.getContent());
+                    priorityCars.put(msg.getSender().getLocalName(), distanceTravelled);
+                    Collection<Double> dt = this.priorityCars.values();
+                    double m = Collections.min(dt);
+                    roadAgent.getManager().notifyAll("priority:" + m + ":" + roadAgent.getRoadInfo().getMaxVelocity(),"road" + roadAgent.getRoadInfo().getStartNode() + "-" + roadAgent.getRoadInfo().getEndNode());
+                    break;
             }
         } else {
             block();

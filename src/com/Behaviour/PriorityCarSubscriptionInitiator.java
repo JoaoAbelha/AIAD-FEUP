@@ -34,7 +34,6 @@ public class PriorityCarSubscriptionInitiator extends SubscriptionInitiator {
         l.addElement(subscription);
         priorityCar.getLOGGER().info("Starting velocity subscription with " + responderName);
 
-        //System.out.println("subscription started");
         return l;
     }
 

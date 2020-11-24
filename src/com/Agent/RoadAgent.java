@@ -108,7 +108,6 @@ public class RoadAgent  extends AgentRegister {
     }
 
     public void updateCars(String carName, Double length, boolean add) {
-        System.out.println("Space occupied:" +  this.spaceOccupied + " out of " + this.roadInfo.getDistance());
         if(add) {
             this.currentCars.add(carName);
             this.spaceOccupied += length;

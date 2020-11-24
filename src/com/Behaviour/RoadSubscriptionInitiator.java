@@ -26,7 +26,6 @@ public class RoadSubscriptionInitiator extends SubscriptionInitiator {
         l.addElement(subscription);
         road.getLOGGER().info("Starting weather subscription with city");
 
-        //System.out.println("subscription started");
         return l;
     }
 

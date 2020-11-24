@@ -56,7 +56,6 @@ public class MinInterseptions implements  RouteStrategy {
             //distances.putIfAbsent(Atop[NODE], currentDistance);
             for(Map.Entry<Integer, RoadInfo> adj : adjacently.entrySet()) {
                 Integer nodeDest = adj.getKey();
-                System.out.print(nodeDest + " ");
 
                 if (intersectionCounter.get(nodeDest) > intersectionCounter.get(Atop.second) + 1) {
                     intersectionCounter.put(nodeDest , intersectionCounter.get(Atop.second) + 1);

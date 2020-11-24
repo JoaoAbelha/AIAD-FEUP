@@ -67,6 +67,7 @@ public class PriorityCarMovement extends TickerBehaviour {
     }
 
     private void handleEndOfRoad() {
+        sendEndOfRoad();
         priorityCarAgent.getCar().setStatus(Car.Status.INTERSECTION);
         this.priorityCarAgent.getCar().updateCurrentNode();
         this.priorityCarAgent.getSubscriptionInitiator().cancelInform();
@@ -84,6 +85,15 @@ public class PriorityCarMovement extends TickerBehaviour {
         msg.addReceiver(new AID("road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode(), false));
         msg.setConversationId("PEOR");
         msg.setContent(String.valueOf(priorityCarAgent.getCar().getCurrentDistanceTravelled()));
+        myAgent.send(msg);
+    }
+
+    private void sendEndOfRoad() {
+        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        RoadInfo roadInfo = priorityCarAgent.getCar().getCurrentRoad();
+        msg.addReceiver(new AID("road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode(), false));
+        msg.setConversationId("PEOR");
+        msg.setContent("EOF");
         myAgent.send(msg);
     }
 }

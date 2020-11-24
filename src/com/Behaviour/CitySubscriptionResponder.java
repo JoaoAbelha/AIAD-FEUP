@@ -20,7 +20,6 @@ public class CitySubscriptionResponder extends SubscriptionResponder {
         ACLMessage decision_result = subscription.createReply();
         try {
             super.handleSubscription(subscription);
-            //System.out.println("subcriber added");
             decision_result.setPerformative(ACLMessage.AGREE);
             city.getLOGGER().info("Received valid subscription from " + subscription.getSender().getLocalName() + ". Sending Agree" );
         } catch (RefuseException e) {

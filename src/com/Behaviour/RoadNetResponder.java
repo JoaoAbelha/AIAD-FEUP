@@ -38,7 +38,7 @@ public class RoadNetResponder extends ContractNetResponder {
                 ACLMessage refuse = cfp.createReply();
                 refuse.setPerformative(ACLMessage.REFUSE);
                 refuse.setContent("full-road");
-                road.getLOGGER().info("Road is full. Sending refuse to " + cfp.getSender().getLocalName());
+                road.getLOGGER().info("Road is full. Sending refuse to " + cfp.getSender().getLocalName() + ":" + road.getSpaceOccupied() + ":" + road.getRoadInfo().getDistance());
                 return refuse;
             }
         } catch (UnreadableException e) {
@@ -59,14 +59,9 @@ public class RoadNetResponder extends ContractNetResponder {
      */
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
-        //System.out.println("Agent "+ myAgent.getLocalName() +": Proposal accepted");
-       // System.out.println("<>>>> handle proposal: " + road.getSpaceOccupied());
-        //if (road.isRoadFull(Double.valueOf(accept.getContent()))) {
-          //  System.out.println(">>>>>>>>>>>problem found bro");
-        //}
         try {
             road.updateCars(accept.getSender().getLocalName(), Double.valueOf(accept.getContent()), true);
-            road.getLOGGER().info(accept.getSender().getLocalName() + " accepted my proposal. Sending my information");
+            road.getLOGGER().info(accept.getSender().getLocalName() + " accepted my proposal. Sending my information" + ":" + road.getSpaceOccupied());
             ACLMessage inform = accept.createReply();
             inform.setPerformative(ACLMessage.INFORM); // INFORM DONE
             inform.setContentObject(road.getRoadInfo());

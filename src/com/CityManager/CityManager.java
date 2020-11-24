@@ -30,23 +30,23 @@ public class CityManager extends AgentCreator {
     public CityManager(String arg) throws FileNotFoundException {
         super();
 
-        CarReader r = new CarReader("src/" + arg + "/car.txt");
+        CarReader r = new CarReader(arg + "/car.txt");
         r.readFile();
         this.cars = r.getInfo();
 
-        PriorityCarReader pr = new PriorityCarReader("src/"+ arg + "/priorityCars.txt");
+        PriorityCarReader pr = new PriorityCarReader(arg + "/priorityCars.txt");
         pr.readFile();
         this.priorityCars = pr.getInfo();
 
-        TypeWeatherReader twr = new TypeWeatherReader("src/"+ arg + "/typeWeather.txt");
+        TypeWeatherReader twr = new TypeWeatherReader(arg + "/typeWeather.txt");
         twr.readFile();
         this.weatherVelocityRestriction = twr.getInfo();
 
-        WeatherReader wr = new WeatherReader("src/"+ arg + "/weather.txt");
+        WeatherReader wr = new WeatherReader(arg + "/weather.txt");
         wr.readFile();
         this.weather = wr.getInfo();
 
-        GraphReader gr = new GraphReader("src/"+ arg + "/city.txt");
+        GraphReader gr = new GraphReader(arg + "/city.txt");
         gr.readFile();
         this.graph = gr.getInfo();
     }
@@ -68,7 +68,6 @@ public class CityManager extends AgentCreator {
     @Override
     void createCity() {
         WeatherStation weatherStation = new WeatherStation(this.weatherVelocityRestriction, this.weather);
-        System.out.println(this.graph);
         CityAgent cityAgent = new CityAgent(weatherStation, this.graph);
         try {
             this.agentController = this.containerController.acceptNewAgent("city", cityAgent);
@@ -87,7 +86,6 @@ public class CityManager extends AgentCreator {
                 Integer dest= adj.getKey();
                 RoadAgent roadAgent = new RoadAgent(adj.getValue());
                 try {
-                    System.out.println(src + " " + dest);
                     this.agentController = this.containerController.acceptNewAgent("road" + src + "-" + dest, roadAgent);
 
                     this.agentController.start();
@@ -118,7 +116,7 @@ public class CityManager extends AgentCreator {
             return;
         }
 
-        File dir = new File("src/" + args[0] + "/");
+        File dir = new File(args[0] + "/");
         if (!dir.exists()){
             System.err.println("Folder does not exist");
             return;

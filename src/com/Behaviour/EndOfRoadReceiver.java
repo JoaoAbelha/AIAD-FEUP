@@ -22,7 +22,7 @@ public class EndOfRoadReceiver extends CyclicBehaviour {
         ACLMessage msg = roadAgent.receive(mt);
         if(msg != null) {
             roadAgent.updateCars(msg.getSender().getLocalName(), Double.valueOf(msg.getContent()), false);
-            roadAgent.getLOGGER().info(msg.getSender().getLocalName() + " left the road");
+            roadAgent.getLOGGER().info(msg.getSender().getLocalName() + " left the road" + ":" + roadAgent.getSpaceOccupied());
         } else {
             block();
         }

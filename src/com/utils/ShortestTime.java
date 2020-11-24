@@ -54,7 +54,6 @@ public class ShortestTime implements RouteStrategy {
             for(Map.Entry<Integer, RoadInfo> adj : adjacently.entrySet()) {
                 Integer nodeDest = adj.getKey();
                 double distance = adj.getValue().getDistance() * 1.0 / adj.getValue().getMaxVelocity();
-                System.out.print(nodeDest + " ");
 
                 if (distances.get(nodeDest) > distances.get(currentNode) + distance) {
                     distances.put(nodeDest , distances.get(currentNode) + distance);

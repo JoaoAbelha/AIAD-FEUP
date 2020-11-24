@@ -1,1 +1,0 @@
-ambulance_first 1 2

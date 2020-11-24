@@ -46,7 +46,6 @@ public class CityAgent extends AgentRegister {
             for(Map.Entry<Integer,RoadInfo> adj : value.entrySet()) {
                 Integer dest= adj.getKey();
                 RoadInfo roadInfo = adj.getValue();
-                System.out.println(src + " " + dest);
                 this.maxVelocity.put("road" + src + "-" + dest, roadInfo.getMaxVelocity());
                 this.distances.put("road" + src + "-" + dest, roadInfo.getDistance());
                 adjacent.add(dest);

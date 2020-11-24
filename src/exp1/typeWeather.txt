@@ -1,3 +1,0 @@
-sun 1
-cloudy 0.8
-rain 0.65

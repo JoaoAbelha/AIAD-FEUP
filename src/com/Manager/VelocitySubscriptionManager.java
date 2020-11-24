@@ -33,7 +33,6 @@ public class VelocitySubscriptionManager implements SubscriptionResponder.Subscr
             ACLMessage notification = new ACLMessage(ACLMessage.INFORM);
             notification.setContent(content);
             s.notify(notification);
-            System.out.println(roadName + " notify: " + content + ":" + s.getMessage().getSender().getLocalName());
         }
     }
 }

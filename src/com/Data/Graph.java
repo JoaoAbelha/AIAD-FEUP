@@ -41,14 +41,11 @@ public class Graph {
     public void print() {
         for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : edges.entrySet()) {
             Integer src = entry.getKey();
-            System.out.print(src + "->");
             Map<Integer, RoadInfo> value = entry.getValue();
 
             for(Map.Entry<Integer,RoadInfo> adj : value.entrySet()) {
                 Integer dest = adj.getKey();
-                System.out.print(dest + " ");
             }
-            System.out.println();
         }
     }
 }

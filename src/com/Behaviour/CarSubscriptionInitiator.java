@@ -37,7 +37,6 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
         Vector l = new Vector(1);
         l.addElement(subscription);
         car.getLOGGER().info("Starting velocity subscription with " + responderName);
-        //System.out.println("subscription started");
         return l;
     }
 
@@ -72,7 +71,7 @@ public class CarSubscriptionInitiator extends SubscriptionInitiator {
                             ignoreRest = false;
                             ignorePriority = true;
                         } else if(car.getCar().getCurrentDistanceTravelled() >= Double.parseDouble(contentArray[1])) {
-                            car.getLOGGER().info("Priority car behind me on road " + responderName + ". Stopping");
+                            car.getLOGGER().info("Priority car behind me on road " + responderName + ". Stopping.");
                             car.getCar().setCurrentVelocity(0);
                             ignorePriority = false;
                             ignoreRest = true;

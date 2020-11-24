@@ -104,7 +104,5 @@ public class PriorityCar {
         this.currentRoad = roadInfo;
         this.currentVelocity = currentRoad.getMaxVelocity();
         this.currentDistanceTravelled = 0;
-
-        System.out.println(this.name + " driving on road " + this.currentRoad.getStartNode() + "->" + this.currentRoad.getEndNode());
     }
 }
