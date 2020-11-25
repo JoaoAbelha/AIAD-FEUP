@@ -5,10 +5,13 @@ import com.Data.Car;
 import com.Data.RoadInfo;
 import com.utils.Pair;
 import jade.core.AID;
-import jade.core.Agent;
+//import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-import jade.proto.ContractNetInitiator;
+//import sajas.core.AID;
+import sajas.core.Agent;
+import sajas.proto.ContractNetInitiator;
+//import jade.proto.ContractNetInitiator;
 
 import java.util.Enumeration;
 import java.util.Vector;
@@ -60,7 +63,7 @@ public class CarNetInitiator extends ContractNetInitiator {
                 if (result < bestResult) {
                     bestResult = result;
                     bestProposal = proposal;
-                    bestProposer = msg.getSender();
+                    bestProposer =  msg.getSender();
                     accept = reply;
                 }
             }

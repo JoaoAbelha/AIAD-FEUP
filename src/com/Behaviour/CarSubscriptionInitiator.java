@@ -1,11 +1,13 @@
 package com.Behaviour;
 
 import com.Agent.CarAgent;
-import jade.core.AID;
+//import jade.core.AID;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-import jade.proto.SubscriptionInitiator;
+import jade.core.AID;
+import sajas.proto.SubscriptionInitiator;
+//import jade.proto.SubscriptionInitiator;
 
 import java.util.Vector;
 

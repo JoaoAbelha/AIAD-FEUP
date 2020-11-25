@@ -9,7 +9,8 @@ import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import jade.proto.AchieveREResponder;
+import sajas.proto.AchieveREResponder;
+//import jade.proto.AchieveREResponder;
 
 import java.io.IOException;
 

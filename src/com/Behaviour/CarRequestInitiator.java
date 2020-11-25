@@ -7,7 +7,8 @@ import jade.core.AID;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-import jade.proto.AchieveREInitiator;
+import sajas.proto.AchieveREInitiator;
+//import jade.proto.AchieveREInitiator;
 
 import java.io.IOException;
 import java.util.Date;

@@ -3,8 +3,6 @@ package com.Agent;
 import com.Behaviour.CarMovement;
 import com.Behaviour.CarSubscriptionInitiator;
 import com.Data.Car;
-import com.Data.Graph;
-import com.Data.PathRequest;
 import com.Data.PathResponse;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 

@@ -5,7 +5,8 @@ import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
-import jade.proto.SubscriptionResponder;
+import sajas.proto.SubscriptionResponder;
+//import jade.proto.SubscriptionResponder;
 
 public class CitySubscriptionResponder extends SubscriptionResponder {
     CityAgent city;

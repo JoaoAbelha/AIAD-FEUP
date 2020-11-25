@@ -3,13 +3,15 @@ package com.Behaviour;
 
 import com.Agent.RoadAgent;
 import com.Data.ContractNetCfp;
-import jade.core.Agent;
+//import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import jade.proto.ContractNetResponder;
+import sajas.core.Agent;
+import sajas.proto.ContractNetResponder;
+//import jade.proto.ContractNetResponder;
 
 import java.io.IOException;
 

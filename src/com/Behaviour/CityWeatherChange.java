@@ -1,11 +1,12 @@
 package com.Behaviour;
 
 import com.Agent.CityAgent;
-import jade.core.behaviours.TickerBehaviour;
+import sajas.core.behaviours.TickerBehaviour;
+//import jade.core.behaviours.TickerBehaviour;
 
 import java.util.Map;
 
-public class CityWeatherChange extends TickerBehaviour{
+public class CityWeatherChange extends TickerBehaviour {
     private CityAgent city = null;
     private int time;
 

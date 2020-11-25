@@ -11,7 +11,8 @@ import jade.core.behaviours.SenderBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import jade.proto.AchieveREInitiator;
+import sajas.proto.AchieveREInitiator;
+//import jade.proto.AchieveREInitiator;
 
 public class PriorityCarRequestInitiator extends AchieveREInitiator {
 

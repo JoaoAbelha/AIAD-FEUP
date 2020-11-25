@@ -3,10 +3,12 @@ package com.Behaviour;
 import com.Agent.PriorityCarAgent;
 import com.Data.Car;
 import com.Data.RoadInfo;
-import jade.core.AID;
-import jade.core.behaviours.TickerBehaviour;
+//import jade.core.AID;
+//import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+import jade.core.AID;
+import sajas.core.behaviours.TickerBehaviour;
 
 import java.util.Date;
 

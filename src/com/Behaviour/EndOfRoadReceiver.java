@@ -1,11 +1,13 @@
 package com.Behaviour;
 
 import com.Agent.RoadAgent;
-import jade.core.Agent;
-import jade.core.behaviours.CyclicBehaviour;
+//import jade.core.Agent;
+//import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ReceiverBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import sajas.core.Agent;
+import sajas.core.behaviours.CyclicBehaviour;
 
 public class EndOfRoadReceiver extends CyclicBehaviour {
 

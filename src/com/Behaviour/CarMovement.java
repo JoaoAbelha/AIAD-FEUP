@@ -7,9 +7,10 @@ import com.Data.PathRequest;
 import com.Data.RoadInfo;
 import jade.core.AID;
 import jade.core.behaviours.SequentialBehaviour;
-import jade.core.behaviours.TickerBehaviour;
+//import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+import sajas.core.behaviours.TickerBehaviour;
 
 import java.io.IOException;
 import java.util.Date;

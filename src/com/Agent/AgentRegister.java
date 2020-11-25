@@ -1,12 +1,13 @@
 package com.Agent;
 
-import jade.core.Agent;
-import jade.domain.DFService;
+
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 
-import java.util.logging.Logger;
+import sajas.core.Agent;
+import sajas.domain.DFService;
+
 
 public class AgentRegister extends Agent {
     protected DFAgentDescription dfd;
