@@ -6,7 +6,8 @@ import com.Agent.PriorityCarAgent;
 import com.Agent.RoadAgent;
 import com.Data.*;
 import com.utils.*;
-import jade.core.AID;
+import uchicago.src.sim.engine.SimInit;
+
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import sajas.core.Runtime;
@@ -22,69 +23,21 @@ import java.util.Map;
 
 public class Launcher extends Repast3Launcher {
 
-    private int N = 10;
-
-    private int FILTER_SIZE = 5;
-
-    private double FAILURE_PROBABILITY_GOOD_PROVIDER = 0.2;
-    private double FAILURE_PROBABILITY_BAD_PROVIDER = 0.8;
-
-    private int N_CONTRACTS = 100;
-
-    public static final boolean USE_RESULTS_COLLECTOR = true;
-
-    public static final boolean SEPARATE_CONTAINERS = false;
     private ContainerController mainContainer;
-    private ContainerController agentContainer;
+    String folder;
 
-    public int getN() {
-        return N;
+    public Launcher(String arg) {
+        folder = arg;
     }
 
-    public void setN(int N) {
-        this.N = N;
-    }
-
-    public int getFILTER_SIZE() {
-        return FILTER_SIZE;
-    }
-
-    public void setFILTER_SIZE(int FILTER_SIZE) {
-        this.FILTER_SIZE = FILTER_SIZE;
-    }
-
-    public double getFAILURE_PROBABILITY_GOOD_PROVIDER() {
-        return FAILURE_PROBABILITY_GOOD_PROVIDER;
-    }
-
-    public void setFAILURE_PROBABILITY_GOOD_PROVIDER(double FAILURE_PROBABILITY_GOOD_PROVIDER) {
-        this.FAILURE_PROBABILITY_GOOD_PROVIDER = FAILURE_PROBABILITY_GOOD_PROVIDER;
-    }
-
-    public double getFAILURE_PROBABILITY_BAD_PROVIDER() {
-        return FAILURE_PROBABILITY_BAD_PROVIDER;
-    }
-
-    public void setFAILURE_PROBABILITY_BAD_PROVIDER(double FAILURE_PROBABILITY_BAD_PROVIDER) {
-        this.FAILURE_PROBABILITY_BAD_PROVIDER = FAILURE_PROBABILITY_BAD_PROVIDER;
-    }
-
-    public int getN_CONTRACTS() {
-        return N_CONTRACTS;
-    }
-
-    public void setN_CONTRACTS(int N_CONTRACTS) {
-        this.N_CONTRACTS = N_CONTRACTS;
-    }
-
-    //@Override
+    @Override
     public String[] getInitParam() {
         return new String[0];
     }
 
-    //@Override
+    @Override
     public String getName() {
-        return "Service Consumer/Provider -- SAJaS Repast3 Test";
+        return "Traffic manager city";
     }
 
     @Override
@@ -94,21 +47,22 @@ public class Launcher extends Repast3Launcher {
         Profile p1 = new ProfileImpl();
         mainContainer = rt.createMainContainer(p1);
 
+        /*
         if(SEPARATE_CONTAINERS) {
             Profile p2 = new ProfileImpl();
             agentContainer = rt.createAgentContainer(p2);
         } else {
             agentContainer = mainContainer;
-        }
+        }*/
 
-        try {
-            launchAgents("exp1");
+        try { launchAgents("exp1");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     private void launchAgents(String arg) throws FileNotFoundException {
+
 
        Graph graph;
        HashSet<Car> cars = new HashSet<>();
@@ -138,11 +92,8 @@ public class Launcher extends Repast3Launcher {
         graph = gr.getInfo();
 
 
-
-       // int N_CONSUMERS = N;
-       // int N_CONSUMERS_FILTERING_PROVIDERS = N;
-       // int N_PROVIDERS = 2*N;
         // AID resultsCollectorAID = null;
+
 
 
         for(Car car : cars) {
@@ -198,6 +149,7 @@ public class Launcher extends Repast3Launcher {
         if (args.length != 1) {
             return;
         }
+        System.out.println("Arg here :" + args[0]);
         File dir = new File(args[0] + "/");
         if (!dir.exists()){
             System.err.println("Folder does not exist");
@@ -219,11 +171,11 @@ public class Launcher extends Repast3Launcher {
        // cityManager.createPriorityCars();
         //System.out.println("city manager running...");
 
-        /**
+
         SimInit init = new SimInit();
         init.setNumRuns(1);   // works only in batch mode
-        init.loadModel(new Repast3ServiceConsumerProviderLauncher(args[0]), null, true);
-         */
+        init.loadModel(new Launcher(args[0]), null, false);
+
     }
 
 }
