@@ -6,6 +6,7 @@ import com.Agent.PriorityCarAgent;
 import com.Agent.RoadAgent;
 import com.Data.*;
 import com.utils.*;
+import uchicago.src.sim.engine.Schedule;
 import uchicago.src.sim.engine.SimInit;
 
 import jade.core.Profile;
@@ -25,6 +26,10 @@ public class Launcher extends Repast3Launcher {
 
     private ContainerController mainContainer;
     String folder;
+
+    /* devemos usar estes dois parametros? */
+    public static final int TICKS_IN_HOUR = 30;
+    private Schedule schedule;
 
     public Launcher(String arg) {
         folder = arg;
