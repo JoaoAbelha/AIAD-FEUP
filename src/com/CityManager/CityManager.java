@@ -119,7 +119,7 @@ public class CityManager extends AgentCreator {
         File dir = new File(args[0] + "/");
         if (!dir.exists()){
             System.err.println("Folder does not exist");
-            return;
+            return ;
         }
 
         CityManager cityManager = new CityManager(args[0]);

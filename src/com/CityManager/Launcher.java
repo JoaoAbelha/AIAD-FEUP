@@ -6,6 +6,8 @@ import com.Agent.PriorityCarAgent;
 import com.Agent.RoadAgent;
 import com.Data.*;
 import com.utils.*;
+import uchicago.src.sim.analysis.OpenSequenceGraph;
+import uchicago.src.sim.analysis.Sequence;
 import uchicago.src.sim.engine.Schedule;
 import uchicago.src.sim.engine.SimInit;
 
@@ -18,9 +20,7 @@ import jade.wrapper.StaleProxyException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class Launcher extends Repast3Launcher {
 
@@ -30,9 +30,14 @@ public class Launcher extends Repast3Launcher {
     /* devemos usar estes dois parametros? */
     public static final int TICKS_IN_HOUR = 30;
     private Schedule schedule;
+    private boolean runInBatchMode;
+    private OpenSequenceGraph plot;
 
-    public Launcher(String arg) {
+
+    public Launcher(String arg, boolean runMode) {
+        super();
         folder = arg;
+        this.runInBatchMode = runMode;
     }
 
     @Override
@@ -96,19 +101,7 @@ public class Launcher extends Repast3Launcher {
         gr.readFile();
         graph = gr.getInfo();
 
-
         // AID resultsCollectorAID = null;
-
-
-
-        for(Car car : cars) {
-            CarAgent carAgent = new CarAgent(car);
-            try {
-                mainContainer.acceptNewAgent(car.getName(), carAgent).start();
-            } catch (StaleProxyException e) {
-                e.printStackTrace();
-            }
-        }
 
         WeatherStation weatherStation = new WeatherStation(weatherVelocityRestriction,weather);
         CityAgent cityAgent = new CityAgent(weatherStation, graph);
@@ -117,6 +110,15 @@ public class Launcher extends Repast3Launcher {
 
         } catch (StaleProxyException e) {
             e.printStackTrace();
+        }
+
+        for(Car car : cars) {
+            CarAgent carAgent = new CarAgent(car);
+            try {
+                mainContainer.acceptNewAgent(car.getName(), carAgent).start();
+            } catch (StaleProxyException e) {
+                e.printStackTrace();
+            }
         }
 
         for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : graph.getEdges().entrySet()) {
@@ -143,6 +145,30 @@ public class Launcher extends Repast3Launcher {
         }
 
 
+    }
+
+    @Override
+    public void begin() {
+        super.begin();
+        if(!runInBatchMode) {
+            buildAndScheduleDisplay();
+        }
+    }
+
+    private void buildAndScheduleDisplay() {
+        // graph
+        if (plot != null) plot.dispose();
+        plot = new OpenSequenceGraph("City", this);
+        plot.setAxisTitles("time", "% traffic");
+
+        plot.addSequence("Consumers", new Sequence() {
+            public double getSValue() {
+                return 1;
+            }
+        });
+        plot.display();
+
+        getSchedule().scheduleActionAtInterval(100, plot, "step", Schedule.LAST);
     }
 
     /**
@@ -176,12 +202,20 @@ public class Launcher extends Repast3Launcher {
        // cityManager.createPriorityCars();
         //System.out.println("city manager running...");
 
+        File dir2 = new File("logs/");
+        if (!dir2.exists()){
+            dir2.mkdir();
+        }
+        for (File file: dir2.listFiles())
+            if (!file.isDirectory())
+                file.delete();
+
 
         SimInit init = new SimInit();
         init.setNumRuns(1);   // works only in batch mode
-        init.loadModel(new Launcher(args[0]), null, false);
-
+        init.loadModel(new Launcher(args[0], false), null, false);
     }
+
 
 }
 

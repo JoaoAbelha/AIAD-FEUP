@@ -81,7 +81,7 @@ public class CarMovement extends TickerBehaviour {
         try {
             PathRequest pathRequest = new PathRequest(carAgent.getCar().getCurrentNode(), carAgent.getCar().getDestNode(), carAgent.getCar().getStrategy());
             ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-            request.addReceiver(new AID(("city"), AID.ISLOCALNAME));
+            request.addReceiver(new sajas.core.AID(("city"), AID.ISLOCALNAME));
             request.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
             request.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
             request.setContentObject(pathRequest);
@@ -101,7 +101,7 @@ public class CarMovement extends TickerBehaviour {
             contractNet.setReplyByDate(new Date(System.currentTimeMillis() + 10000)); // wait 10 seconds for reply
             contractNet.setContentObject(cfp);
             for (String roadName : carAgent.getCurrentPathResponse().getPaths().keySet())
-                contractNet.addReceiver(new AID(roadName, AID.ISLOCALNAME));
+                contractNet.addReceiver(new sajas.core.AID(roadName, AID.ISLOCALNAME));
             carAgent.getLOGGER().info("Starting contract net with roads in the intersection");
             carAgent.addBehaviour(new CarNetInitiator(this.carAgent, contractNet, this));
             restartContractNet = false;
@@ -114,7 +114,7 @@ public class CarMovement extends TickerBehaviour {
         RoadInfo roadInfo = this.carAgent.getCar().getCurrentRoad();
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
         String roadName = "road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode();
-        msg.addReceiver(new AID(roadName, false));
+        msg.addReceiver(new sajas.core.AID(roadName, false));
         msg.setConversationId("EOR");
         msg.setContent(String.valueOf(carAgent.getCar().getLength()));
         carAgent.getLOGGER().info("Car reached end of " + roadName + " sending EOF message");

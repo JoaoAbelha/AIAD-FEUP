@@ -53,7 +53,7 @@ public class PriorityCarMovement extends TickerBehaviour {
         if(nextNode == -1) return;
         String roadToInform = "road" + priorityCarAgent.getCar().getCurrentNode() + "-" + nextNode;
         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-        request.addReceiver(new AID((roadToInform), AID.ISLOCALNAME));
+        request.addReceiver(new sajas.core.AID((roadToInform), AID.ISLOCALNAME));
         request.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
         request.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
         request.setContent(String.valueOf(priorityCarAgent.getCar().getCurrentNode()));
@@ -84,7 +84,7 @@ public class PriorityCarMovement extends TickerBehaviour {
     private void informDistanceTravelled() {
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
         RoadInfo roadInfo = priorityCarAgent.getCar().getCurrentRoad();
-        msg.addReceiver(new AID("road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode(), false));
+        msg.addReceiver(new sajas.core.AID("road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode(), false));
         msg.setConversationId("PEOR");
         msg.setContent(String.valueOf(priorityCarAgent.getCar().getCurrentDistanceTravelled()));
         myAgent.send(msg);
@@ -93,7 +93,7 @@ public class PriorityCarMovement extends TickerBehaviour {
     private void sendEndOfRoad() {
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
         RoadInfo roadInfo = priorityCarAgent.getCar().getCurrentRoad();
-        msg.addReceiver(new AID("road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode(), false));
+        msg.addReceiver(new sajas.core.AID("road" + roadInfo.getStartNode() + "-" + roadInfo.getEndNode(), false));
         msg.setConversationId("PEOR");
         msg.setContent("EOF");
         myAgent.send(msg);

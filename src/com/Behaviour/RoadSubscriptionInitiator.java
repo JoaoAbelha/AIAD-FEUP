@@ -22,7 +22,7 @@ public class RoadSubscriptionInitiator extends SubscriptionInitiator {
     @Override
     protected Vector prepareSubscriptions(ACLMessage subscription) {
         subscription = new ACLMessage(ACLMessage.SUBSCRIBE);
-        subscription.addReceiver(new AID(("city"), AID.ISLOCALNAME));
+        subscription.addReceiver(new sajas.core.AID("city", AID.ISLOCALNAME));
         subscription.setProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
         Vector l = new Vector(1);
         l.addElement(subscription);
