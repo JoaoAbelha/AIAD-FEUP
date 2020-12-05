@@ -38,7 +38,7 @@ public class Launcher extends Repast3Launcher {
     private OpenSequenceGraph plotCars;
     private Configuration config;
     public static ArrayList<Integer> nodes;
-    private ArrayList<CarAgent> carAgents;
+    private ArrayList<CarAgent> carAgents = new ArrayList<>();
     private ArrayList<PriorityCarAgent> priorityCarAgents;
     private ArrayList<RoadAgent> roadAgents;
     private CityAgent cityAgent;
@@ -176,6 +176,7 @@ public class Launcher extends Repast3Launcher {
         for(int i = 0; i < this.getNumberShortestTimeCar(); i++) {
             Car car = CarFactory.buildCar(Car.Strategy.SHORTEST_TIME);
             CarAgent carAgent = new CarAgent(car);
+            carAgents.add(carAgent);
             try {
                 mainContainer.acceptNewAgent(car.getName(), carAgent).start();
             } catch (StaleProxyException e) {
@@ -315,6 +316,18 @@ public class Launcher extends Repast3Launcher {
     }
 
     private void buildAndScheduleDisplayCars() {
+        if (plotCars != null) plotCity.dispose();
+        plotCars = new OpenSequenceGraph("Cars", this);
+        plotCity.setAxisTitles("time", "velocity");
+
+        plotCars.addSequence("car_velocity", new Sequence() {
+            public double getSValue() {
+                return carAgents.stream().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum() / carAgents.size();
+            }
+        });
+        plotCars.display();
+
+        getSchedule().scheduleActionAtInterval(100, plotCars, "step", Schedule.LAST);
     }
 
     /**
