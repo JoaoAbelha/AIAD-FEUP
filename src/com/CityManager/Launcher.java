@@ -22,6 +22,7 @@ import jade.wrapper.StaleProxyException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Launcher extends Repast3Launcher {
 
@@ -318,13 +319,21 @@ public class Launcher extends Repast3Launcher {
     private void buildAndScheduleDisplayCars() {
         if (plotCars != null) plotCity.dispose();
         plotCars = new OpenSequenceGraph("Cars", this);
-        plotCity.setAxisTitles("time", "velocity");
+        plotCars.setAxisTitles("time", "velocity");
 
         plotCars.addSequence("car_velocity", new Sequence() {
             public double getSValue() {
                 return carAgents.stream().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum() / carAgents.size();
             }
         });
+
+        plotCars.addSequence("number Stopped cars", new Sequence() {
+            public double getSValue() {
+                return (int) carAgents.stream().filter(c -> c.getCar().getCurrentVelocity() == 0).count();
+
+            }
+        });
+
         plotCars.display();
 
         getSchedule().scheduleActionAtInterval(100, plotCars, "step", Schedule.LAST);
