@@ -44,14 +44,14 @@ public class Launcher extends Repast3Launcher {
 
     @Override
     public String[] getInitParam() {
-        return new String[]{"numberCars", "numberPriorityCars"};
+        return new String[]{"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar"};
     }
-    public void setNumberCars(int cars) {
-        this.config.setNumberCars(cars);
+    public void setNumberShortestTimeCar(int cars) {
+        this.config.setNumberShortestTimeCar(cars);
     }
 
-    public int getNumberCars() {
-        return config.getNumberCars();
+    public int getNumberShortestTimeCar() {
+        return config.getNumberShortestTimeCar();
     }
 
     public void setNumberPriorityCars(int cars) {
@@ -61,6 +61,24 @@ public class Launcher extends Repast3Launcher {
     public int getNumberPriorityCars() {
         return config.getPriorityNumberCars();
     }
+
+    public int getNumberMinIntersectionCar() {
+        return config.getNumberMinIntersectionCar();
+    }
+
+    public void setNumberMinIntersectionCar(int numberMinIntersectionCar) {
+        this.config.setNumberMinIntersectionCar(numberMinIntersectionCar);
+    }
+
+    public int getNumberShortestPathCar() {
+        return config.getNumberShortestPathCar();
+    }
+
+    public void setNumberShortestPathCar(int numberShortestPathCar) {
+        this.config.setNumberShortestPathCar(numberShortestPathCar);
+    }
+
+
 
 
     @Override
@@ -82,11 +100,11 @@ public class Launcher extends Repast3Launcher {
         } else {
             agentContainer = mainContainer;
         }*/
-
+        /*
         try { launchAgents("exp1");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private void launchAgents(String arg) throws FileNotFoundException {

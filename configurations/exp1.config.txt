@@ -1,3 +1,5 @@
-batchMode: false
-numberCars: 5
-numberAmbulance: 1
+batchMode: true
+numberShortestTimeCar: 4
+numberShortestPathCar: 1
+numberMinIntersectionCar:2
+numberPriorityCar: 2
