@@ -18,6 +18,7 @@ public class Car {
     private RoadInfo currentRoad;
     private Status carStatus;
     private double length;
+    private Integer numberIntersections = 0;
 
     public Car(String name, int src, int dest, float length, Strategy strategy) {
         this.name = name;
@@ -30,6 +31,15 @@ public class Car {
         this.currentDistanceTravelled = 0;
         this.length = length;
         this.carStatus = Status.INTERSECTION;
+    }
+
+    public int getNumberIntersections() {
+        return numberIntersections;
+    }
+
+    public void incNumberIntersections() {
+        System.out.println("go");
+        this.numberIntersections++;
     }
 
     public String getName() {

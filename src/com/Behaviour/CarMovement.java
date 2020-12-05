@@ -31,6 +31,7 @@ public class CarMovement extends TickerBehaviour {
     @Override
     protected void onTick() {
         if(carAgent.getCar().getCurrentNode() == carAgent.getCar().getDestNode()) {
+            carAgent.getCar().setCurrentVelocity(0);
             carAgent.getLOGGER().info("Car arrived at destination");
             carAgent.unregister();
             return;
@@ -43,6 +44,7 @@ public class CarMovement extends TickerBehaviour {
                 this.handleMovement();
             }
         } else if(carAgent.getCar().getCarStatus().equals(Car.Status.INTERSECTION)) {
+            this.carAgent.getCar().incNumberIntersections();
             this.handleIntersection();
         }
     }

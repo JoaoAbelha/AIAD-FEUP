@@ -26,6 +26,7 @@ public class PriorityCarMovement extends TickerBehaviour {
     @Override
     protected void onTick() {
         if(priorityCarAgent.getCar().getCurrentNode() == priorityCarAgent.getCar().getDestNode()) {
+            priorityCarAgent.getCar().setCurrentVelocity(0);
             priorityCarAgent.getLOGGER().info("Priority car arrived at destination");
             priorityCarAgent.unregister();
             return;

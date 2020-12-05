@@ -10,6 +10,7 @@ import com.utils.*;
 import uchicago.src.sim.analysis.OpenSequenceGraph;
 import uchicago.src.sim.analysis.Sequence;
 import uchicago.src.sim.engine.Schedule;
+import uchicago.src.sim.engine.ScheduleBase;
 import uchicago.src.sim.engine.SimInit;
 
 import jade.core.Profile;
@@ -22,7 +23,9 @@ import jade.wrapper.StaleProxyException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Launcher extends Repast3Launcher {
 
@@ -35,8 +38,9 @@ public class Launcher extends Repast3Launcher {
     private boolean runInBatchMode;
     private OpenSequenceGraph plotNumberCars;
     private OpenSequenceGraph plotCity;
+    private OpenSequenceGraph plotVelocity;
     private OpenSequenceGraph plotRoads;
-    private OpenSequenceGraph plotPriorityCars;
+    private OpenSequenceGraph plotNrIntersections;
     private OpenSequenceGraph plotCars;
     private Configuration config;
     public static ArrayList<Integer> nodes;
@@ -299,10 +303,68 @@ public class Launcher extends Repast3Launcher {
     public void begin() {
         super.begin();
         if(!runInBatchMode) {
-            buildAndScheduleDisplayCity();
-            buildAndScheduleDisplayCars();
-            buildAndScheduleDisplayNumberCars();
+           // buildAndScheduleDisplayVelocity();
+            buildAndScheduleDisplayIntersections();
+            //buildAndScheduleDisplayNumberCars();
         }
+    }
+    private void printAndSchedule(double v, OpenSequenceGraph o , String s, ScheduleBase.Order order) {
+
+        o.display();
+        getSchedule().scheduleActionAtInterval(v, o, s, order);
+    }
+
+    private void buildAndScheduleDisplayIntersections() {
+        if (plotNrIntersections != null) plotNrIntersections.dispose();
+        plotNrIntersections = new OpenSequenceGraph("Avg Nr Intersections", this);
+
+        plotNrIntersections.addSequence("Min intersection strategy", new Sequence() {
+            @Override
+            public double getSValue() {
+                return (double )carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).mapToInt(f ->f.getCar().getNumberIntersections()).sum()
+                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).count();
+            }
+        });
+        plotNrIntersections.addSequence("Min distance strategy", new Sequence() {
+            @Override
+            public double getSValue() {
+                return (double )carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).mapToInt(f ->f.getCar().getNumberIntersections()).sum()
+                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).count();
+            }
+        });
+
+        plotNrIntersections.addSequence("Min time strategy", new Sequence() {
+            @Override
+            public double getSValue() {
+                return (double )carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).mapToInt(f ->f.getCar().getNumberIntersections()).sum()
+                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).count();
+            }
+        });
+
+        printAndSchedule(100, plotNrIntersections, "step", Schedule.LAST);
+
+    }
+
+
+    private void buildAndScheduleDisplayVelocity() {
+        if (plotVelocity != null) plotVelocity.dispose();
+        plotVelocity = new OpenSequenceGraph("Velocities", this);
+
+        plotVelocity.addSequence("Average velocity of cars", new Sequence() {
+            @Override
+            public double getSValue() {
+                return carAgents.stream().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum() / carAgents.size();
+            }
+        });
+
+        plotVelocity.addSequence("Average velocity of priority cars", new Sequence() {
+            @Override
+            public double getSValue() {
+                return priorityCarAgents.stream().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum()/priorityCarAgents.size();
+            }
+        });
+       printAndSchedule(100, plotVelocity, "step", Schedule.LAST);
+
     }
 
     private void buildAndScheduleDisplayCity() {
@@ -310,14 +372,14 @@ public class Launcher extends Repast3Launcher {
         plotCity = new OpenSequenceGraph("City", this);
         plotCity.setAxisTitles("time", "weather");
 
+
         plotCity.addSequence("Percentage of max velocity", new Sequence() {
             public double getSValue() {
                 return cityAgent.getWeatherStation().getVelocity(cityAgent.getWeatherStation().getCurrentWeather());
             }
         });
 
-        plotCity.display();
-        getSchedule().scheduleActionAtInterval(100, plotCity, "step", Schedule.LAST);
+        printAndSchedule(100, plotCity, "step", Schedule.LAST);
     }
 
     private void buildAndScheduleDisplayNumberCars() {
@@ -327,7 +389,16 @@ public class Launcher extends Repast3Launcher {
 
         plotNumberCars.addSequence("Number Stopped Cars", new Sequence() {
             public double getSValue() {
-                return (int) carAgents.stream().filter(c -> c.getCar().getCurrentVelocity() == 0).count();
+                return carAgents.stream().filter(c -> c.getCar().getCurrentVelocity() == 0).count() +
+                        priorityCarAgents.stream().filter(c -> c.getCar().getCurrentVelocity() == 0).count();
+
+            }
+        });
+
+        plotNumberCars.addSequence("Number not Stopped Cars", new Sequence() {
+            public double getSValue() {
+                return carAgents.stream().filter(c -> c.getCar().getCurrentVelocity() > 0).count() +
+                        priorityCarAgents.stream().filter(c -> c.getCar().getCurrentVelocity() > 0).count();
 
             }
         });
@@ -350,20 +421,6 @@ public class Launcher extends Repast3Launcher {
         getSchedule().scheduleActionAtInterval(100, plotNumberCars, "step", Schedule.LAST);
     }
 
-    private void buildAndScheduleDisplayCars() {
-        if (plotCars != null) plotCity.dispose();
-        plotCars = new OpenSequenceGraph("Cars", this);
-        plotCars.setAxisTitles("time", "velocity");
-
-        plotCars.addSequence("car_velocity", new Sequence() {
-            public double getSValue() {
-                return carAgents.stream().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum() / carAgents.size();
-            }
-        });
-
-        plotCars.display();
-        getSchedule().scheduleActionAtInterval(100, plotCars, "step", Schedule.LAST);
-    }
 
     /**
      * Launching Repast3
