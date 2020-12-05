@@ -5,7 +5,6 @@ import com.Agent.CityAgent;
 import com.Agent.PriorityCarAgent;
 import com.Agent.RoadAgent;
 import com.Data.*;
-import com.bbn.openmap.tools.roads.Road;
 import com.utils.*;
 import uchicago.src.sim.analysis.OpenSequenceGraph;
 import uchicago.src.sim.analysis.Sequence;
@@ -19,22 +18,31 @@ import sajas.core.Runtime;
 import sajas.sim.repast3.Repast3Launcher;
 import sajas.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+import uchicago.src.sim.gui.DisplaySurface;
+import uchicago.src.sim.gui.Network2DDisplay;
+import uchicago.src.sim.gui.OvalNetworkItem;
+import uchicago.src.sim.network.DefaultDrawableNode;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.List;
+
 
 public class Launcher extends Repast3Launcher {
 
     private ContainerController mainContainer;
     private String folder;
 
-    /* devemos usar estes dois parametros? */
-    public static final int TICKS_IN_HOUR = 30;
-    private Schedule schedule;
+    // viz
+    private static List<DefaultDrawableNode> nodesViz;
+    private final int WIDTH = 200;
+    private final int HEIGHT = 200;
+    private DisplaySurface surf;
+
+
+
     private boolean runInBatchMode;
     private OpenSequenceGraph plotNumberCars;
     private OpenSequenceGraph plotCity;
@@ -60,6 +68,16 @@ public class Launcher extends Repast3Launcher {
     @Override
     public String[] getInitParam() {
         return new String[]{ "fileOfWeather","fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar"};
+    }
+
+    //viz
+    public static DefaultDrawableNode getNode(String label) {
+        for(DefaultDrawableNode node : nodesViz) {
+            if(node.getNodeLabel().equals(label)) {
+                return node;
+            }
+        }
+        return null;
     }
 
     public String getFileOfWeather() {
@@ -143,11 +161,29 @@ public class Launcher extends Repast3Launcher {
         }*/
     }
 
+
+    private DefaultDrawableNode generateNode(String label, Color color, int x, int y) {
+        OvalNetworkItem oval = new OvalNetworkItem(x,y);
+        oval.allowResizing(false);
+        oval.setHeight(5);
+        oval.setWidth(5);
+
+        DefaultDrawableNode node = new DefaultDrawableNode(label, oval);
+        node.setColor(color);
+
+        return node;
+    }
+
     private void launchAgents() throws FileNotFoundException {
+        // viz
+        Random random = new Random(System.currentTimeMillis());
+        nodesViz = new ArrayList<DefaultDrawableNode>();
+
+
         GraphReader gr = new GraphReader(this.getFileOfCity());
         gr.readFile();
         Graph graph = gr.getInfo();
-        Launcher.nodes = new ArrayList<>(graph.getEdges().keySet());
+        Launcher.nodes = new ArrayList<>(graph.getEdges().keySet()); // todo: isto pode nao dar os nodes todos
 
         TypeWeatherReader twr = new TypeWeatherReader(this.getFileOfTypeWeather());
         twr.readFile();
@@ -166,12 +202,31 @@ public class Launcher extends Repast3Launcher {
             e.printStackTrace();
         }
 
+        HashMap<Integer, DefaultDrawableNode> nodestoDraw = new HashMap<>();
+
+
         for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : graph.getEdges().entrySet()) {
             Integer src = entry.getKey();
             Map<Integer, RoadInfo> value = entry.getValue();
+            nodestoDraw.putIfAbsent(src, generateNode( src + "", Color.WHITE,
+                    random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2)));
+
             for(Map.Entry<Integer,RoadInfo> adj : value.entrySet()) {
                 Integer dest= adj.getKey();
                 RoadAgent roadAgent = new RoadAgent(adj.getValue());
+                nodestoDraw.putIfAbsent(dest,generateNode( dest + "", Color.WHITE,
+                        random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2)));
+
+                DefaultDrawableNode srcNode = nodestoDraw.get(src);
+                DefaultDrawableNode destNode = nodestoDraw.get(dest);
+
+                nodesViz.add(srcNode);
+                nodesViz.add(destNode);
+
+                EdgeDrawable edge = new EdgeDrawable(srcNode,  destNode);
+                edge.setColor(Color.ORANGE);
+                srcNode.addOutEdge(edge);
+
                 try {
                     mainContainer.acceptNewAgent("road" + src + "-" + dest, roadAgent).start();
                 } catch (StaleProxyException e) {
@@ -223,80 +278,6 @@ public class Launcher extends Repast3Launcher {
                 e.printStackTrace();
             }
         }
-        /*
-       Graph graph;
-       HashSet<Car> cars = new HashSet<>();
-       HashSet<PriorityCar> priorityCars = new HashSet<>();
-       HashSet<RoadInfo> roads = new HashSet<>();
-       HashMap<String, Float> weatherVelocityRestriction;
-       HashMap<Integer, String> weather = new HashMap<>();
-
-        CarReader r = new CarReader(arg + "/car.txt");
-        r.readFile();
-        cars = r.getInfo();
-
-        PriorityCarReader pr = new PriorityCarReader(arg + "/priorityCars.txt");
-        pr.readFile();
-        priorityCars = pr.getInfo();
-
-        TypeWeatherReader twr = new TypeWeatherReader(arg + "/typeWeather.txt");
-        twr.readFile();
-        weatherVelocityRestriction = twr.getInfo();
-
-        WeatherReader wr = new WeatherReader(arg + "/weather.txt");
-        wr.readFile();
-        weather = wr.getInfo();
-
-        GraphReader gr = new GraphReader(arg + "/city.txt");
-        gr.readFile();
-        graph = gr.getInfo();
-        Launcher.nodes = new ArrayList<>(graph.getEdges().keySet());
-
-
-
-        // AID resultsCollectorAID = null;
-
-        WeatherStation weatherStation = new WeatherStation(weatherVelocityRestriction,weather);
-        CityAgent cityAgent = new CityAgent(weatherStation, graph);
-        try {
-            mainContainer.acceptNewAgent("city", cityAgent).start();
-
-        } catch (StaleProxyException e) {
-            e.printStackTrace();
-        }
-
-        for(Car car : cars) {
-            CarAgent carAgent = new CarAgent(car);
-            try {
-                mainContainer.acceptNewAgent(car.getName(), carAgent).start();
-            } catch (StaleProxyException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : graph.getEdges().entrySet()) {
-            Integer src = entry.getKey();
-            Map<Integer, RoadInfo> value = entry.getValue();
-            for(Map.Entry<Integer,RoadInfo> adj : value.entrySet()) {
-                Integer dest= adj.getKey();
-                RoadAgent roadAgent = new RoadAgent(adj.getValue());
-                try {
-                    mainContainer.acceptNewAgent("road" + src + "-" + dest, roadAgent).start();
-                } catch (StaleProxyException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        for(PriorityCar car : priorityCars) {
-            PriorityCarAgent carAgent = new PriorityCarAgent(car, graph);
-            try {
-                mainContainer.acceptNewAgent(car.getName(), carAgent).start();
-            } catch (StaleProxyException e) {
-                e.printStackTrace();
-            }
-        }
-    */
 
     }
 
@@ -307,7 +288,18 @@ public class Launcher extends Repast3Launcher {
            // buildAndScheduleDisplayVelocity();
            // buildAndScheduleDisplayIntersections();
             //buildAndScheduleDisplayNumberCars();
-            buildAndScheduleDisplayDistanceTraveled();
+            //buildAndScheduleDisplayDistanceTraveled(); //todo
+            if (surf != null) surf.dispose();
+            surf = new DisplaySurface(this, "City Display");
+            registerDisplaySurface("City Display", surf);
+            Network2DDisplay display = new Network2DDisplay(nodesViz, WIDTH,HEIGHT);
+            surf.addDisplayableProbeable(display, "Network Display");
+            surf.addZoomable(display);
+            addSimEventListener(surf); // why this????
+
+            surf.display();
+            getSchedule().scheduleActionAtInterval(500, surf, "updateDisplay", Schedule.LAST);
+
         }
     }
     private void printAndSchedule(double v, OpenSequenceGraph o , String s, ScheduleBase.Order order) {
