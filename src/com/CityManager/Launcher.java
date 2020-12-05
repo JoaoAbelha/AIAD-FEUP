@@ -40,7 +40,10 @@ public class Launcher extends Repast3Launcher {
     private final int WIDTH = 200;
     private final int HEIGHT = 200;
     private DisplaySurface surf;
-
+    private Color LOW = Color.green;
+    private Color MEDIUM = Color.orange;
+    private Color HIGH = Color.red;
+    HashMap<Integer, DefaultDrawableNode> nodestoDraw = new HashMap<>();
 
 
     private boolean runInBatchMode;
@@ -63,6 +66,19 @@ public class Launcher extends Repast3Launcher {
         folder = arg;
         this.runInBatchMode = runMode;
         this.config = config;
+    }
+
+    public void changeColor (int src, int dest, int capacity_percentage) {
+        this.nodestoDraw.get(src).removeEdgesTo(this.nodestoDraw.get(dest));
+        EdgeDrawable edge = new EdgeDrawable(nodestoDraw.get(src), nodestoDraw.get(dest));
+        if (capacity_percentage <= 20) {
+            edge.setColor(LOW);
+        } else if (capacity_percentage <= 85) {
+            edge.setColor(MEDIUM);
+        } else {
+            edge.setColor(HIGH);
+        }
+        this.nodestoDraw.get(src).addOutEdge(edge);
     }
 
     @Override
@@ -202,7 +218,6 @@ public class Launcher extends Repast3Launcher {
             e.printStackTrace();
         }
 
-        HashMap<Integer, DefaultDrawableNode> nodestoDraw = new HashMap<>();
 
 
         for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : graph.getEdges().entrySet()) {
