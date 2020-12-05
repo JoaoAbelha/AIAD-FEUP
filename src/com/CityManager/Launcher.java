@@ -152,7 +152,7 @@ public class Launcher extends Repast3Launcher {
         HashMap<Integer, String> weather = wr.getInfo();
 
         WeatherStation weatherStation = new WeatherStation(weatherVelocityRestriction,weather);
-        CityAgent cityAgent = new CityAgent(weatherStation, graph);
+        cityAgent = new CityAgent(weatherStation, graph);
         try {
             mainContainer.acceptNewAgent("city", cityAgent).start();
 
@@ -301,14 +301,13 @@ public class Launcher extends Repast3Launcher {
     }
 
     private void buildAndScheduleDisplayCity() {
-        // graph
         if (plotCity != null) plotCity.dispose();
         plotCity = new OpenSequenceGraph("City", this);
-        plotCity.setAxisTitles("time", "% traffic");
+        plotCity.setAxisTitles("time", "weather");
 
-        plotCity.addSequence("Consumers", new Sequence() {
+        plotCity.addSequence("Percentage of max velocity", new Sequence() {
             public double getSValue() {
-                return 1;
+                return cityAgent.getWeatherStation().getVelocity(cityAgent.getWeatherStation().getCurrentWeather());
             }
         });
         plotCity.display();

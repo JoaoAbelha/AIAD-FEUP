@@ -7,14 +7,14 @@ public class WeatherStation {
 
     private HashMap<String, Float> velocities = new HashMap<>();
     private HashMap<Integer, String> weather = new HashMap<>();
-    private String cuurentWeather;
+    private String currentWeather;
 
     public WeatherStation(HashMap<String, Float> velocities, HashMap<Integer, String> weather) {
         this.velocities = velocities;
         this.weather = weather;
 
         Map.Entry<Integer,String> entry = weather.entrySet().iterator().next();
-        this.cuurentWeather = entry.getValue();
+        this.currentWeather = entry.getValue();
     }
 
     public float getVelocity(String weather) {
@@ -27,6 +27,14 @@ public class WeatherStation {
 
     public boolean existsWeather(int time) {
         return weather.containsKey(time);
+    }
+
+    public void setCurrentWeather(String currentWeather) {
+        this.currentWeather = currentWeather;
+    }
+
+    public String getCurrentWeather() {
+        return currentWeather;
     }
 }
 
