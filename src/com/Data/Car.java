@@ -19,6 +19,7 @@ public class Car {
     private Status carStatus;
     private double length;
     private Integer numberIntersections = 0;
+    private Integer distanceUntilNow = 0; // distancia ate ao ultimo no
 
     public Car(String name, int src, int dest, float length, Strategy strategy) {
         this.name = name;
@@ -33,12 +34,20 @@ public class Car {
         this.carStatus = Status.INTERSECTION;
     }
 
+
+    public Integer getDistanceUntilNow() {
+        return distanceUntilNow;
+    }
+
+    public void incDistanceUntilNow(Integer distance) {
+        this.distanceUntilNow += distance;
+    }
+
     public int getNumberIntersections() {
         return numberIntersections;
     }
 
     public void incNumberIntersections() {
-        System.out.println("go");
         this.numberIntersections++;
     }
 

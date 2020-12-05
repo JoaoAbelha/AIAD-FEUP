@@ -42,6 +42,7 @@ public class Launcher extends Repast3Launcher {
     private OpenSequenceGraph plotRoads;
     private OpenSequenceGraph plotNrIntersections;
     private OpenSequenceGraph plotCars;
+    private OpenSequenceGraph plotDistanceTraveled;
     private Configuration config;
     public static ArrayList<Integer> nodes;
     private ArrayList<CarAgent> carAgents = new ArrayList<>();
@@ -304,14 +305,29 @@ public class Launcher extends Repast3Launcher {
         super.begin();
         if(!runInBatchMode) {
            // buildAndScheduleDisplayVelocity();
-            buildAndScheduleDisplayIntersections();
+           // buildAndScheduleDisplayIntersections();
             //buildAndScheduleDisplayNumberCars();
+            buildAndScheduleDisplayDistanceTraveled();
         }
     }
     private void printAndSchedule(double v, OpenSequenceGraph o , String s, ScheduleBase.Order order) {
 
         o.display();
         getSchedule().scheduleActionAtInterval(v, o, s, order);
+    }
+
+    /**
+     * todo
+     * */
+    private void buildAndScheduleDisplayDistanceTraveled() {
+        if (plotDistanceTraveled != null) plotDistanceTraveled.dispose();
+        plotDistanceTraveled = new OpenSequenceGraph("Avg distance travelled", this);
+        plotDistanceTraveled.addSequence("Min Intersection strategy", new Sequence() {
+            @Override
+            public double getSValue() {
+                return 0;
+            };
+        });
     }
 
     private void buildAndScheduleDisplayIntersections() {

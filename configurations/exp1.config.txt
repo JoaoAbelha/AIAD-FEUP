@@ -1,7 +1,7 @@
 batchMode: false
-numberShortestTimeCar: 4
+numberShortestTimeCar: 1
 numberShortestPathCar: 1
-numberMinIntersectionCar:2
+numberMinIntersectionCar:0
 numberPriorityCar: 2
 graph: exp1/city.txt
 typeWeather: exp1/typeWeather.txt
