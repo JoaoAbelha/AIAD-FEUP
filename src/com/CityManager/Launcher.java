@@ -44,8 +44,34 @@ public class Launcher extends Repast3Launcher {
 
     @Override
     public String[] getInitParam() {
-        return new String[]{"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar"};
+        return new String[]{ "fileOfWeather","fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar"};
     }
+
+    public String getFileOfWeather() {
+        return config.getFileOfWeather();
+    }
+
+    public void setFileOfWeather(String fileOfWeather) {
+        this.config.setFileOfWeather(fileOfWeather);
+    }
+
+    public String getFileOfTypeWeather() {
+        return config.getFileOfTypeWeather();
+    }
+
+    public void setFileOfTypeWeather(String fileOfTypeWeather) {
+        this.config.setFileOfTypeWeather(fileOfTypeWeather);
+    }
+
+
+    public String getFileOfCity() {
+        return config.getFileofCity();
+    }
+
+    public void setFileOfCity(String fileofCity) {
+        this.config.setFileofCity(fileofCity);
+    }
+
     public void setNumberShortestTimeCar(int cars) {
         this.config.setNumberShortestTimeCar(cars);
     }
@@ -78,9 +104,6 @@ public class Launcher extends Repast3Launcher {
         this.config.setNumberShortestPathCar(numberShortestPathCar);
     }
 
-
-
-
     @Override
     public String getName() {
         return "Traffic manager city";
@@ -109,7 +132,7 @@ public class Launcher extends Repast3Launcher {
 
     private void launchAgents(String arg) throws FileNotFoundException {
 
-
+        /*
        Graph graph;
        HashSet<Car> cars = new HashSet<>();
        HashSet<PriorityCar> priorityCars = new HashSet<>();
@@ -137,6 +160,8 @@ public class Launcher extends Repast3Launcher {
         gr.readFile();
         graph = gr.getInfo();
         Launcher.nodes = new ArrayList<>(graph.getEdges().keySet());
+
+
 
         // AID resultsCollectorAID = null;
 
@@ -180,7 +205,7 @@ public class Launcher extends Repast3Launcher {
                 e.printStackTrace();
             }
         }
-
+    */
 
     }
 

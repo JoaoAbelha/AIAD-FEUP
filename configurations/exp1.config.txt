@@ -3,3 +3,6 @@ numberShortestTimeCar: 4
 numberShortestPathCar: 1
 numberMinIntersectionCar:2
 numberPriorityCar: 2
+graph: exp1/city.txt
+typeWeather: exp1/typeWeather.txt
+weather: exp1/weather.txt

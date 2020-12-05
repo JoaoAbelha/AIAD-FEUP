@@ -1,7 +1,10 @@
 package com.utils;
 
+import com.CityManager.Launcher;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -12,6 +15,10 @@ public class Configuration {
     private int numberShortestTimeCar =  1;
     private int numberShortestPathCar =  1;
     private int numberMinIntersectionCar = 2;
+    private String fileofCity = null;
+    private String fileOfTypeWeather = null;
+    private String fileOfWeather = null;
+
 
     public Configuration(String[] args) {
         if (args.length == 0) {
@@ -41,6 +48,15 @@ public class Configuration {
                         case "numberminintersectioncar" -> {
                             this.numberMinIntersectionCar = Integer.parseInt(data[1]);
                         }
+                        case "graph" -> {
+                            this.fileofCity = data[1];
+                        }
+                        case "typeweather" -> {
+                            this.fileOfTypeWeather = data[1];
+                        }
+                        case "weather" -> {
+                            this.fileOfWeather = data[1];
+                        }
                         default -> {
                             System.out.println("Unknown key in configuration file " + data[0]);
                         }
@@ -54,6 +70,30 @@ public class Configuration {
                 e.printStackTrace();
             }
         }
+    }
+
+    public String getFileOfWeather() {
+        return fileOfWeather;
+    }
+
+    public void setFileOfWeather(String fileOfWeather) {
+        this.fileOfWeather = fileOfWeather;
+    }
+
+    public String getFileOfTypeWeather() {
+        return this.fileOfTypeWeather;
+    }
+
+    public void setFileOfTypeWeather(String fileOfTypeWeather) {
+        this.fileOfTypeWeather = fileOfTypeWeather;
+    }
+
+    public String getFileofCity() {
+        return fileofCity;
+    }
+
+    public void setFileofCity(String fileofCity) {
+        this.fileofCity = fileofCity;
     }
 
     public int getNumberShortestTimeCar() {
