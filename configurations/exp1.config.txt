@@ -1,0 +1,3 @@
+batchMode: true
+numberCars: 5
+numberAmbulance: 1

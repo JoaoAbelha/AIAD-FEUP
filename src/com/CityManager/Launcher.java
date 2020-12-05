@@ -32,18 +32,36 @@ public class Launcher extends Repast3Launcher {
     private Schedule schedule;
     private boolean runInBatchMode;
     private OpenSequenceGraph plot;
+    private Configuration config;
 
 
-    public Launcher(String arg, boolean runMode) {
+    public Launcher(String arg, Configuration config, boolean runMode) {
         super();
         folder = arg;
         this.runInBatchMode = runMode;
+        this.config = config;
     }
 
     @Override
     public String[] getInitParam() {
-        return new String[0];
+        return new String[]{"numberCars", "numberPriorityCars"};
     }
+    public void setNumberCars(int cars) {
+        this.config.setNumberCars(cars);
+    }
+
+    public int getNumberCars() {
+        return config.getNumberCars();
+    }
+
+    public void setNumberPriorityCars(int cars) {
+        this.config.setNumberPriorityCars(cars);
+    }
+
+    public int getNumberPriorityCars() {
+        return config.getPriorityNumberCars();
+    }
+
 
     @Override
     public String getName() {
@@ -187,6 +205,8 @@ public class Launcher extends Repast3Launcher {
             return;
         }
 
+
+
         //CityManager cityManager = new CityManager(args[0]);
         //CheckValidaty X = new CheckValidaty(cityManager.graph.getEdges());
         //if (!X.validateNodeNr()) return;
@@ -212,8 +232,9 @@ public class Launcher extends Repast3Launcher {
 
 
         SimInit init = new SimInit();
+        Configuration config = new Configuration(args);
         init.setNumRuns(1);   // works only in batch mode
-        init.loadModel(new Launcher(args[0], false), null, false);
+        init.loadModel(new Launcher(args[0], config, config.getBatchMode()), null, false);
     }
 
 
