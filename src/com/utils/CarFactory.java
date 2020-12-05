@@ -8,22 +8,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class CarFactory {
-    private static int id = 0;
+    private static int carId = 0;
+    private static int priorityCarId = 0;
 
-    public Car buildCar(Car.Strategy strategy) {
+
+    public static Car buildCar(Car.Strategy strategy) {
         ArrayList<Integer> shuffled = Launcher.nodes;
         Collections.shuffle(shuffled);
-        return new Car("car" + (id++),
+        return new Car("car" + (carId++),
                 shuffled.get(0),
                 shuffled.get(1) ,
                 (float)(Math.random() * 4) + 1,
                 strategy);
     }
 
-    public PriorityCar buildPriorityCar() {
+    public static PriorityCar buildPriorityCar() {
         ArrayList<Integer> shuffled = Launcher.nodes;
         Collections.shuffle(shuffled);
-        return new PriorityCar("priority_car" + (id++),
+        return new PriorityCar("priority_car" + (priorityCarId++),
                 shuffled.get(0),
                 shuffled.get(1));
     }

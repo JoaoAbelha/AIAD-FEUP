@@ -1,4 +1,4 @@
-batchMode: true
+batchMode: false
 numberShortestTimeCar: 4
 numberShortestPathCar: 1
 numberMinIntersectionCar:2

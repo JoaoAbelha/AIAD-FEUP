@@ -69,7 +69,7 @@ public class PriorityCarSubscriptionInitiator extends SubscriptionInitiator {
 
     public void cancelInform() {
         priorityCar.getLOGGER().info("Canceling subscription with " + responderName);
-        cancel(new AID((responderName), AID.ISLOCALNAME), false);
+        cancel(new sajas.core.AID((responderName), AID.ISLOCALNAME), false);
         this.cancel_inform = true;
     }
 }

@@ -5,6 +5,7 @@ import com.Agent.CityAgent;
 import com.Agent.PriorityCarAgent;
 import com.Agent.RoadAgent;
 import com.Data.*;
+import com.bbn.openmap.tools.roads.Road;
 import com.utils.*;
 import uchicago.src.sim.analysis.OpenSequenceGraph;
 import uchicago.src.sim.analysis.Sequence;
@@ -31,9 +32,16 @@ public class Launcher extends Repast3Launcher {
     public static final int TICKS_IN_HOUR = 30;
     private Schedule schedule;
     private boolean runInBatchMode;
-    private OpenSequenceGraph plot;
+    private OpenSequenceGraph plotCity;
+    private OpenSequenceGraph plotRoads;
+    private OpenSequenceGraph plotPriorityCars;
+    private OpenSequenceGraph plotCars;
     private Configuration config;
     public static ArrayList<Integer> nodes;
+    private ArrayList<CarAgent> carAgents;
+    private ArrayList<PriorityCarAgent> priorityCarAgents;
+    private ArrayList<RoadAgent> roadAgents;
+    private CityAgent cityAgent;
 
     public Launcher(String arg, Configuration config, boolean runMode) {
         super();
@@ -111,11 +119,14 @@ public class Launcher extends Repast3Launcher {
 
     @Override
     protected void launchJADE() {
-
-        Runtime rt = Runtime.instance();
-        Profile p1 = new ProfileImpl();
-        mainContainer = rt.createMainContainer(p1);
-
+        try {
+            Runtime rt = Runtime.instance();
+            Profile p1 = new ProfileImpl();
+            mainContainer = rt.createMainContainer(p1);
+            launchAgents();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         /*
         if(SEPARATE_CONTAINERS) {
             Profile p2 = new ProfileImpl();
@@ -123,15 +134,84 @@ public class Launcher extends Repast3Launcher {
         } else {
             agentContainer = mainContainer;
         }*/
-        /*
-        try { launchAgents("exp1");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }*/
     }
 
-    private void launchAgents(String arg) throws FileNotFoundException {
+    private void launchAgents() throws FileNotFoundException {
+        GraphReader gr = new GraphReader(this.getFileOfCity());
+        gr.readFile();
+        Graph graph = gr.getInfo();
+        Launcher.nodes = new ArrayList<>(graph.getEdges().keySet());
 
+        TypeWeatherReader twr = new TypeWeatherReader(this.getFileOfTypeWeather());
+        twr.readFile();
+        HashMap<String, Float> weatherVelocityRestriction = twr.getInfo();
+
+        WeatherReader wr = new WeatherReader(this.getFileOfWeather());
+        wr.readFile();
+        HashMap<Integer, String> weather = wr.getInfo();
+
+        WeatherStation weatherStation = new WeatherStation(weatherVelocityRestriction,weather);
+        CityAgent cityAgent = new CityAgent(weatherStation, graph);
+        try {
+            mainContainer.acceptNewAgent("city", cityAgent).start();
+
+        } catch (StaleProxyException e) {
+            e.printStackTrace();
+        }
+
+        for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : graph.getEdges().entrySet()) {
+            Integer src = entry.getKey();
+            Map<Integer, RoadInfo> value = entry.getValue();
+            for(Map.Entry<Integer,RoadInfo> adj : value.entrySet()) {
+                Integer dest= adj.getKey();
+                RoadAgent roadAgent = new RoadAgent(adj.getValue());
+                try {
+                    mainContainer.acceptNewAgent("road" + src + "-" + dest, roadAgent).start();
+                } catch (StaleProxyException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        for(int i = 0; i < this.getNumberShortestTimeCar(); i++) {
+            Car car = CarFactory.buildCar(Car.Strategy.SHORTEST_TIME);
+            CarAgent carAgent = new CarAgent(car);
+            try {
+                mainContainer.acceptNewAgent(car.getName(), carAgent).start();
+            } catch (StaleProxyException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for(int i = 0; i < this.getNumberShortestPathCar(); i++) {
+            Car car = CarFactory.buildCar(Car.Strategy.SHORTEST_PATH);
+            CarAgent carAgent = new CarAgent(car);
+            try {
+                mainContainer.acceptNewAgent(car.getName(), carAgent).start();
+            } catch (StaleProxyException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for(int i = 0; i < this.getNumberMinIntersectionCar(); i++) {
+            Car car = CarFactory.buildCar(Car.Strategy.MINIMUM_INTERSECTIONS);
+            CarAgent carAgent = new CarAgent(car);
+            try {
+                mainContainer.acceptNewAgent(car.getName(), carAgent).start();
+            } catch (StaleProxyException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for(int i = 0; i< this.getNumberPriorityCars(); i++) {
+            PriorityCar car = CarFactory.buildPriorityCar();
+            PriorityCarAgent carAgent = new PriorityCarAgent(car, graph);
+            try {
+                mainContainer.acceptNewAgent(car.getName(), carAgent).start();
+            } catch (StaleProxyException e) {
+                e.printStackTrace();
+            }
+        }
         /*
        Graph graph;
        HashSet<Car> cars = new HashSet<>();
@@ -213,24 +293,28 @@ public class Launcher extends Repast3Launcher {
     public void begin() {
         super.begin();
         if(!runInBatchMode) {
-            buildAndScheduleDisplay();
+            buildAndScheduleDisplayCity();
+            buildAndScheduleDisplayCars();
         }
     }
 
-    private void buildAndScheduleDisplay() {
+    private void buildAndScheduleDisplayCity() {
         // graph
-        if (plot != null) plot.dispose();
-        plot = new OpenSequenceGraph("City", this);
-        plot.setAxisTitles("time", "% traffic");
+        if (plotCity != null) plotCity.dispose();
+        plotCity = new OpenSequenceGraph("City", this);
+        plotCity.setAxisTitles("time", "% traffic");
 
-        plot.addSequence("Consumers", new Sequence() {
+        plotCity.addSequence("Consumers", new Sequence() {
             public double getSValue() {
                 return 1;
             }
         });
-        plot.display();
+        plotCity.display();
 
-        getSchedule().scheduleActionAtInterval(100, plot, "step", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(100, plotCity, "step", Schedule.LAST);
+    }
+
+    private void buildAndScheduleDisplayCars() {
     }
 
     /**
@@ -250,21 +334,12 @@ public class Launcher extends Repast3Launcher {
         }
 
 
-
         //CityManager cityManager = new CityManager(args[0]);
         //CheckValidaty X = new CheckValidaty(cityManager.graph.getEdges());
         //if (!X.validateNodeNr()) return;
         //if (!X.validateCars(cityManager.cars)) return;
         //if (!X.validatePriorityCars(cityManager.priorityCars)) return;
         //if (!X.check()) return;
-
-        //cityManager.cleanLogFiles();
-
-       // cityManager.createCity();
-       // cityManager.createAgentRoads();
-       // cityManager.createAgentCars();
-       // cityManager.createPriorityCars();
-        //System.out.println("city manager running...");
 
         File dir2 = new File("logs/");
         if (!dir2.exists()){
