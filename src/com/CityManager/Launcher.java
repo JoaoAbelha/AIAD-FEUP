@@ -25,7 +25,7 @@ import java.util.*;
 public class Launcher extends Repast3Launcher {
 
     private ContainerController mainContainer;
-    String folder;
+    private String folder;
 
     /* devemos usar estes dois parametros? */
     public static final int TICKS_IN_HOUR = 30;
@@ -33,7 +33,7 @@ public class Launcher extends Repast3Launcher {
     private boolean runInBatchMode;
     private OpenSequenceGraph plot;
     private Configuration config;
-
+    public static ArrayList<Integer> nodes;
 
     public Launcher(String arg, Configuration config, boolean runMode) {
         super();
@@ -118,6 +118,7 @@ public class Launcher extends Repast3Launcher {
         GraphReader gr = new GraphReader(arg + "/city.txt");
         gr.readFile();
         graph = gr.getInfo();
+        Launcher.nodes = new ArrayList<>(graph.getEdges().keySet());
 
         // AID resultsCollectorAID = null;
 

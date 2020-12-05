@@ -1,3 +1,3 @@
-batchMode: true
+batchMode: false
 numberCars: 5
 numberAmbulance: 1
