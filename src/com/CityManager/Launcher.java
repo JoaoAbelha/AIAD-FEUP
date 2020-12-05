@@ -33,6 +33,7 @@ public class Launcher extends Repast3Launcher {
     public static final int TICKS_IN_HOUR = 30;
     private Schedule schedule;
     private boolean runInBatchMode;
+    private OpenSequenceGraph plotNumberCars;
     private OpenSequenceGraph plotCity;
     private OpenSequenceGraph plotRoads;
     private OpenSequenceGraph plotPriorityCars;
@@ -40,7 +41,7 @@ public class Launcher extends Repast3Launcher {
     private Configuration config;
     public static ArrayList<Integer> nodes;
     private ArrayList<CarAgent> carAgents = new ArrayList<>();
-    private ArrayList<PriorityCarAgent> priorityCarAgents;
+    private ArrayList<PriorityCarAgent> priorityCarAgents = new ArrayList<>();
     private ArrayList<RoadAgent> roadAgents;
     private CityAgent cityAgent;
 
@@ -188,6 +189,7 @@ public class Launcher extends Repast3Launcher {
         for(int i = 0; i < this.getNumberShortestPathCar(); i++) {
             Car car = CarFactory.buildCar(Car.Strategy.SHORTEST_PATH);
             CarAgent carAgent = new CarAgent(car);
+            carAgents.add(carAgent);
             try {
                 mainContainer.acceptNewAgent(car.getName(), carAgent).start();
             } catch (StaleProxyException e) {
@@ -198,6 +200,7 @@ public class Launcher extends Repast3Launcher {
         for(int i = 0; i < this.getNumberMinIntersectionCar(); i++) {
             Car car = CarFactory.buildCar(Car.Strategy.MINIMUM_INTERSECTIONS);
             CarAgent carAgent = new CarAgent(car);
+            carAgents.add(carAgent);
             try {
                 mainContainer.acceptNewAgent(car.getName(), carAgent).start();
             } catch (StaleProxyException e) {
@@ -208,6 +211,7 @@ public class Launcher extends Repast3Launcher {
         for(int i = 0; i< this.getNumberPriorityCars(); i++) {
             PriorityCar car = CarFactory.buildPriorityCar();
             PriorityCarAgent carAgent = new PriorityCarAgent(car, graph);
+            priorityCarAgents.add(carAgent);
             try {
                 mainContainer.acceptNewAgent(car.getName(), carAgent).start();
             } catch (StaleProxyException e) {
@@ -297,6 +301,7 @@ public class Launcher extends Repast3Launcher {
         if(!runInBatchMode) {
             buildAndScheduleDisplayCity();
             buildAndScheduleDisplayCars();
+            buildAndScheduleDisplayNumberCars();
         }
     }
 
@@ -310,9 +315,39 @@ public class Launcher extends Repast3Launcher {
                 return cityAgent.getWeatherStation().getVelocity(cityAgent.getWeatherStation().getCurrentWeather());
             }
         });
-        plotCity.display();
 
+        plotCity.display();
         getSchedule().scheduleActionAtInterval(100, plotCity, "step", Schedule.LAST);
+    }
+
+    private void buildAndScheduleDisplayNumberCars() {
+        if (plotNumberCars != null) plotNumberCars.dispose();
+        plotNumberCars = new OpenSequenceGraph("Cars Information", this);
+        plotNumberCars.setAxisTitles("time", "Nº Cars");
+
+        plotNumberCars.addSequence("Number Stopped Cars", new Sequence() {
+            public double getSValue() {
+                return (int) carAgents.stream().filter(c -> c.getCar().getCurrentVelocity() == 0).count();
+
+            }
+        });
+
+        plotNumberCars.addSequence("Number of Cars in dest node", new Sequence() {
+            public double getSValue() {
+                return (int) carAgents.stream().filter(c -> c.getCar().getCurrentNode() == c.getCar().getDestNode()).count();
+
+            }
+        });
+
+        plotNumberCars.addSequence("Number of Priority Cars in dest node", new Sequence() {
+            public double getSValue() {
+                return (int) priorityCarAgents.stream().filter(c -> c.getCar().getCurrentNode() == c.getCar().getDestNode()).count();
+
+            }
+        });
+
+        plotNumberCars.display();
+        getSchedule().scheduleActionAtInterval(100, plotNumberCars, "step", Schedule.LAST);
     }
 
     private void buildAndScheduleDisplayCars() {
@@ -326,15 +361,7 @@ public class Launcher extends Repast3Launcher {
             }
         });
 
-        plotCars.addSequence("number Stopped cars", new Sequence() {
-            public double getSValue() {
-                return (int) carAgents.stream().filter(c -> c.getCar().getCurrentVelocity() == 0).count();
-
-            }
-        });
-
         plotCars.display();
-
         getSchedule().scheduleActionAtInterval(100, plotCars, "step", Schedule.LAST);
     }
 
