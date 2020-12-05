@@ -1,6 +1,7 @@
 package com.utils;
 
 import com.CityManager.Launcher;
+import com.Data.Car;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,6 +19,7 @@ public class Configuration {
     private String fileofCity = null;
     private String fileOfTypeWeather = null;
     private String fileOfWeather = null;
+    private String carToFollow = null;
 
 
     public Configuration(String[] args) {
@@ -57,6 +59,14 @@ public class Configuration {
                         case "weather" -> {
                             this.fileOfWeather = data[1];
                         }
+                        case "cartofollow" -> {
+                            String [] carInfo = data[1].split(" ");
+                            Arrays.parallelSetAll(carInfo, (i) -> carInfo[i].trim());
+                            if (carInfo.length != 4) {
+                                System.out.println("car to follow configuration invalid. Ignoring it");
+                            }
+                            this.carToFollow = String.join (" ",carInfo);
+                        }
                         default -> {
                             System.out.println("Unknown key in configuration file " + data[0]);
                         }
@@ -70,6 +80,14 @@ public class Configuration {
                 e.printStackTrace();
             }
         }
+    }
+
+    public String getCarToFollow() {
+        return carToFollow;
+    }
+
+    public void setCarToFollow(String carToFollow) {
+        this.carToFollow = carToFollow;
     }
 
     public String getFileOfWeather() {

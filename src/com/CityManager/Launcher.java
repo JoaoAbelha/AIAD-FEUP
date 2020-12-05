@@ -40,12 +40,13 @@ public class Launcher extends Repast3Launcher {
     private final int WIDTH = 200;
     private final int HEIGHT = 200;
     private DisplaySurface surf;
-    private Color LOW = Color.green;
-    private Color MEDIUM = Color.orange;
-    private Color HIGH = Color.red;
+    private final Color LOW = Color.green;
+    private final Color MEDIUM = Color.orange;
+    private final Color HIGH = Color.red;
     HashMap<Integer, DefaultDrawableNode> nodestoDraw = new HashMap<>();
 
 
+    private  CarAgent carAgentSpecial;
     private boolean runInBatchMode;
     private OpenSequenceGraph plotNumberCars;
     private OpenSequenceGraph plotCity;
@@ -54,6 +55,7 @@ public class Launcher extends Repast3Launcher {
     private OpenSequenceGraph plotNrIntersections;
     private OpenSequenceGraph plotCars;
     private OpenSequenceGraph plotDistanceTraveled;
+    private OpenSequenceGraph plotCarSpecial;
     private Configuration config;
     public static ArrayList<Integer> nodes;
     private ArrayList<CarAgent> carAgents = new ArrayList<>();
@@ -83,7 +85,15 @@ public class Launcher extends Repast3Launcher {
 
     @Override
     public String[] getInitParam() {
-        return new String[]{ "fileOfWeather","fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar"};
+        return new String[]{ "carToFollow" ,"fileOfWeather","fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar"};
+    }
+
+    public String getCarToFollow() {
+        return config.getCarToFollow();
+    }
+
+    public void setCarToFollow(String carToFollow) {
+        this.config.setCarToFollow(carToFollow);
     }
 
     //viz
@@ -190,6 +200,31 @@ public class Launcher extends Repast3Launcher {
         return node;
     }
 
+    private void createSpecialCar() {
+        String [] carToFollowSpecs = this.getCarToFollow().split(" ");
+        Car.Strategy st;
+        switch (carToFollowSpecs[2].toLowerCase()) {
+            case "dijkstra"-> {st = Car.Strategy.SHORTEST_PATH;}
+            case "minIntersection" -> {st = Car.Strategy.MINIMUM_INTERSECTIONS;}
+            case "shortestTime" -> {st = Car.Strategy.SHORTEST_TIME;}
+            default -> {
+                System.out.println("invalid strategy for the car. Not creating it");
+                return;
+
+            }
+
+        }
+        Car carSpecial = new Car("specialCar", Integer.parseInt(carToFollowSpecs[0]), Integer.parseInt(carToFollowSpecs[1]),
+                Float.parseFloat(carToFollowSpecs[3]) , st);
+        carAgentSpecial = new CarAgent(carSpecial);
+
+        try {
+            mainContainer.acceptNewAgent(carSpecial.getName(), carAgentSpecial).start();
+        } catch (StaleProxyException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void launchAgents() throws FileNotFoundException {
         // viz
         Random random = new Random(System.currentTimeMillis());
@@ -248,7 +283,10 @@ public class Launcher extends Repast3Launcher {
                     e.printStackTrace();
                 }
             }
+
         }
+
+        createSpecialCar();
 
         for(int i = 0; i < this.getNumberShortestTimeCar(); i++) {
             Car car = CarFactory.buildCar(Car.Strategy.SHORTEST_TIME);
@@ -315,12 +353,28 @@ public class Launcher extends Repast3Launcher {
             surf.display();
             getSchedule().scheduleActionAtInterval(500, surf, "updateDisplay", Schedule.LAST);
 
+            buildAndScheduleDisplayPlotCarSpecial();
+
         }
     }
-    private void printAndSchedule(double v, OpenSequenceGraph o , String s, ScheduleBase.Order order) {
 
+
+    private void printAndSchedule(double v, OpenSequenceGraph o , String s, ScheduleBase.Order order) {
         o.display();
         getSchedule().scheduleActionAtInterval(v, o, s, order);
+    }
+
+    private void buildAndScheduleDisplayPlotCarSpecial() {
+        if (plotCarSpecial != null) plotCarSpecial.dispose();
+        plotCarSpecial = new OpenSequenceGraph("Special car stats", this);
+        plotCarSpecial.addSequence("Current velocity", new Sequence() {
+            @Override
+            public double getSValue() {
+                return carAgentSpecial.getCar().getCurrentVelocity();
+            }
+        });
+        printAndSchedule(100, plotCarSpecial, "step", Schedule.LAST);
+
     }
 
     /**
@@ -335,6 +389,7 @@ public class Launcher extends Repast3Launcher {
                 return 0;
             };
         });
+
     }
 
     private void buildAndScheduleDisplayIntersections() {
