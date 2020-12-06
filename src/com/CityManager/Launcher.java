@@ -6,8 +6,11 @@ import com.Agent.PriorityCarAgent;
 import com.Agent.RoadAgent;
 import com.Data.*;
 import com.utils.*;
+import uchicago.src.sim.analysis.DataRecorder;
+import uchicago.src.sim.analysis.NumericDataSource;
 import uchicago.src.sim.analysis.OpenSequenceGraph;
 import uchicago.src.sim.analysis.Sequence;
+import uchicago.src.sim.engine.BasicAction;
 import uchicago.src.sim.engine.Schedule;
 import uchicago.src.sim.engine.ScheduleBase;
 import uchicago.src.sim.engine.SimInit;
@@ -356,18 +359,45 @@ public class Launcher extends Repast3Launcher {
 
     }
 
+    /**
+     * todo : se calhar por a guardar de mais em mais tempo
+     */
+    public void trackVelocity() {
+        DataRecorder recorder= new DataRecorder("./velocity.txt", this, "A comment");
+
+        recorder.addNumericDataSource("Avg velocity allowed", new NumericDataSource() {
+            @Override
+            public double execute() {
+                return cityAgent.getMaxVelocity().values().stream().mapToDouble(f->f).sum() / cityAgent.getMaxVelocity().entrySet().size();
+            }
+        });
+        getSchedule().scheduleActionBeginning(0, new BasicAction() {
+            public void execute() {
+                recorder.record();
+            }
+        });
+
+        getSchedule().scheduleActionAtEnd(recorder, "writeToFile");
+    }
+
+
     @Override
     public void begin() {
         super.begin();
-        if(!runInBatchMode) {
-           // buildAndScheduleDisplayVelocity();
-           // buildAndScheduleDisplayIntersections();
+        if(!runInBatchMode) { // why this?
+            trackVelocity();
+
+
+           // getSchedule().scheduleActionAtInterval(100, dt, "step", Schedule.LAST);
+
+        // buildAndScheduleDisplayVelocity();
+            // buildAndScheduleDisplayIntersections();
             //buildAndScheduleDisplayNumberCars();
             //buildAndScheduleDisplayDistanceTraveled(); //todo
-            buildAndScheduleDisplayPlotCarSpecial();
-            buildAndScheduleDisplayPlotPriorityCarSpecial();
-            buildAndScheduleDisplayDistanceTraveled();
-
+            //buildAndScheduleDisplayPlotCarSpecial();
+            //buildAndScheduleDisplayPlotPriorityCarSpecial();
+            //buildAndScheduleDisplayDistanceTraveled();
+            /*
             if (surf != null) surf.dispose();
             surf = new DisplaySurface(this, "City Display");
             registerDisplaySurface("City Display", surf);
@@ -377,8 +407,9 @@ public class Launcher extends Repast3Launcher {
             addSimEventListener(surf); // why this????
 
             surf.display();
-            getSchedule().scheduleActionAtInterval(50, surf, "updateDisplay", Schedule.LAST);
+            getSchedule().scheduleActionAtInterval(50, surf, "updateDisplay", Schedule.LAST);*/
         }
+
     }
 
 
