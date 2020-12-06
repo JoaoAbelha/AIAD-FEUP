@@ -110,6 +110,8 @@ public class Car {
     public void updateCurrentNode() {
         this.carPath.remove(0);
         this.currentNode = this.carPath.get(0);
+        this.distanceUntilNow += currentRoad.getDistance();
+        this.currentDistanceTravelled = 0;
         this.currentRoad = null;
     }
 
@@ -122,5 +124,6 @@ public class Car {
 
     public void addDistanceTravelled(double distanceTravelled) {
         this.currentDistanceTravelled += distanceTravelled;
+        this.currentDistanceTravelled = Math.min(currentRoad.getDistance(), this.currentDistanceTravelled);
     }
 }

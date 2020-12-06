@@ -9,6 +9,9 @@ import uchicago.src.sim.network.Node;
 public class EdgeDrawable extends DefaultEdge implements DrawableEdge {
     private Color color = Color.WHITE;
     private static final float DEFAULT_STRENGTH = 1;
+    private final Color LOW = Color.green;
+    private final Color MEDIUM = Color.orange;
+    private final Color HIGH = Color.red;
 
     public EdgeDrawable() { }
 
@@ -32,4 +35,13 @@ public class EdgeDrawable extends DefaultEdge implements DrawableEdge {
         g.drawDirectedLink(color, fromX, toX, fromY, toY);
     }
 
+    public void changeColor (double capacity_percentage) {
+        if (capacity_percentage <= 0.2) {
+            this.setColor(LOW);
+        } else if (capacity_percentage <= 0.85) {
+            this.setColor(MEDIUM);
+        } else {
+            this.setColor(HIGH);
+        }
+    }
 }

@@ -40,9 +40,6 @@ public class Launcher extends Repast3Launcher {
     private final int WIDTH = 200;
     private final int HEIGHT = 200;
     private DisplaySurface surf;
-    private final Color LOW = Color.green;
-    private final Color MEDIUM = Color.orange;
-    private final Color HIGH = Color.red;
     HashMap<Integer, DefaultDrawableNode> nodestoDraw = new HashMap<>();
 
 
@@ -71,7 +68,7 @@ public class Launcher extends Repast3Launcher {
         this.runInBatchMode = runMode;
         this.config = config;
     }
-
+/*
     public void changeColor (int src, int dest, int capacity_percentage) {
         this.nodestoDraw.get(src).removeEdgesTo(this.nodestoDraw.get(dest));
         EdgeDrawable edge = new EdgeDrawable(nodestoDraw.get(src), nodestoDraw.get(dest));
@@ -83,7 +80,7 @@ public class Launcher extends Repast3Launcher {
             edge.setColor(HIGH);
         }
         this.nodestoDraw.get(src).addOutEdge(edge);
-    }
+    }*/
 
     @Override
     public String[] getInitParam() {
@@ -276,18 +273,19 @@ public class Launcher extends Repast3Launcher {
         }
 
 
-
+        HashSet<Integer> nodesSet = new HashSet<>();
         for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : graph.getEdges().entrySet()) {
             Integer src = entry.getKey();
+            nodesSet.add(src);
             Map<Integer, RoadInfo> value = entry.getValue();
             nodestoDraw.putIfAbsent(src, generateNode( src + "", Color.WHITE,
-                    random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2)));
+                    random.nextInt(WIDTH),random.nextInt(HEIGHT)));
 
             for(Map.Entry<Integer,RoadInfo> adj : value.entrySet()) {
                 Integer dest= adj.getKey();
-                RoadAgent roadAgent = new RoadAgent(adj.getValue());
+                nodesSet.add(dest);
                 nodestoDraw.putIfAbsent(dest,generateNode( dest + "", Color.WHITE,
-                        random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2)));
+                        random.nextInt(WIDTH),random.nextInt(HEIGHT)));
 
                 DefaultDrawableNode srcNode = nodestoDraw.get(src);
                 DefaultDrawableNode destNode = nodestoDraw.get(dest);
@@ -296,8 +294,9 @@ public class Launcher extends Repast3Launcher {
                 nodesViz.add(destNode);
 
                 EdgeDrawable edge = new EdgeDrawable(srcNode,  destNode);
-                edge.setColor(Color.ORANGE);
+                edge.setColor(Color.WHITE);
                 srcNode.addOutEdge(edge);
+                RoadAgent roadAgent = new RoadAgent(adj.getValue(), edge);
 
                 try {
                     mainContainer.acceptNewAgent("road" + src + "-" + dest, roadAgent).start();
@@ -305,9 +304,9 @@ public class Launcher extends Repast3Launcher {
                     e.printStackTrace();
                 }
             }
-
         }
 
+        Launcher.nodes = new ArrayList<>(nodesSet);
         createSpecialCar();
         createPriorityCarSpecial(graph);
 
@@ -365,6 +364,10 @@ public class Launcher extends Repast3Launcher {
            // buildAndScheduleDisplayIntersections();
             //buildAndScheduleDisplayNumberCars();
             //buildAndScheduleDisplayDistanceTraveled(); //todo
+            buildAndScheduleDisplayPlotCarSpecial();
+            buildAndScheduleDisplayPlotPriorityCarSpecial();
+            buildAndScheduleDisplayDistanceTraveled();
+
             if (surf != null) surf.dispose();
             surf = new DisplaySurface(this, "City Display");
             registerDisplaySurface("City Display", surf);
@@ -374,11 +377,7 @@ public class Launcher extends Repast3Launcher {
             addSimEventListener(surf); // why this????
 
             surf.display();
-            getSchedule().scheduleActionAtInterval(500, surf, "updateDisplay", Schedule.LAST);
-
-            buildAndScheduleDisplayPlotCarSpecial();
-            buildAndScheduleDisplayPlotPriorityCarSpecial();
-
+            getSchedule().scheduleActionAtInterval(50, surf, "updateDisplay", Schedule.LAST);
         }
     }
 
@@ -420,13 +419,29 @@ public class Launcher extends Repast3Launcher {
     private void buildAndScheduleDisplayDistanceTraveled() {
         if (plotDistanceTraveled != null) plotDistanceTraveled.dispose();
         plotDistanceTraveled = new OpenSequenceGraph("Avg distance travelled", this);
-        plotDistanceTraveled.addSequence("Min Intersection strategy", new Sequence() {
+        plotDistanceTraveled.addSequence("Min intersection strategy", new Sequence() {
             @Override
             public double getSValue() {
-                return 0;
-            };
+                return carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).mapToDouble(f ->f.getCar().getDistanceUntilNow() + f.getCar().getCurrentDistanceTravelled()).sum()
+                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).count();
+            }
+        });
+        plotDistanceTraveled.addSequence("Min distance strategy", new Sequence() {
+            @Override
+            public double getSValue() {
+                return carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).mapToDouble(f ->f.getCar().getDistanceUntilNow() + f.getCar().getCurrentDistanceTravelled()).sum()
+                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).count();
+            }
         });
 
+        plotDistanceTraveled.addSequence("Min time strategy", new Sequence() {
+            @Override
+            public double getSValue() {
+                return carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).mapToDouble(f ->f.getCar().getDistanceUntilNow() + f.getCar().getCurrentDistanceTravelled()).sum()
+                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).count();
+            }
+        });
+        printAndSchedule(100, plotDistanceTraveled, "step", Schedule.LAST);
     }
 
     private void buildAndScheduleDisplayIntersections() {
@@ -451,8 +466,8 @@ public class Launcher extends Repast3Launcher {
         plotNrIntersections.addSequence("Min time strategy", new Sequence() {
             @Override
             public double getSValue() {
-                return (double )carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).mapToInt(f ->f.getCar().getNumberIntersections()).sum()
-                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).count();
+                return (double )carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).mapToInt(f ->f.getCar().getNumberIntersections()).sum()
+                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).count();
             }
         });
 

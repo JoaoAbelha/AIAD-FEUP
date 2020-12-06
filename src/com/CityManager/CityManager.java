@@ -79,12 +79,12 @@ public class CityManager extends AgentCreator {
 
     @Override
     void createAgentRoads() {
-        for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : this.graph.getEdges().entrySet()) {
+        /*for (Map.Entry<Integer, Map<Integer, RoadInfo>> entry : this.graph.getEdges().entrySet()) {
             Integer src = entry.getKey();
             Map<Integer, RoadInfo> value = entry.getValue();
             for(Map.Entry<Integer,RoadInfo> adj : value.entrySet()) {
                 Integer dest= adj.getKey();
-                RoadAgent roadAgent = new RoadAgent(adj.getValue());
+                RoadAgent roadAgent = new RoadAgent(adj.getValue(), edge);
                 try {
                     this.agentController = this.containerController.acceptNewAgent("road" + src + "-" + dest, roadAgent);
 
@@ -93,7 +93,7 @@ public class CityManager extends AgentCreator {
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
     }
 
     @Override

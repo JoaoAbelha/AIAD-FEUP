@@ -4,6 +4,7 @@ import com.Behaviour.*;
 import com.Data.Car;
 import com.Data.RoadInfo;
 import com.Manager.VelocitySubscriptionManager;
+import com.utils.EdgeDrawable;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -25,13 +26,14 @@ public class RoadAgent  extends AgentRegister {
     private double spaceOccupied; // sum of the length of current cars
     private final float PERCENTAGE_SPACE_BETWEEN_CARS_IN_A_ROAD = 15;
     VelocitySubscriptionManager manager;
+    EdgeDrawable edgeDrawable;
 
-
-    public RoadAgent(RoadInfo roadInfo) {
+    public RoadAgent(RoadInfo roadInfo, EdgeDrawable edge) {
         this.roadInfo = roadInfo;
         this.currentCars = new HashSet<>();
         this.spaceOccupied = 0;
         this.manager = new VelocitySubscriptionManager();
+        this.edgeDrawable = edge;
         this.setupLogger();
     }
 
@@ -115,5 +117,9 @@ public class RoadAgent  extends AgentRegister {
             this.currentCars.remove(carName);
             this.spaceOccupied -= length;
         }
+
+        double penalty = this.spaceOccupied / this.getRoadInfo().getDistance();
+        System.out.println(penalty);
+        edgeDrawable.changeColor(penalty);
     }
 }
