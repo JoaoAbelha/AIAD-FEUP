@@ -21,4 +21,5 @@ AIAD-FEUP.iml
 
 logs/
 velocity*.csv
+roadOccupation*.csv
 

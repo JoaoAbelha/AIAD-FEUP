@@ -31,6 +31,8 @@ import uchicago.src.sim.network.DefaultDrawableNode;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.List;
 
@@ -64,7 +66,7 @@ public class Launcher extends Repast3Launcher {
     public static ArrayList<Integer> nodes; // bug in here
     private ArrayList<CarAgent> carAgents = new ArrayList<>();
     private ArrayList<PriorityCarAgent> priorityCarAgents = new ArrayList<>();
-    private ArrayList<RoadAgent> roadAgents;
+    private ArrayList<RoadAgent> roadAgents = new ArrayList<>();
     private CityAgent cityAgent;
     private Graph graph;
 
@@ -326,6 +328,7 @@ public class Launcher extends Repast3Launcher {
                 edge.setColor(Color.WHITE);
                 srcNode.addOutEdge(edge);
                 RoadAgent roadAgent = new RoadAgent(adj.getValue(), edge);
+                roadAgents.add(roadAgent);
 
                 try {
                     mainContainer.acceptNewAgent("road" + src + "-" + dest, roadAgent).start();
@@ -360,6 +363,14 @@ public class Launcher extends Repast3Launcher {
         }
     }
 
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
     /**
      * todo : se calhar por a guardar de mais em mais tempo
      */
@@ -367,19 +378,44 @@ public class Launcher extends Repast3Launcher {
         DataRecorder recorder= new DataRecorder("./velocity.csv", this, "A comment");
         recorder.setDelimeter(";");
 
-        recorder.addNumericDataSource("Avg velocity allowed", new NumericDataSource() {
-            @Override
-            public double execute() {
-                return cityAgent.getMaxVelocity().values().stream().mapToDouble(f->f).sum() / cityAgent.getMaxVelocity().entrySet().size();
-            }
-        });
+        recorder.addNumericDataSource("Avg velocity allowed",
+                () -> Launcher.round(cityAgent.getMaxVelocity().values().stream().mapToDouble(f->f).sum() / cityAgent.getMaxVelocity().entrySet().size(), 3));
+
+        recorder.addNumericDataSource("Avg velocity of normal cars",
+                () -> Launcher.round( carAgents.stream().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum() / carAgents.size(), 3));
+
+        recorder.addNumericDataSource("Avg velocity of priority cars",
+                () -> Launcher.round(priorityCarAgents.stream().mapToDouble(f ->f.getCar().getCurrentVelocity()).sum() / priorityCarAgents.size(), 3));
+
+        recorder.addNumericDataSource("Weather factor velocity",
+                () -> Launcher.round(cityAgent.getWeatherStation().getVelocity(cityAgent.getWeatherStation().getCurrentWeather()), 3));
+
         getSchedule().scheduleActionBeginning(0, new BasicAction() {
             public void execute() {
                 recorder.record();
             }
         });
-
         getSchedule().scheduleActionAtEnd(recorder, "writeToFile");
+    }
+
+    public void trackOccupationOfRoads() {
+        DataRecorder recorder= new DataRecorder("./roadOccupation.csv", this);
+        recorder.setDelimeter(";");
+        recorder.addNumericDataSource("AvgOccupancy",
+                () -> Launcher.round(
+                        roadAgents.stream().mapToDouble(f->f.getSpaceOccupied()/f.getRoadInfo().getDistance()).sum() / roadAgents.size()
+                        , 3));
+
+        getSchedule().scheduleActionBeginning(0, new BasicAction() {
+            public void execute() {
+                recorder.record();
+            }
+        });
+        getSchedule().scheduleActionAtEnd(recorder, "writeToFile");
+
+
+
+
     }
 
 
@@ -388,7 +424,7 @@ public class Launcher extends Repast3Launcher {
         super.begin();
         if(!runInBatchMode) { // why this?
             trackVelocity();
-
+            trackOccupationOfRoads();
 
            // getSchedule().scheduleActionAtInterval(100, dt, "step", Schedule.LAST);
 
@@ -556,20 +592,7 @@ public class Launcher extends Repast3Launcher {
        printAndSchedule(100, plotVelocity, "step", Schedule.LAST);
     }
 
-    private void buildAndScheduleDisplayCity() {
-        if (plotCity != null) plotCity.dispose();
-        plotCity = new OpenSequenceGraph("City", this);
-        plotCity.setAxisTitles("time", "weather");
 
-
-        plotCity.addSequence("Percentage of max velocity", new Sequence() {
-            public double getSValue() {
-                return cityAgent.getWeatherStation().getVelocity(cityAgent.getWeatherStation().getCurrentWeather());
-            }
-        });
-
-        printAndSchedule(100, plotCity, "step", Schedule.LAST);
-    }
 
     private void buildAndScheduleDisplayNumberCars() {
         if (plotNumberCars != null) plotNumberCars.dispose();
