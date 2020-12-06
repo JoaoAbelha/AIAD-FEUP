@@ -3,8 +3,11 @@ numberShortestTimeCar: 1
 numberShortestPathCar: 1
 numberMinIntersectionCar:0
 numberPriorityCar: 2
+cars: exp1/car.txt
+priorityCars: exp1/priorityCars.txt
 graph: exp1/city.txt
 typeWeather: exp1/typeWeather.txt
 weather: exp1/weather.txt
 CarToFollow: 1 2 dijkstra 4.85
 PriorityCarToFollow: 1 2
+tickIntervalMakeCars: 500

@@ -1,16 +1,11 @@
 package com.utils;
 
-import com.CityManager.Launcher;
-import com.Data.Car;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class Configuration {
-
     private boolean batchMode = true;
     private int priorityCars = 1;
     private int numberShortestTimeCar =  1;
@@ -21,7 +16,9 @@ public class Configuration {
     private String fileOfWeather = null;
     private String carToFollow = null;
     private String prioritycarToFollow = null;
-
+    private String priorityCarsFile = null;
+    private String cars = null;
+    private int tickInterval = 500;
 
     public Configuration(String[] args) {
         if (args.length == 0) {
@@ -60,6 +57,12 @@ public class Configuration {
                         case "weather" -> {
                             this.fileOfWeather = data[1];
                         }
+                        case "cars" -> {
+                            this.cars = data[1];
+                        }
+                        case "prioritycars" -> {
+                            this.priorityCarsFile = data[1];
+                        }
                         case "cartofollow" -> {
                             String [] carInfo = data[1].split(" ");
                             Arrays.parallelSetAll(carInfo, (i) -> carInfo[i].trim());
@@ -77,6 +80,9 @@ public class Configuration {
                                 break;
                             }
                             this.prioritycarToFollow = String.join (" ",carInfo);
+                        }
+                        case "tickintervalmakecars" -> {
+                            this.tickInterval = Integer.parseInt(data[1]);
                         }
                         default -> {
                             System.out.println("Unknown key in configuration file " + data[0]);
@@ -160,10 +166,10 @@ public class Configuration {
     public void setBatchMode(boolean batchMode) {
         this.batchMode = batchMode;
     }
+
     public boolean getBatchMode() {
         return batchMode;
     }
-
 
     public void setNumberPriorityCars(int cars) {
         this.priorityCars = cars;
@@ -171,5 +177,29 @@ public class Configuration {
 
     public int getPriorityNumberCars() {
         return priorityCars;
+    }
+
+    public int getTickInterval() {
+        return tickInterval;
+    }
+
+    public void setTickInterval(int tickInterval) {
+        this.tickInterval = tickInterval;
+    }
+
+    public String getCars() {
+        return cars;
+    }
+
+    public void setCars(String cars) {
+        this.cars = cars;
+    }
+
+    public String getPriorityCars() {
+        return priorityCarsFile;
+    }
+
+    public void setPriorityCars(String fileOfPriorityCars) {
+        this.priorityCarsFile = fileOfPriorityCars;
     }
 }

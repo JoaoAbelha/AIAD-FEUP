@@ -1,5 +1,7 @@
 package com.CityManager;
 
+import com.Actions.CreateCars;
+import com.Actions.CreatePriorityCars;
 import com.Agent.CarAgent;
 import com.Agent.CityAgent;
 import com.Agent.PriorityCarAgent;
@@ -10,7 +12,7 @@ import uchicago.src.sim.analysis.DataRecorder;
 import uchicago.src.sim.analysis.NumericDataSource;
 import uchicago.src.sim.analysis.OpenSequenceGraph;
 import uchicago.src.sim.analysis.Sequence;
-import uchicago.src.sim.engine.BasicAction;
+import uchicago.src.sim.engine.BasicAction;import uchicago.src.sim.engine.ActionGroup;
 import uchicago.src.sim.engine.Schedule;
 import uchicago.src.sim.engine.ScheduleBase;
 import uchicago.src.sim.engine.SimInit;
@@ -43,10 +45,10 @@ public class Launcher extends Repast3Launcher {
     private final int WIDTH = 200;
     private final int HEIGHT = 200;
     private DisplaySurface surf;
-    HashMap<Integer, DefaultDrawableNode> nodestoDraw = new HashMap<>();
+    private static HashMap<Integer, DefaultDrawableNode> nodestoDraw = new HashMap<>();
 
 
-    private  CarAgent carAgentSpecial;
+    private CarAgent carAgentSpecial;
     private PriorityCarAgent priorityCarAgentSpecial;
     private boolean runInBatchMode;
     private OpenSequenceGraph plotNumberCars;
@@ -64,6 +66,7 @@ public class Launcher extends Repast3Launcher {
     private ArrayList<PriorityCarAgent> priorityCarAgents = new ArrayList<>();
     private ArrayList<RoadAgent> roadAgents;
     private CityAgent cityAgent;
+    private Graph graph;
 
     public Launcher(String arg, Configuration config, boolean runMode) {
         super();
@@ -71,23 +74,10 @@ public class Launcher extends Repast3Launcher {
         this.runInBatchMode = runMode;
         this.config = config;
     }
-/*
-    public void changeColor (int src, int dest, int capacity_percentage) {
-        this.nodestoDraw.get(src).removeEdgesTo(this.nodestoDraw.get(dest));
-        EdgeDrawable edge = new EdgeDrawable(nodestoDraw.get(src), nodestoDraw.get(dest));
-        if (capacity_percentage <= 20) {
-            edge.setColor(LOW);
-        } else if (capacity_percentage <= 85) {
-            edge.setColor(MEDIUM);
-        } else {
-            edge.setColor(HIGH);
-        }
-        this.nodestoDraw.get(src).addOutEdge(edge);
-    }*/
 
     @Override
     public String[] getInitParam() {
-        return new String[]{"priorityCarToFollow" ,"carToFollow" ,"fileOfWeather","fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar"};
+        return new String[]{"priorityCarToFollow" ,"carToFollow", "fileOfCars", "fileOfPriorityCars", "fileOfWeather","fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar", "tickIntervalMakeCars"};
     }
 
     public String getPriorityCarToFollow() {
@@ -97,7 +87,6 @@ public class Launcher extends Repast3Launcher {
     public void setPriorityCarToFollow(String prioritycarToFollow) {
         this.config.setPrioritycarToFollow(prioritycarToFollow);
     }
-
 
     public String getCarToFollow() {
         return config.getCarToFollow();
@@ -115,6 +104,22 @@ public class Launcher extends Repast3Launcher {
             }
         }
         return null;
+    }
+
+    public String getFileOfCars() {
+        return config.getCars();
+    }
+
+    public void setFileOfCars(String fileOfCars) {
+        this.config.setCars(fileOfCars);
+    }
+
+    public String getFileOfPriorityCars() {
+        return config.getPriorityCars();
+    }
+
+    public void setFileOfPriorityCars(String fileOfPriorityCars) {
+        this.config.setPriorityCars(fileOfPriorityCars);
     }
 
     public String getFileOfWeather() {
@@ -174,6 +179,30 @@ public class Launcher extends Repast3Launcher {
         this.config.setNumberShortestPathCar(numberShortestPathCar);
     }
 
+    public int getTickIntervalMakeCars() {
+        return config.getTickInterval();
+    }
+
+    public void setTickIntervalMakeCars(int tickInterval) {
+        this.config.setTickInterval(tickInterval);
+    }
+
+    public void addCarAgent(CarAgent carAgent) {
+        this.carAgents.add(carAgent);
+    }
+
+    public void addPriorityCarAgent(PriorityCarAgent carAgent) {
+        this.priorityCarAgents.add(carAgent);
+    }
+
+    public ContainerController getMainContainer() {
+        return mainContainer;
+    }
+
+    public Graph getGraph() {
+        return graph;
+    }
+
     @Override
     public String getName() {
         return "Traffic manager city";
@@ -189,15 +218,7 @@ public class Launcher extends Repast3Launcher {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        /*
-        if(SEPARATE_CONTAINERS) {
-            Profile p2 = new ProfileImpl();
-            agentContainer = rt.createAgentContainer(p2);
-        } else {
-            agentContainer = mainContainer;
-        }*/
     }
-
 
     private DefaultDrawableNode generateNode(String label, Color color, int x, int y) {
         OvalNetworkItem oval = new OvalNetworkItem(x,y);
@@ -221,10 +242,9 @@ public class Launcher extends Repast3Launcher {
             default -> {
                 System.out.println("invalid strategy for the car. Not creating it");
                 return;
-
             }
-
         }
+
         Car carSpecial = new Car("specialCar", Integer.parseInt(carToFollowSpecs[0]), Integer.parseInt(carToFollowSpecs[1]),
                 Float.parseFloat(carToFollowSpecs[3]) , st);
         carAgentSpecial = new CarAgent(carSpecial);
@@ -252,11 +272,18 @@ public class Launcher extends Repast3Launcher {
         Random random = new Random(System.currentTimeMillis());
         nodesViz = new ArrayList<DefaultDrawableNode>();
 
-
+        // read input
         GraphReader gr = new GraphReader(this.getFileOfCity());
         gr.readFile();
-        Graph graph = gr.getInfo();
-        Launcher.nodes = new ArrayList<>(graph.getEdges().keySet()); // todo: isto pode nao dar os nodes todos
+        graph = gr.getInfo();
+
+        CarReader r = new CarReader(this.getFileOfCars());
+        r.readFile();
+        HashSet<Car> cars = r.getInfo();
+
+        PriorityCarReader pr = new PriorityCarReader(this.getFileOfPriorityCars());
+        pr.readFile();
+        HashSet<PriorityCar> priorityCars = pr.getInfo();
 
         TypeWeatherReader twr = new TypeWeatherReader(this.getFileOfTypeWeather());
         twr.readFile();
@@ -270,7 +297,6 @@ public class Launcher extends Repast3Launcher {
         cityAgent = new CityAgent(weatherStation, graph);
         try {
             mainContainer.acceptNewAgent("city", cityAgent).start();
-
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }
@@ -313,50 +339,25 @@ public class Launcher extends Repast3Launcher {
         createSpecialCar();
         createPriorityCarSpecial(graph);
 
-        for(int i = 0; i < this.getNumberShortestTimeCar(); i++) {
-            Car car = CarFactory.buildCar(Car.Strategy.SHORTEST_TIME);
+        for(Car car : cars) {
             CarAgent carAgent = new CarAgent(car);
-            carAgents.add(carAgent);
             try {
                 mainContainer.acceptNewAgent(car.getName(), carAgent).start();
+                carAgents.add(carAgent);
             } catch (StaleProxyException e) {
                 e.printStackTrace();
             }
         }
 
-        for(int i = 0; i < this.getNumberShortestPathCar(); i++) {
-            Car car = CarFactory.buildCar(Car.Strategy.SHORTEST_PATH);
-            CarAgent carAgent = new CarAgent(car);
-            carAgents.add(carAgent);
+        for(PriorityCar car : priorityCars) {
+            PriorityCarAgent carAgent = new PriorityCarAgent(car, this.graph);
             try {
                 mainContainer.acceptNewAgent(car.getName(), carAgent).start();
+                priorityCarAgents.add(carAgent);
             } catch (StaleProxyException e) {
                 e.printStackTrace();
             }
         }
-
-        for(int i = 0; i < this.getNumberMinIntersectionCar(); i++) {
-            Car car = CarFactory.buildCar(Car.Strategy.MINIMUM_INTERSECTIONS);
-            CarAgent carAgent = new CarAgent(car);
-            carAgents.add(carAgent);
-            try {
-                mainContainer.acceptNewAgent(car.getName(), carAgent).start();
-            } catch (StaleProxyException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for(int i = 0; i< this.getNumberPriorityCars(); i++) {
-            PriorityCar car = CarFactory.buildPriorityCar();
-            PriorityCarAgent carAgent = new PriorityCarAgent(car, graph);
-            priorityCarAgents.add(carAgent);
-            try {
-                mainContainer.acceptNewAgent(car.getName(), carAgent).start();
-            } catch (StaleProxyException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
     /**
@@ -398,7 +399,7 @@ public class Launcher extends Repast3Launcher {
             //buildAndScheduleDisplayPlotCarSpecial();
             //buildAndScheduleDisplayPlotPriorityCarSpecial();
             //buildAndScheduleDisplayDistanceTraveled();
-            /*
+            
             if (surf != null) surf.dispose();
             surf = new DisplaySurface(this, "City Display");
             registerDisplaySurface("City Display", surf);
@@ -407,16 +408,43 @@ public class Launcher extends Repast3Launcher {
             surf.addZoomable(display);
             addSimEventListener(surf); // why this????
 
-            surf.display();
-            getSchedule().scheduleActionAtInterval(50, surf, "updateDisplay", Schedule.LAST);*/
+            surf.display(); 
+            getSchedule().scheduleActionAtInterval(25, surf, "updateDisplay", Schedule.LAST);
         }
 
+        buildSchedule();
     }
-
 
     private void printAndSchedule(double v, OpenSequenceGraph o , String s, ScheduleBase.Order order) {
         o.display();
         getSchedule().scheduleActionAtInterval(v, o, s, order);
+    }
+
+    private void buildSchedule() {
+        CreateCars createCars = new CreateCars(this.getNumberMinIntersectionCar(), this.getNumberShortestTimeCar(), this.getNumberShortestPathCar(), this);
+        CreatePriorityCars createPriorityCars = new CreatePriorityCars(this.getNumberPriorityCars(), this);
+        boolean schedule = false;
+
+        ActionGroup group = new ActionGroup(ActionGroup.SEQUENTIAL);
+
+        if(this.getNumberMinIntersectionCar() + this.getNumberShortestPathCar() + this.getNumberShortestTimeCar() != 0) {
+            group.addAction(createCars);
+            schedule = true;
+        }
+
+        if(this.getNumberPriorityCars() != 0) {
+            group.addAction(createPriorityCars);
+            schedule = true;
+        }
+
+        if(this.getTickIntervalMakeCars() < 200) {
+            System.out.println("Please insert a tick interval greater or equal than 200. Using default 200 ticks interval.");
+            this.setTickIntervalMakeCars(200);
+        }
+
+        if(schedule) {
+            getSchedule().scheduleActionAtInterval(this.getTickIntervalMakeCars(), group);
+        }
     }
 
     private void buildAndScheduleDisplayPlotCarSpecial() {
@@ -429,7 +457,6 @@ public class Launcher extends Repast3Launcher {
             }
         });
         printAndSchedule(100, plotCarSpecial, "step", Schedule.LAST);
-
     }
 
     private void buildAndScheduleDisplayPlotPriorityCarSpecial() {
@@ -441,8 +468,8 @@ public class Launcher extends Repast3Launcher {
                 return priorityCarAgentSpecial.getCar().getCurrentVelocity();
             }
         });
-        printAndSchedule(100, plotPriorityCarSpecial, "step", Schedule.LAST);
 
+        printAndSchedule(100, plotPriorityCarSpecial, "step", Schedule.LAST);
     }
 
     /**
@@ -473,6 +500,7 @@ public class Launcher extends Repast3Launcher {
                         / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).count();
             }
         });
+
         printAndSchedule(100, plotDistanceTraveled, "step", Schedule.LAST);
     }
 
@@ -504,7 +532,6 @@ public class Launcher extends Repast3Launcher {
         });
 
         printAndSchedule(100, plotNrIntersections, "step", Schedule.LAST);
-
     }
 
 
@@ -525,8 +552,8 @@ public class Launcher extends Repast3Launcher {
                 return priorityCarAgents.stream().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum()/priorityCarAgents.size();
             }
         });
-       printAndSchedule(100, plotVelocity, "step", Schedule.LAST);
 
+       printAndSchedule(100, plotVelocity, "step", Schedule.LAST);
     }
 
     private void buildAndScheduleDisplayCity() {
@@ -622,7 +649,5 @@ public class Launcher extends Repast3Launcher {
         init.setNumRuns(1);   // works only in batch mode
         init.loadModel(new Launcher(args[0], config, config.getBatchMode()), null, false);
     }
-
-
 }
 
