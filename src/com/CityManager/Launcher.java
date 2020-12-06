@@ -422,19 +422,9 @@ public class Launcher extends Repast3Launcher {
     @Override
     public void begin() {
         super.begin();
-        if(!runInBatchMode) { // why this?
+        if(!runInBatchMode) {
             trackVelocity();
             trackOccupationOfRoads();
-
-           // getSchedule().scheduleActionAtInterval(100, dt, "step", Schedule.LAST);
-
-        // buildAndScheduleDisplayVelocity();
-            // buildAndScheduleDisplayIntersections();
-            //buildAndScheduleDisplayNumberCars();
-            //buildAndScheduleDisplayDistanceTraveled(); //todo
-            //buildAndScheduleDisplayPlotCarSpecial();
-            //buildAndScheduleDisplayPlotPriorityCarSpecial();
-            //buildAndScheduleDisplayDistanceTraveled();
             
             if (surf != null) surf.dispose();
             surf = new DisplaySurface(this, "City Display");
@@ -446,6 +436,12 @@ public class Launcher extends Repast3Launcher {
 
             surf.display(); 
             getSchedule().scheduleActionAtInterval(25, surf, "updateDisplay", Schedule.LAST);
+
+            buildAndScheduleDisplayDistanceTraveled();
+            buildAndScheduleDisplayIntersections();
+            buildAndScheduleDisplayNumberCars();
+            buildAndScheduleDisplayPlotCarSpecial();
+            buildAndScheduleDisplayPlotPriorityCarSpecial();
         }
 
         buildSchedule();
@@ -492,6 +488,20 @@ public class Launcher extends Repast3Launcher {
                 return carAgentSpecial.getCar().getCurrentVelocity();
             }
         });
+        plotCarSpecial.addSequence("Distance Travelled", new Sequence() {
+            @Override
+            public double getSValue() {
+                return carAgentSpecial.getCar().getDistanceUntilNow() + carAgentSpecial.getCar().getCurrentDistanceTravelled();
+            }
+        });
+
+        plotCarSpecial.addSequence("Intersections", new Sequence() {
+            @Override
+            public double getSValue() {
+                return carAgentSpecial.getCar().getNumberIntersections();
+            }
+        });
+
         printAndSchedule(100, plotCarSpecial, "step", Schedule.LAST);
     }
 
@@ -629,8 +639,27 @@ public class Launcher extends Repast3Launcher {
             }
         });
 
-        plotNumberCars.display();
-        getSchedule().scheduleActionAtInterval(100, plotNumberCars, "step", Schedule.LAST);
+        plotNumberCars.addSequence("Min intersection strategy", new Sequence() {
+            @Override
+            public double getSValue() {
+                return carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS) && c.getCar().getCurrentNode() == c.getCar().getDestNode()).count();
+            }
+        });
+        plotNumberCars.addSequence("Min distance strategy", new Sequence() {
+            @Override
+            public double getSValue() {
+                return carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH) && c.getCar().getCurrentNode() == c.getCar().getDestNode()).count();
+            }
+        });
+
+        plotNumberCars.addSequence("Min time strategy", new Sequence() {
+            @Override
+            public double getSValue() {
+                return carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME) && c.getCar().getCurrentNode() == c.getCar().getDestNode()).count();
+            }
+        });
+
+        printAndSchedule(100, plotNumberCars, "step", Schedule.LAST);
     }
 
 

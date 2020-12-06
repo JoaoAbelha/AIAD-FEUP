@@ -119,7 +119,6 @@ public class RoadAgent  extends AgentRegister {
         }
 
         double penalty = this.spaceOccupied / this.getRoadInfo().getDistance();
-        System.out.println(penalty);
         edgeDrawable.changeColor(penalty);
     }
 }
