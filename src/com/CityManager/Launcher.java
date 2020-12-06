@@ -379,13 +379,13 @@ public class Launcher extends Repast3Launcher {
         recorder.setDelimeter(";");
 
         recorder.addNumericDataSource("Avg velocity allowed",
-                () -> Launcher.round(cityAgent.getMaxVelocity().values().stream().mapToDouble(f->f).sum() / cityAgent.getMaxVelocity().entrySet().size(), 3));
+                () -> cityAgent.getMaxVelocity().entrySet().size() > 0 ? Launcher.round(cityAgent.getMaxVelocity().values().stream().mapToDouble(f->f).sum() / cityAgent.getMaxVelocity().entrySet().size(), 3) : 0);
 
         recorder.addNumericDataSource("Avg velocity of normal cars",
-                () -> Launcher.round( carAgents.stream().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum() / carAgents.size(), 3));
+                () -> carAgents.size() > 0 ? Launcher.round( carAgents.stream().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum() / carAgents.size(), 3) : 0);
 
         recorder.addNumericDataSource("Avg velocity of priority cars",
-                () -> Launcher.round(priorityCarAgents.stream().mapToDouble(f ->f.getCar().getCurrentVelocity()).sum() / priorityCarAgents.size(), 3));
+                () -> priorityCarAgents.size() > 0 ? Launcher.round(priorityCarAgents.stream().mapToDouble(f ->f.getCar().getCurrentVelocity()).sum() / priorityCarAgents.size(), 3) : 0);
 
         recorder.addNumericDataSource("Weather factor velocity",
                 () -> Launcher.round(cityAgent.getWeatherStation().getVelocity(cityAgent.getWeatherStation().getCurrentWeather()), 3));
@@ -402,9 +402,9 @@ public class Launcher extends Repast3Launcher {
         DataRecorder recorder= new DataRecorder("./roadOccupation.csv", this);
         recorder.setDelimeter(";");
         recorder.addNumericDataSource("AvgOccupancy",
-                () -> Launcher.round(
+                () -> roadAgents.size() > 0 ? Launcher.round(
                         roadAgents.stream().mapToDouble(f->f.getSpaceOccupied()/f.getRoadInfo().getDistance()).sum() / roadAgents.size()
-                        , 3));
+                        , 3) : 0);
 
         getSchedule().scheduleActionBeginning(0, new BasicAction() {
             public void execute() {
@@ -527,23 +527,35 @@ public class Launcher extends Repast3Launcher {
         plotDistanceTraveled.addSequence("Min intersection strategy", new Sequence() {
             @Override
             public double getSValue() {
-                return carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).mapToDouble(f ->f.getCar().getDistanceUntilNow() + f.getCar().getCurrentDistanceTravelled()).sum()
-                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).count();
+                double value = 0d;
+                if(carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).count() > 0) {
+                    value = carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).mapToDouble(f ->f.getCar().getDistanceUntilNow() + f.getCar().getCurrentDistanceTravelled()).sum()
+                            / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).count();
+                }
+                return value;
             }
         });
         plotDistanceTraveled.addSequence("Min distance strategy", new Sequence() {
             @Override
             public double getSValue() {
-                return carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).mapToDouble(f ->f.getCar().getDistanceUntilNow() + f.getCar().getCurrentDistanceTravelled()).sum()
-                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).count();
+                double value = 0d;
+                if(carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).count() > 0) {
+                    value = carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).mapToDouble(f ->f.getCar().getDistanceUntilNow() + f.getCar().getCurrentDistanceTravelled()).sum()
+                            / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).count();
+                }
+                return value;
             }
         });
 
         plotDistanceTraveled.addSequence("Min time strategy", new Sequence() {
             @Override
             public double getSValue() {
-                return carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).mapToDouble(f ->f.getCar().getDistanceUntilNow() + f.getCar().getCurrentDistanceTravelled()).sum()
-                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).count();
+                double value = 0d;
+                if(carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).count() > 0) {
+                    value = carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).mapToDouble(f ->f.getCar().getDistanceUntilNow() + f.getCar().getCurrentDistanceTravelled()).sum()
+                            / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).count();
+                }
+                return value;
             }
         });
 
@@ -557,23 +569,35 @@ public class Launcher extends Repast3Launcher {
         plotNrIntersections.addSequence("Min intersection strategy", new Sequence() {
             @Override
             public double getSValue() {
-                return (double )carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).mapToInt(f ->f.getCar().getNumberIntersections()).sum()
-                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).count();
+                double value = 0d;
+                if(carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).count() > 0) {
+                    value = (double )carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).mapToInt(f ->f.getCar().getNumberIntersections()).sum()
+                            / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.MINIMUM_INTERSECTIONS)).count();
+                }
+                return value;
             }
         });
         plotNrIntersections.addSequence("Min distance strategy", new Sequence() {
             @Override
             public double getSValue() {
-                return (double )carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).mapToInt(f ->f.getCar().getNumberIntersections()).sum()
-                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).count();
+                double value = 0d;
+                if(carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).count() > 0) {
+                    value = (double )carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).mapToInt(f ->f.getCar().getNumberIntersections()).sum()
+                            / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_PATH)).count();
+                }
+                return value;
             }
         });
 
         plotNrIntersections.addSequence("Min time strategy", new Sequence() {
             @Override
             public double getSValue() {
-                return (double )carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).mapToInt(f ->f.getCar().getNumberIntersections()).sum()
-                        / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).count();
+                double value = 0d;
+                if(carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).count() > 0) {
+                    value = (double )carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).mapToInt(f ->f.getCar().getNumberIntersections()).sum()
+                            / carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME)).count();
+                }
+                return value;
             }
         });
 
