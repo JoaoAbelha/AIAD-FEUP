@@ -20,6 +20,7 @@ public class Configuration {
     private String fileOfTypeWeather = null;
     private String fileOfWeather = null;
     private String carToFollow = null;
+    private String prioritycarToFollow = null;
 
 
     public Configuration(String[] args) {
@@ -64,8 +65,18 @@ public class Configuration {
                             Arrays.parallelSetAll(carInfo, (i) -> carInfo[i].trim());
                             if (carInfo.length != 4) {
                                 System.out.println("car to follow configuration invalid. Ignoring it");
+                                break;
                             }
                             this.carToFollow = String.join (" ",carInfo);
+                        }
+                        case "prioritycartofollow" -> {
+                            String [] carInfo = data[1].split(" ");
+                            Arrays.parallelSetAll(carInfo, (i) -> carInfo[i].trim());
+                            if (carInfo.length != 2) {
+                                System.out.println("Priority car to follow configuration invalid. Ignoring it");
+                                break;
+                            }
+                            this.prioritycarToFollow = String.join (" ",carInfo);
                         }
                         default -> {
                             System.out.println("Unknown key in configuration file " + data[0]);
@@ -80,6 +91,14 @@ public class Configuration {
                 e.printStackTrace();
             }
         }
+    }
+
+    public String getPrioritycarToFollow() {
+        return prioritycarToFollow;
+    }
+
+    public void setPrioritycarToFollow(String prioritycarToFollow) {
+        this.prioritycarToFollow = prioritycarToFollow;
     }
 
     public String getCarToFollow() {

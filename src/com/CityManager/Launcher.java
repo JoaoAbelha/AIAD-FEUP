@@ -47,6 +47,7 @@ public class Launcher extends Repast3Launcher {
 
 
     private  CarAgent carAgentSpecial;
+    private PriorityCarAgent priorityCarAgentSpecial;
     private boolean runInBatchMode;
     private OpenSequenceGraph plotNumberCars;
     private OpenSequenceGraph plotCity;
@@ -56,8 +57,9 @@ public class Launcher extends Repast3Launcher {
     private OpenSequenceGraph plotCars;
     private OpenSequenceGraph plotDistanceTraveled;
     private OpenSequenceGraph plotCarSpecial;
+    private OpenSequenceGraph plotPriorityCarSpecial;
     private Configuration config;
-    public static ArrayList<Integer> nodes;
+    public static ArrayList<Integer> nodes; // bug in here
     private ArrayList<CarAgent> carAgents = new ArrayList<>();
     private ArrayList<PriorityCarAgent> priorityCarAgents = new ArrayList<>();
     private ArrayList<RoadAgent> roadAgents;
@@ -85,8 +87,17 @@ public class Launcher extends Repast3Launcher {
 
     @Override
     public String[] getInitParam() {
-        return new String[]{ "carToFollow" ,"fileOfWeather","fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar"};
+        return new String[]{"priorityCarToFollow" ,"carToFollow" ,"fileOfWeather","fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar"};
     }
+
+    public String getPriorityCarToFollow() {
+        return config.getPrioritycarToFollow();
+    }
+
+    public void setPriorityCarToFollow(String prioritycarToFollow) {
+        this.config.setPrioritycarToFollow(prioritycarToFollow);
+    }
+
 
     public String getCarToFollow() {
         return config.getCarToFollow();
@@ -225,6 +236,17 @@ public class Launcher extends Repast3Launcher {
         }
     }
 
+    private void createPriorityCarSpecial(Graph graph) {
+        String [] carToFollowSpecs = this.getPriorityCarToFollow().split(" ");
+        PriorityCar priorityCar = new PriorityCar("priorityCarSpecial", Integer.parseInt(carToFollowSpecs[0]), Integer.parseInt( carToFollowSpecs[1]));
+        priorityCarAgentSpecial = new PriorityCarAgent(priorityCar, graph);
+        try {
+            mainContainer.acceptNewAgent(priorityCar.getName(), priorityCarAgentSpecial).start();
+        } catch (StaleProxyException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void launchAgents() throws FileNotFoundException {
         // viz
         Random random = new Random(System.currentTimeMillis());
@@ -287,6 +309,7 @@ public class Launcher extends Repast3Launcher {
         }
 
         createSpecialCar();
+        createPriorityCarSpecial(graph);
 
         for(int i = 0; i < this.getNumberShortestTimeCar(); i++) {
             Car car = CarFactory.buildCar(Car.Strategy.SHORTEST_TIME);
@@ -354,6 +377,7 @@ public class Launcher extends Repast3Launcher {
             getSchedule().scheduleActionAtInterval(500, surf, "updateDisplay", Schedule.LAST);
 
             buildAndScheduleDisplayPlotCarSpecial();
+            buildAndScheduleDisplayPlotPriorityCarSpecial();
 
         }
     }
@@ -374,6 +398,19 @@ public class Launcher extends Repast3Launcher {
             }
         });
         printAndSchedule(100, plotCarSpecial, "step", Schedule.LAST);
+
+    }
+
+    private void buildAndScheduleDisplayPlotPriorityCarSpecial() {
+        if (plotPriorityCarSpecial != null) plotPriorityCarSpecial.dispose();
+        plotPriorityCarSpecial = new OpenSequenceGraph("Special priority car stats", this);
+        plotPriorityCarSpecial.addSequence("Current velocity", new Sequence() {
+            @Override
+            public double getSValue() {
+                return priorityCarAgentSpecial.getCar().getCurrentVelocity();
+            }
+        });
+        printAndSchedule(100, plotPriorityCarSpecial, "step", Schedule.LAST);
 
     }
 
