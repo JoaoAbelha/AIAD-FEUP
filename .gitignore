@@ -20,3 +20,5 @@ AIAD-FEUP.iml
 .idea/libraries
 
 logs/
+velocity*.csv
+

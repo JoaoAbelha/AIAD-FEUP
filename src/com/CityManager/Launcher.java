@@ -363,7 +363,8 @@ public class Launcher extends Repast3Launcher {
      * todo : se calhar por a guardar de mais em mais tempo
      */
     public void trackVelocity() {
-        DataRecorder recorder= new DataRecorder("./velocity.txt", this, "A comment");
+        DataRecorder recorder= new DataRecorder("./velocity.csv", this, "A comment");
+        recorder.setDelimeter(";");
 
         recorder.addNumericDataSource("Avg velocity allowed", new NumericDataSource() {
             @Override
