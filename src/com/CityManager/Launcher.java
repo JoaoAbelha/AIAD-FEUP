@@ -1,5 +1,6 @@
 package com.CityManager;
 
+import com.Actions.ChangeWeather;
 import com.Actions.CreateCars;
 import com.Actions.CreatePriorityCars;
 import com.Agent.CarAgent;
@@ -9,7 +10,6 @@ import com.Agent.RoadAgent;
 import com.Data.*;
 import com.utils.*;
 import uchicago.src.sim.analysis.DataRecorder;
-import uchicago.src.sim.analysis.NumericDataSource;
 import uchicago.src.sim.analysis.OpenSequenceGraph;
 import uchicago.src.sim.analysis.Sequence;
 import uchicago.src.sim.engine.BasicAction;import uchicago.src.sim.engine.ActionGroup;
@@ -35,6 +35,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Stream;
 
 
 public class Launcher extends Repast3Launcher {
@@ -54,11 +55,8 @@ public class Launcher extends Repast3Launcher {
     private PriorityCarAgent priorityCarAgentSpecial;
     private boolean runInBatchMode;
     private OpenSequenceGraph plotNumberCars;
-    private OpenSequenceGraph plotCity;
     private OpenSequenceGraph plotVelocity;
-    private OpenSequenceGraph plotRoads;
     private OpenSequenceGraph plotNrIntersections;
-    private OpenSequenceGraph plotCars;
     private OpenSequenceGraph plotDistanceTraveled;
     private OpenSequenceGraph plotCarSpecial;
     private OpenSequenceGraph plotPriorityCarSpecial;
@@ -79,7 +77,7 @@ public class Launcher extends Repast3Launcher {
 
     @Override
     public String[] getInitParam() {
-        return new String[]{"priorityCarToFollow" ,"carToFollow", "fileOfCars", "fileOfPriorityCars", "fileOfWeather","fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar", "tickIntervalMakeCars"};
+        return new String[]{"priorityCarToFollow" ,"carToFollow", "fileOfCars", "fileOfPriorityCars", "fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar", "probabilityChangeWeather", "tickInterval"};
     }
 
     public String getPriorityCarToFollow() {
@@ -124,14 +122,6 @@ public class Launcher extends Repast3Launcher {
         this.config.setPriorityCars(fileOfPriorityCars);
     }
 
-    public String getFileOfWeather() {
-        return config.getFileOfWeather();
-    }
-
-    public void setFileOfWeather(String fileOfWeather) {
-        this.config.setFileOfWeather(fileOfWeather);
-    }
-
     public String getFileOfTypeWeather() {
         return config.getFileOfTypeWeather();
     }
@@ -139,7 +129,6 @@ public class Launcher extends Repast3Launcher {
     public void setFileOfTypeWeather(String fileOfTypeWeather) {
         this.config.setFileOfTypeWeather(fileOfTypeWeather);
     }
-
 
     public String getFileOfCity() {
         return config.getFileofCity();
@@ -181,11 +170,19 @@ public class Launcher extends Repast3Launcher {
         this.config.setNumberShortestPathCar(numberShortestPathCar);
     }
 
-    public int getTickIntervalMakeCars() {
+    public double getProbabilityChangeWeather() {
+        return config.getProbabilityChangeWeather();
+    }
+
+    public void setProbabilityChangeWeather(double probabilityChangeWeather) {
+        config.setProbabilityChangeWeather(probabilityChangeWeather);
+    }
+
+    public int getTickInterval() {
         return config.getTickInterval();
     }
 
-    public void setTickIntervalMakeCars(int tickInterval) {
+    public void setTickInterval(int tickInterval) {
         this.config.setTickInterval(tickInterval);
     }
 
@@ -291,11 +288,7 @@ public class Launcher extends Repast3Launcher {
         twr.readFile();
         HashMap<String, Float> weatherVelocityRestriction = twr.getInfo();
 
-        WeatherReader wr = new WeatherReader(this.getFileOfWeather());
-        wr.readFile();
-        HashMap<Integer, String> weather = wr.getInfo();
-
-        WeatherStation weatherStation = new WeatherStation(weatherVelocityRestriction,weather);
+        WeatherStation weatherStation = new WeatherStation(weatherVelocityRestriction);
         cityAgent = new CityAgent(weatherStation, graph);
         try {
             mainContainer.acceptNewAgent("city", cityAgent).start();
@@ -371,6 +364,14 @@ public class Launcher extends Repast3Launcher {
         return bd.doubleValue();
     }
 
+    private Stream<CarAgent> getDrivingCars() {
+        return carAgents.stream().filter(c -> c.getCar().getCurrentNode() != c.getCar().getDestNode());
+    }
+
+    private Stream<PriorityCarAgent> getDrivingPriorityCars() {
+        return priorityCarAgents.stream().filter(c -> c.getCar().getCurrentNode() != c.getCar().getDestNode());
+    }
+
     /**
      * todo : se calhar por a guardar de mais em mais tempo
      */
@@ -382,10 +383,10 @@ public class Launcher extends Repast3Launcher {
                 () -> cityAgent.getMaxVelocity().entrySet().size() > 0 ? Launcher.round(cityAgent.getMaxVelocity().values().stream().mapToDouble(f->f).sum() / cityAgent.getMaxVelocity().entrySet().size(), 3) : 0);
 
         recorder.addNumericDataSource("Avg velocity of normal cars",
-                () -> carAgents.size() > 0 ? Launcher.round( carAgents.stream().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum() / carAgents.size(), 3) : 0);
+                () -> getDrivingCars().count() > 0 ? Launcher.round( getDrivingCars().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum() / getDrivingCars().count(), 3) : 0);
 
         recorder.addNumericDataSource("Avg velocity of priority cars",
-                () -> priorityCarAgents.size() > 0 ? Launcher.round(priorityCarAgents.stream().mapToDouble(f ->f.getCar().getCurrentVelocity()).sum() / priorityCarAgents.size(), 3) : 0);
+                () -> getDrivingPriorityCars().count() > 0 ? Launcher.round(getDrivingPriorityCars().mapToDouble(f ->f.getCar().getCurrentVelocity()).sum() / getDrivingPriorityCars().count(), 3) : 0);
 
         recorder.addNumericDataSource("Weather factor velocity",
                 () -> Launcher.round(cityAgent.getWeatherStation().getVelocity(cityAgent.getWeatherStation().getCurrentWeather()), 3));
@@ -412,10 +413,6 @@ public class Launcher extends Repast3Launcher {
             }
         });
         getSchedule().scheduleActionAtEnd(recorder, "writeToFile");
-
-
-
-
     }
 
 
@@ -455,6 +452,7 @@ public class Launcher extends Repast3Launcher {
     private void buildSchedule() {
         CreateCars createCars = new CreateCars(this.getNumberMinIntersectionCar(), this.getNumberShortestTimeCar(), this.getNumberShortestPathCar(), this);
         CreatePriorityCars createPriorityCars = new CreatePriorityCars(this.getNumberPriorityCars(), this);
+        ChangeWeather changeWeather = new ChangeWeather(cityAgent, getProbabilityChangeWeather());
         boolean schedule = false;
 
         ActionGroup group = new ActionGroup(ActionGroup.SEQUENTIAL);
@@ -469,13 +467,18 @@ public class Launcher extends Repast3Launcher {
             schedule = true;
         }
 
-        if(this.getTickIntervalMakeCars() < 200) {
+        if(getProbabilityChangeWeather() != 0d) {
+            group.addAction(changeWeather);
+            schedule = true;
+        }
+
+        if(this.getTickInterval() < 200) {
             System.out.println("Please insert a tick interval greater or equal than 200. Using default 200 ticks interval.");
-            this.setTickIntervalMakeCars(200);
+            this.setTickInterval(200);
         }
 
         if(schedule) {
-            getSchedule().scheduleActionAtInterval(this.getTickIntervalMakeCars(), group);
+            getSchedule().scheduleActionAtInterval(this.getTickInterval(), group);
         }
     }
 
@@ -518,9 +521,6 @@ public class Launcher extends Repast3Launcher {
         printAndSchedule(100, plotPriorityCarSpecial, "step", Schedule.LAST);
     }
 
-    /**
-     * todo
-     * */
     private void buildAndScheduleDisplayDistanceTraveled() {
         if (plotDistanceTraveled != null) plotDistanceTraveled.dispose();
         plotDistanceTraveled = new OpenSequenceGraph("Avg distance travelled", this);
@@ -635,16 +635,16 @@ public class Launcher extends Repast3Launcher {
 
         plotNumberCars.addSequence("Number Stopped Cars", new Sequence() {
             public double getSValue() {
-                return carAgents.stream().filter(c -> c.getCar().getCurrentVelocity() == 0).count() +
-                        priorityCarAgents.stream().filter(c -> c.getCar().getCurrentVelocity() == 0).count();
+                return getDrivingCars().filter(c -> c.getCar().getCurrentVelocity() == 0).count() +
+                        getDrivingPriorityCars().filter(c -> c.getCar().getCurrentVelocity() == 0).count();
 
             }
         });
 
         plotNumberCars.addSequence("Number not Stopped Cars", new Sequence() {
             public double getSValue() {
-                return carAgents.stream().filter(c -> c.getCar().getCurrentVelocity() > 0).count() +
-                        priorityCarAgents.stream().filter(c -> c.getCar().getCurrentVelocity() > 0).count();
+                return getDrivingCars().filter(c -> c.getCar().getCurrentVelocity() > 0).count() +
+                        getDrivingPriorityCars().filter(c -> c.getCar().getCurrentVelocity() > 0).count();
 
             }
         });

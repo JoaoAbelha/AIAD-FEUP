@@ -1,32 +1,24 @@
 package com.Data;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class WeatherStation {
 
     private HashMap<String, Float> velocities = new HashMap<>();
-    private HashMap<Integer, String> weather = new HashMap<>();
     private String currentWeather;
 
-    public WeatherStation(HashMap<String, Float> velocities, HashMap<Integer, String> weather) {
+    public WeatherStation(HashMap<String, Float> velocities) {
         this.velocities = velocities;
-        this.weather = weather;
-
-        Map.Entry<Integer,String> entry = weather.entrySet().iterator().next();
-        this.currentWeather = entry.getValue();
+        ArrayList<String> weathers = new ArrayList<>(velocities.keySet());
+        Collections.shuffle(weathers);
+        this.currentWeather = weathers.get(0);
     }
 
     public float getVelocity(String weather) {
         return velocities.get(weather);
-    }
-
-    public String getWeather(int time) {
-        return weather.get(time);
-    }
-
-    public boolean existsWeather(int time) {
-        return weather.containsKey(time);
     }
 
     public void setCurrentWeather(String currentWeather) {
@@ -35,6 +27,10 @@ public class WeatherStation {
 
     public String getCurrentWeather() {
         return currentWeather;
+    }
+
+    public HashMap<String, Float> getVelocities() {
+        return velocities;
     }
 }
 

@@ -67,14 +67,14 @@ public class CityManager extends AgentCreator {
 
     @Override
     void createCity() {
-        WeatherStation weatherStation = new WeatherStation(this.weatherVelocityRestriction, this.weather);
+        /*WeatherStation weatherStation = new WeatherStation(this.weatherVelocityRestriction, this.weather);
         CityAgent cityAgent = new CityAgent(weatherStation, this.graph);
         try {
             this.agentController = this.containerController.acceptNewAgent("city", cityAgent);
             this.agentController.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override

@@ -18,7 +18,7 @@ public class CityWeatherChange extends TickerBehaviour {
 
     @Override
     protected void onTick() {
-        time++;
+        /*time++;
         if(city.getWeatherStation().existsWeather(time)) {
             String weather = city.getWeatherStation().getWeather(time);
             city.getLOGGER().info("Weather change to " + weather+". Notifying all subscribers" );
@@ -28,7 +28,7 @@ public class CityWeatherChange extends TickerBehaviour {
                 entry.setValue(entry.getValue() * velocity);
             }
             city.getManager().notifyAll(velocity);
-        }
+        }*/
     }
 
 }

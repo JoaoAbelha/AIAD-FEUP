@@ -102,7 +102,6 @@ public class CityAgent extends AgentRegister {
 
         addBehaviour(new CityRequestResponder(this, template));
         addBehaviour(new CitySubscriptionResponder(this, this.manager));
-        addBehaviour(new CityWeatherChange(this, 300));
     }
 
     public void updateRoadMaxVelocity(String name, double maxVelocity) {

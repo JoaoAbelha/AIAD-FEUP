@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Configuration {
+    private double probabilityChangeWeather;
     private boolean batchMode = true;
     private int priorityCars = 1;
     private int numberShortestTimeCar =  1;
@@ -13,7 +14,6 @@ public class Configuration {
     private int numberMinIntersectionCar = 2;
     private String fileofCity = null;
     private String fileOfTypeWeather = null;
-    private String fileOfWeather = null;
     private String carToFollow = null;
     private String prioritycarToFollow = null;
     private String priorityCarsFile = null;
@@ -54,9 +54,6 @@ public class Configuration {
                         case "typeweather" -> {
                             this.fileOfTypeWeather = data[1];
                         }
-                        case "weather" -> {
-                            this.fileOfWeather = data[1];
-                        }
                         case "cars" -> {
                             this.cars = data[1];
                         }
@@ -81,8 +78,11 @@ public class Configuration {
                             }
                             this.prioritycarToFollow = String.join (" ",carInfo);
                         }
-                        case "tickintervalmakecars" -> {
+                        case "tickinterval" -> {
                             this.tickInterval = Integer.parseInt(data[1]);
+                        }
+                        case "probabilitychangeweather" -> {
+                            this.probabilityChangeWeather = Double.parseDouble(data[1]);
                         }
                         default -> {
                             System.out.println("Unknown key in configuration file " + data[0]);
@@ -113,14 +113,6 @@ public class Configuration {
 
     public void setCarToFollow(String carToFollow) {
         this.carToFollow = carToFollow;
-    }
-
-    public String getFileOfWeather() {
-        return fileOfWeather;
-    }
-
-    public void setFileOfWeather(String fileOfWeather) {
-        this.fileOfWeather = fileOfWeather;
     }
 
     public String getFileOfTypeWeather() {
@@ -201,5 +193,13 @@ public class Configuration {
 
     public void setPriorityCars(String fileOfPriorityCars) {
         this.priorityCarsFile = fileOfPriorityCars;
+    }
+
+    public double getProbabilityChangeWeather() {
+        return probabilityChangeWeather;
+    }
+
+    public void setProbabilityChangeWeather(double probabilityChangeWeather) {
+        this.probabilityChangeWeather = probabilityChangeWeather;
     }
 }
