@@ -10,4 +10,6 @@ typeWeather: exp1/typeWeather.txt
 CarToFollow: 1 2 dijkstra 4.85
 PriorityCarToFollow: 1 2
 probabilityChangeWeather: 0.4
+probabilityAddCar: 0.3
+probabilityAddPriorityCar: 0.6
 tickInterval: 500

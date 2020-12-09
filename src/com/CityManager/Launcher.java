@@ -77,7 +77,8 @@ public class Launcher extends Repast3Launcher {
 
     @Override
     public String[] getInitParam() {
-        return new String[]{"priorityCarToFollow" ,"carToFollow", "fileOfCars", "fileOfPriorityCars", "fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars", "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar", "probabilityChangeWeather", "tickInterval"};
+        return new String[]{"priorityCarToFollow" ,"carToFollow", "fileOfCars", "fileOfPriorityCars", "fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars",
+                "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar", "probabilityChangeWeather", "probabilityAddCar", "probabilityAddPriorityCar", "tickInterval"};
     }
 
     public String getPriorityCarToFollow() {
@@ -176,6 +177,22 @@ public class Launcher extends Repast3Launcher {
 
     public void setProbabilityChangeWeather(double probabilityChangeWeather) {
         config.setProbabilityChangeWeather(probabilityChangeWeather);
+    }
+
+    public double getProbabilityAddCar() {
+        return config.getProbabilityAddCar();
+    }
+
+    public void setProbabilityAddCar(double probabilityAddCar) {
+        config.setProbabilityAddCar(probabilityAddCar);
+    }
+
+    public double getProbabilityAddPriorityCar() {
+        return config.getProbabilityAddPriorityCar();
+    }
+
+    public void setProbabilityAddPriorityCar(double probabilityAddPriorityCar) {
+        config.setProbabilityAddPriorityCar(probabilityAddPriorityCar);
     }
 
     public int getTickInterval() {

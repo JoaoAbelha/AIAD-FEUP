@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Configuration {
+    private double probabilityAddPriorityCar;
+    private double probabilityAddCar;
     private double probabilityChangeWeather;
     private boolean batchMode = true;
     private int priorityCars = 1;
@@ -83,6 +85,12 @@ public class Configuration {
                         }
                         case "probabilitychangeweather" -> {
                             this.probabilityChangeWeather = Double.parseDouble(data[1]);
+                        }
+                        case "probabilityaddcar" -> {
+                            this.probabilityAddCar = Double.parseDouble(data[1]);
+                        }
+                        case "probabilityaddprioritycar" -> {
+                            this.probabilityAddPriorityCar = Double.parseDouble(data[1]);
                         }
                         default -> {
                             System.out.println("Unknown key in configuration file " + data[0]);
@@ -201,5 +209,21 @@ public class Configuration {
 
     public void setProbabilityChangeWeather(double probabilityChangeWeather) {
         this.probabilityChangeWeather = probabilityChangeWeather;
+    }
+
+    public double getProbabilityAddCar() {
+        return probabilityAddCar;
+    }
+
+    public void setProbabilityAddCar(double probabilityAddCar) {
+        this.probabilityAddCar = probabilityAddCar;
+    }
+
+    public double getProbabilityAddPriorityCar() {
+        return probabilityAddPriorityCar;
+    }
+
+    public void setProbabilityAddPriorityCar(double probabilityAddPriorityCar) {
+        this.probabilityAddPriorityCar = probabilityAddPriorityCar;
     }
 }

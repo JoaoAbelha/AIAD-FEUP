@@ -20,7 +20,6 @@ public class ChangeWeather extends BasicAction {
     @Override
     public void execute() {
         if(new Random().nextDouble() < probability) {
-            System.out.println("changing weather");
             ArrayList<String> weathers = new ArrayList<>(city.getWeatherStation().getVelocities().keySet());
             Collections.shuffle(weathers);
             String weather = weathers.get(0);

@@ -7,6 +7,8 @@ import com.utils.CarFactory;
 import jade.wrapper.StaleProxyException;
 import uchicago.src.sim.engine.BasicAction;
 
+import java.util.Random;
+
 public class CreatePriorityCars extends BasicAction {
     private final Launcher launcher;
     private int numberPriorityCars;
@@ -18,14 +20,16 @@ public class CreatePriorityCars extends BasicAction {
 
     @Override
     public void execute() {
-        for(int i = 0; i< this.numberPriorityCars; i++) {
-            PriorityCar car = CarFactory.buildPriorityCar();
-            PriorityCarAgent carAgent = new PriorityCarAgent(car, launcher.getGraph());
-            launcher.addPriorityCarAgent(carAgent);
-            try {
-                launcher.getMainContainer().acceptNewAgent(car.getName(), carAgent).start();
-            } catch (StaleProxyException e) {
-                e.printStackTrace();
+        if(new Random().nextDouble() < launcher.getProbabilityAddPriorityCar()) {
+            for (int i = 0; i < this.numberPriorityCars; i++) {
+                PriorityCar car = CarFactory.buildPriorityCar();
+                PriorityCarAgent carAgent = new PriorityCarAgent(car, launcher.getGraph());
+                launcher.addPriorityCarAgent(carAgent);
+                try {
+                    launcher.getMainContainer().acceptNewAgent(car.getName(), carAgent).start();
+                } catch (StaleProxyException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
