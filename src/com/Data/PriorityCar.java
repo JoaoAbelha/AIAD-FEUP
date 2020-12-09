@@ -20,6 +20,9 @@ public class PriorityCar {
     private double currentDistanceTravelled;
     private double currentVelocity;
     private Car.Status status;
+    private Integer numberIntersections = 0;
+    private Integer distanceUntilNow = 0; // distancia ate ao ultimo no
+
 
     public PriorityCar(String name, int src, int dest) {
         this.name = name;
@@ -49,7 +52,17 @@ public class PriorityCar {
     public void updateCurrentNode() {
         this.carPath.remove(0);
         this.currentNode = this.carPath.get(0);
+        this.distanceUntilNow += currentRoad.getDistance();
+        this.currentDistanceTravelled = 0;
         this.currentRoad = null;
+    }
+
+    public Integer getDistanceUntilNow() {
+        return distanceUntilNow;
+    }
+
+    public Integer getNumberIntersections() {
+        return numberIntersections;
     }
 
     public Car.Status getStatus() {
@@ -86,6 +99,11 @@ public class PriorityCar {
 
     public void addDistanceTravelled(double distanceTravelled) {
         this.currentDistanceTravelled += distanceTravelled;
+        this.currentDistanceTravelled = Math.min(currentRoad.getDistance(), this.currentDistanceTravelled);
+    }
+
+    public void incNumberIntersections() {
+        this.numberIntersections++;
     }
 
     public void setCurrentVelocity(double currentVelocity) {

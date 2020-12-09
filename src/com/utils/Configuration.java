@@ -20,7 +20,8 @@ public class Configuration {
     private String prioritycarToFollow = null;
     private String priorityCarsFile = null;
     private String cars = null;
-    private int tickInterval = 500;
+    private int tickIntervalMakeCars = 500;
+    private int tickIntervalChangeWeather = 300;
 
     public Configuration(String[] args) {
         if (args.length == 0) {
@@ -80,8 +81,11 @@ public class Configuration {
                             }
                             this.prioritycarToFollow = String.join (" ",carInfo);
                         }
-                        case "tickinterval" -> {
-                            this.tickInterval = Integer.parseInt(data[1]);
+                        case "tickintervalmakecars" -> {
+                            this.tickIntervalMakeCars = Integer.parseInt(data[1]);
+                        }
+                        case "tickintervalchangeweather" -> {
+                            this.tickIntervalChangeWeather = Integer.parseInt(data[1]);
                         }
                         case "probabilitychangeweather" -> {
                             this.probabilityChangeWeather = Double.parseDouble(data[1]);
@@ -179,12 +183,12 @@ public class Configuration {
         return priorityCars;
     }
 
-    public int getTickInterval() {
-        return tickInterval;
+    public int getTickIntervalMakeCars() {
+        return tickIntervalMakeCars;
     }
 
-    public void setTickInterval(int tickInterval) {
-        this.tickInterval = tickInterval;
+    public void setTickIntervalMakeCars(int tickIntervalMakeCars) {
+        this.tickIntervalMakeCars = tickIntervalMakeCars;
     }
 
     public String getCars() {
@@ -225,5 +229,13 @@ public class Configuration {
 
     public void setProbabilityAddPriorityCar(double probabilityAddPriorityCar) {
         this.probabilityAddPriorityCar = probabilityAddPriorityCar;
+    }
+
+    public int getTickIntervalChangeWeather() {
+        return tickIntervalChangeWeather;
+    }
+
+    public void setTickIntervalChangeWeather(int tickIntervalChangeWeather) {
+        this.tickIntervalChangeWeather = tickIntervalChangeWeather;
     }
 }

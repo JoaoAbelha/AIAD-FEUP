@@ -42,6 +42,7 @@ public class Launcher extends Repast3Launcher {
 
     private ContainerController mainContainer;
     private String folder;
+    private boolean specialCars;
 
     // viz
     private static List<DefaultDrawableNode> nodesViz;
@@ -50,16 +51,12 @@ public class Launcher extends Repast3Launcher {
     private DisplaySurface surf;
     private static HashMap<Integer, DefaultDrawableNode> nodestoDraw = new HashMap<>();
 
-
     private CarAgent carAgentSpecial;
     private PriorityCarAgent priorityCarAgentSpecial;
     private boolean runInBatchMode;
     private OpenSequenceGraph plotNumberCars;
-    private OpenSequenceGraph plotVelocity;
     private OpenSequenceGraph plotNrIntersections;
     private OpenSequenceGraph plotDistanceTraveled;
-    private OpenSequenceGraph plotCarSpecial;
-    private OpenSequenceGraph plotPriorityCarSpecial;
     private Configuration config;
     public static ArrayList<Integer> nodes; // bug in here
     private ArrayList<CarAgent> carAgents = new ArrayList<>();
@@ -68,17 +65,18 @@ public class Launcher extends Repast3Launcher {
     private CityAgent cityAgent;
     private Graph graph;
 
-    public Launcher(String arg, Configuration config, boolean runMode) {
+    public Launcher(String arg, Configuration config, boolean runMode, boolean specialCars) {
         super();
         folder = arg;
         this.runInBatchMode = runMode;
         this.config = config;
+        this.specialCars = specialCars;
     }
 
     @Override
     public String[] getInitParam() {
         return new String[]{"priorityCarToFollow" ,"carToFollow", "fileOfCars", "fileOfPriorityCars", "fileOfTypeWeather", "fileOfCity" ,"numberPriorityCars",
-                "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar", "probabilityChangeWeather", "probabilityAddCar", "probabilityAddPriorityCar", "tickInterval"};
+                "numberShortestTimeCar" , "numberShortestPathCar", "numberMinIntersectionCar", "probabilityChangeWeather", "probabilityAddCar", "probabilityAddPriorityCar", "tickIntervalMakeCar", "tickIntervalChangeWeather"};
     }
 
     public String getPriorityCarToFollow() {
@@ -195,12 +193,20 @@ public class Launcher extends Repast3Launcher {
         config.setProbabilityAddPriorityCar(probabilityAddPriorityCar);
     }
 
-    public int getTickInterval() {
-        return config.getTickInterval();
+    public int getTickIntervalMakeCar() {
+        return config.getTickIntervalMakeCars();
     }
 
-    public void setTickInterval(int tickInterval) {
-        this.config.setTickInterval(tickInterval);
+    public void setTickIntervalMakeCar(int tickIntervalMakeCar) {
+        this.config.setTickIntervalMakeCars(tickIntervalMakeCar);
+    }
+
+    public int getTickIntervalChangeWeather() {
+        return config.getTickIntervalChangeWeather();
+    }
+
+    public void setTickIntervalChangeWeather(int tickIntervalChangeWeather) {
+        this.config.setTickIntervalChangeWeather(tickIntervalChangeWeather);
     }
 
     public void addCarAgent(CarAgent carAgent) {
@@ -249,6 +255,7 @@ public class Launcher extends Repast3Launcher {
     }
 
     private void createSpecialCar() {
+        if(this.getCarToFollow() == null) return;
         String [] carToFollowSpecs = this.getCarToFollow().split(" ");
         Car.Strategy st;
         switch (carToFollowSpecs[2].toLowerCase()) {
@@ -264,6 +271,7 @@ public class Launcher extends Repast3Launcher {
         Car carSpecial = new Car("specialCar", Integer.parseInt(carToFollowSpecs[0]), Integer.parseInt(carToFollowSpecs[1]),
                 Float.parseFloat(carToFollowSpecs[3]) , st);
         carAgentSpecial = new CarAgent(carSpecial);
+        carAgents.add(carAgentSpecial);
 
         try {
             mainContainer.acceptNewAgent(carSpecial.getName(), carAgentSpecial).start();
@@ -273,9 +281,12 @@ public class Launcher extends Repast3Launcher {
     }
 
     private void createPriorityCarSpecial(Graph graph) {
+        if(this.getPriorityCarToFollow() == null) return;
         String [] carToFollowSpecs = this.getPriorityCarToFollow().split(" ");
         PriorityCar priorityCar = new PriorityCar("priorityCarSpecial", Integer.parseInt(carToFollowSpecs[0]), Integer.parseInt( carToFollowSpecs[1]));
         priorityCarAgentSpecial = new PriorityCarAgent(priorityCar, graph);
+        priorityCarAgents.add(priorityCarAgentSpecial);
+
         try {
             mainContainer.acceptNewAgent(priorityCar.getName(), priorityCarAgentSpecial).start();
         } catch (StaleProxyException e) {
@@ -454,8 +465,6 @@ public class Launcher extends Repast3Launcher {
             buildAndScheduleDisplayDistanceTraveled();
             buildAndScheduleDisplayIntersections();
             buildAndScheduleDisplayNumberCars();
-            buildAndScheduleDisplayPlotCarSpecial();
-            buildAndScheduleDisplayPlotPriorityCarSpecial();
         }
 
         buildSchedule();
@@ -470,77 +479,37 @@ public class Launcher extends Repast3Launcher {
         CreateCars createCars = new CreateCars(this.getNumberMinIntersectionCar(), this.getNumberShortestTimeCar(), this.getNumberShortestPathCar(), this);
         CreatePriorityCars createPriorityCars = new CreatePriorityCars(this.getNumberPriorityCars(), this);
         ChangeWeather changeWeather = new ChangeWeather(cityAgent, getProbabilityChangeWeather());
-        boolean schedule = false;
+        boolean scheduleCars = false;
 
         ActionGroup group = new ActionGroup(ActionGroup.SEQUENTIAL);
 
         if(this.getNumberMinIntersectionCar() + this.getNumberShortestPathCar() + this.getNumberShortestTimeCar() != 0) {
             group.addAction(createCars);
-            schedule = true;
+            scheduleCars = true;
         }
-
         if(this.getNumberPriorityCars() != 0) {
             group.addAction(createPriorityCars);
-            schedule = true;
+            scheduleCars = true;
         }
 
-        if(getProbabilityChangeWeather() != 0d) {
-            group.addAction(changeWeather);
-            schedule = true;
-        }
-
-        if(this.getTickInterval() < 200) {
+        if(this.getTickIntervalMakeCar() < 200) {
             System.out.println("Please insert a tick interval greater or equal than 200. Using default 200 ticks interval.");
-            this.setTickInterval(200);
+            this.setTickIntervalMakeCar(200);
+        }
+        if(this.getTickIntervalChangeWeather() < 200) {
+            System.out.println("Please insert a tick interval greater or equal than 200. Using default 200 ticks interval.");
+            this.setTickIntervalChangeWeather(200);
         }
 
-        if(schedule) {
-            getSchedule().scheduleActionAtInterval(this.getTickInterval(), group);
+        if(scheduleCars) {
+            getSchedule().scheduleActionAtInterval(this.getTickIntervalMakeCar(), group);
+        }
+        if(getProbabilityChangeWeather() != 0d) {
+            getSchedule().scheduleActionAtInterval(this.getTickIntervalChangeWeather(), changeWeather);
         }
     }
 
-    private void buildAndScheduleDisplayPlotCarSpecial() {
-        if (plotCarSpecial != null) plotCarSpecial.dispose();
-        plotCarSpecial = new OpenSequenceGraph("Special car stats", this);
-        plotCarSpecial.addSequence("Current velocity", new Sequence() {
-            @Override
-            public double getSValue() {
-                return carAgentSpecial.getCar().getCurrentVelocity();
-            }
-        });
-        plotCarSpecial.addSequence("Distance Travelled", new Sequence() {
-            @Override
-            public double getSValue() {
-                return carAgentSpecial.getCar().getDistanceUntilNow() + carAgentSpecial.getCar().getCurrentDistanceTravelled();
-            }
-        });
-
-        plotCarSpecial.addSequence("Intersections", new Sequence() {
-            @Override
-            public double getSValue() {
-                return carAgentSpecial.getCar().getNumberIntersections();
-            }
-        });
-
-        printAndSchedule(100, plotCarSpecial, "step", Schedule.LAST);
-    }
-
-    private void buildAndScheduleDisplayPlotPriorityCarSpecial() {
-        if (plotPriorityCarSpecial != null) plotPriorityCarSpecial.dispose();
-        plotPriorityCarSpecial = new OpenSequenceGraph("Special priority car stats", this);
-        plotPriorityCarSpecial.addSequence("Current velocity", new Sequence() {
-            @Override
-            public double getSValue() {
-                return priorityCarAgentSpecial.getCar().getCurrentVelocity();
-            }
-        });
-
-        printAndSchedule(100, plotPriorityCarSpecial, "step", Schedule.LAST);
-    }
-
-    private void buildAndScheduleDisplayDistanceTraveled() {
-        if (plotDistanceTraveled != null) plotDistanceTraveled.dispose();
-        plotDistanceTraveled = new OpenSequenceGraph("Avg distance travelled", this);
+    private void addAverageCarsDistanceSequences() {
         plotDistanceTraveled.addSequence("Min intersection strategy", new Sequence() {
             @Override
             public double getSValue() {
@@ -563,7 +532,6 @@ public class Launcher extends Repast3Launcher {
                 return value;
             }
         });
-
         plotDistanceTraveled.addSequence("Min time strategy", new Sequence() {
             @Override
             public double getSValue() {
@@ -575,14 +543,44 @@ public class Launcher extends Repast3Launcher {
                 return value;
             }
         });
+    }
+
+    private void addSpecialCarDistanceSequence() {
+        plotDistanceTraveled.addSequence("Special Car", new Sequence() {
+            @Override
+            public double getSValue() {
+                double value = 0d;
+                if(carAgentSpecial != null) {
+                    value = carAgentSpecial.getCar().getDistanceUntilNow() + carAgentSpecial.getCar().getCurrentDistanceTravelled();
+                }
+                return value;
+            }
+        });
+        plotDistanceTraveled.addSequence("Special Priority Car", new Sequence() {
+            @Override
+            public double getSValue() {
+                double value = 0d;
+                if(priorityCarAgentSpecial != null) {
+                    value = priorityCarAgentSpecial.getCar().getDistanceUntilNow() + priorityCarAgentSpecial.getCar().getCurrentDistanceTravelled();
+                }
+                return value;
+            }
+        });
+    }
+
+    private void buildAndScheduleDisplayDistanceTraveled() {
+        if (plotDistanceTraveled != null) plotDistanceTraveled.dispose();
+        plotDistanceTraveled = new OpenSequenceGraph("Avg distance travelled", this);
+        if(!specialCars) {
+            addAverageCarsDistanceSequences();
+        } else {
+            addSpecialCarDistanceSequence();
+        }
 
         printAndSchedule(100, plotDistanceTraveled, "step", Schedule.LAST);
     }
 
-    private void buildAndScheduleDisplayIntersections() {
-        if (plotNrIntersections != null) plotNrIntersections.dispose();
-        plotNrIntersections = new OpenSequenceGraph("Avg Nr Intersections", this);
-
+    private void addAverageCarsIntersectionsSequences() {
         plotNrIntersections.addSequence("Min intersection strategy", new Sequence() {
             @Override
             public double getSValue() {
@@ -605,7 +603,6 @@ public class Launcher extends Repast3Launcher {
                 return value;
             }
         });
-
         plotNrIntersections.addSequence("Min time strategy", new Sequence() {
             @Override
             public double getSValue() {
@@ -617,69 +614,45 @@ public class Launcher extends Repast3Launcher {
                 return value;
             }
         });
+    }
+
+    private void addSpecialCarIntersectionsSequence() {
+        plotNrIntersections.addSequence("Special Car", new Sequence() {
+            @Override
+            public double getSValue() {
+                double value = 0d;
+                if(carAgentSpecial != null) {
+                    value = carAgentSpecial.getCar().getNumberIntersections();
+                }
+                return value;
+            }
+        });
+        plotNrIntersections.addSequence("Special Priority Car", new Sequence() {
+            @Override
+            public double getSValue() {
+                double value = 0d;
+                if(priorityCarAgentSpecial != null) {
+                    value = priorityCarAgentSpecial.getCar().getNumberIntersections();
+                }
+                return value;
+            }
+        });
+    }
+
+    private void buildAndScheduleDisplayIntersections() {
+        if (plotNrIntersections != null) plotNrIntersections.dispose();
+        plotNrIntersections = new OpenSequenceGraph("Avg Nr Intersections", this);
+
+        if(!specialCars) {
+            addAverageCarsIntersectionsSequences();
+        } else {
+            addSpecialCarIntersectionsSequence();
+        }
 
         printAndSchedule(100, plotNrIntersections, "step", Schedule.LAST);
     }
 
-
-    private void buildAndScheduleDisplayVelocity() {
-        if (plotVelocity != null) plotVelocity.dispose();
-        plotVelocity = new OpenSequenceGraph("Velocities", this);
-
-        plotVelocity.addSequence("Average velocity of cars", new Sequence() {
-            @Override
-            public double getSValue() {
-                return carAgents.stream().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum() / carAgents.size();
-            }
-        });
-
-        plotVelocity.addSequence("Average velocity of priority cars", new Sequence() {
-            @Override
-            public double getSValue() {
-                return priorityCarAgents.stream().mapToDouble(f -> f.getCar().getCurrentVelocity()).sum()/priorityCarAgents.size();
-            }
-        });
-
-       printAndSchedule(100, plotVelocity, "step", Schedule.LAST);
-    }
-
-
-
-    private void buildAndScheduleDisplayNumberCars() {
-        if (plotNumberCars != null) plotNumberCars.dispose();
-        plotNumberCars = new OpenSequenceGraph("Cars Information", this);
-        plotNumberCars.setAxisTitles("time", "Nº Cars");
-
-        plotNumberCars.addSequence("Number Stopped Cars", new Sequence() {
-            public double getSValue() {
-                return getDrivingCars().filter(c -> c.getCar().getCurrentVelocity() == 0).count() +
-                        getDrivingPriorityCars().filter(c -> c.getCar().getCurrentVelocity() == 0).count();
-
-            }
-        });
-
-        plotNumberCars.addSequence("Number not Stopped Cars", new Sequence() {
-            public double getSValue() {
-                return getDrivingCars().filter(c -> c.getCar().getCurrentVelocity() > 0).count() +
-                        getDrivingPriorityCars().filter(c -> c.getCar().getCurrentVelocity() > 0).count();
-
-            }
-        });
-
-        plotNumberCars.addSequence("Number of Cars in dest node", new Sequence() {
-            public double getSValue() {
-                return (int) carAgents.stream().filter(c -> c.getCar().getCurrentNode() == c.getCar().getDestNode()).count();
-
-            }
-        });
-
-        plotNumberCars.addSequence("Number of Priority Cars in dest node", new Sequence() {
-            public double getSValue() {
-                return (int) priorityCarAgents.stream().filter(c -> c.getCar().getCurrentNode() == c.getCar().getDestNode()).count();
-
-            }
-        });
-
+    private void addAverageCarsNumberSequences() {
         plotNumberCars.addSequence("Min intersection strategy", new Sequence() {
             @Override
             public double getSValue() {
@@ -699,27 +672,84 @@ public class Launcher extends Repast3Launcher {
                 return carAgents.stream().filter(c -> c.getCar().getStrategy().equals(Car.Strategy.SHORTEST_TIME) && c.getCar().getCurrentNode() == c.getCar().getDestNode()).count();
             }
         });
+    }
+
+    private void addSpecialCarNumberSequence() {
+        plotNumberCars.addSequence("Special Car", new Sequence() {
+            @Override
+            public double getSValue() {
+                double value = 0d;
+                if(carAgentSpecial != null) {
+                    value = carAgentSpecial.getCar().getCurrentNode() == carAgentSpecial.getCar().getDestNode() ? 1d : 0d;
+                }
+                return value;
+            }
+        });
+        plotNumberCars.addSequence("Special Priority Car", new Sequence() {
+            @Override
+            public double getSValue() {
+                double value = 0d;
+                if(priorityCarAgentSpecial != null) {
+                    value = priorityCarAgentSpecial.getCar().getCurrentNode() == priorityCarAgentSpecial.getCar().getDestNode() ? 1d : 0d;
+                }
+                return value;
+            }
+        });
+    }
+
+    private void buildAndScheduleDisplayNumberCars() {
+        if (plotNumberCars != null) plotNumberCars.dispose();
+        plotNumberCars = new OpenSequenceGraph("Cars Information", this);
+        plotNumberCars.setAxisTitles("time", "Nº Cars");
+
+        plotNumberCars.addSequence("Number Stopped Cars", new Sequence() {
+            public double getSValue() {
+                return getDrivingCars().filter(c -> c.getCar().getCurrentVelocity() == 0).count() +
+                        getDrivingPriorityCars().filter(c -> c.getCar().getCurrentVelocity() == 0).count();
+
+            }
+        });
+
+        if(!specialCars) {
+            addAverageCarsNumberSequences();
+        } else {
+            addSpecialCarNumberSequence();
+        }
 
         printAndSchedule(100, plotNumberCars, "step", Schedule.LAST);
     }
 
+    private static boolean checkFile(String f) {
+        File file = new File(f);
+        if (!file.exists()){
+            System.out.println("File does not exist");
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Launching Repast3
      * @param args
      */
     public static void main(String[] args) throws FileNotFoundException {
-
-        if (args.length != 1) {
+        boolean specialCars = false;
+        if (args.length == 1) {
+            if(!Launcher.checkFile(args[0])) return;
+        } else if(args.length == 2) {
+            if(!Launcher.checkFile(args[0])) return;
+            if(!args[1].equals("-s")) {
+                System.out.println("Invalid command line flag!");
+                System.out.println("Flags:");
+                System.out.println("-s: Display Special Cars data");
+                return;
+            } else {
+                specialCars = true;
+            }
+        } else {
+            System.out.println("Invalid number of arguments");
             return;
         }
-        System.out.println("Arg here :" + args[0]);
-        File dir = new File(args[0] + "/");
-        if (!dir.exists()){
-            System.err.println("Folder does not exist");
-            return;
-        }
-
 
         //CityManager cityManager = new CityManager(args[0]);
         //CheckValidaty X = new CheckValidaty(cityManager.graph.getEdges());
@@ -740,7 +770,7 @@ public class Launcher extends Repast3Launcher {
         SimInit init = new SimInit();
         Configuration config = new Configuration(args);
         init.setNumRuns(1);   // works only in batch mode
-        init.loadModel(new Launcher(args[0], config, config.getBatchMode()), null, false);
+        init.loadModel(new Launcher(args[0], config, config.getBatchMode(), specialCars), null, false);
     }
 }
 

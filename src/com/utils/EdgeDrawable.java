@@ -38,7 +38,7 @@ public class EdgeDrawable extends DefaultEdge implements DrawableEdge {
     public void changeColor (double capacity_percentage) {
         if (capacity_percentage <= 0.2) {
             this.setColor(LOW);
-        } else if (capacity_percentage <= 0.85) {
+        } else if (capacity_percentage <= 0.70) {
             this.setColor(MEDIUM);
         } else {
             this.setColor(HIGH);

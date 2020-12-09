@@ -39,6 +39,7 @@ public class PriorityCarMovement extends TickerBehaviour {
                 this.handleMovement();
             }
         } else if(priorityCarAgent.getCar().getStatus().equals(Car.Status.INTERSECTION)) {
+            this.priorityCarAgent.getCar().incNumberIntersections();
             this.handleIntersection();
         }
     }
