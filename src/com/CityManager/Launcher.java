@@ -577,6 +577,13 @@ public class Launcher extends Repast3Launcher {
             addSpecialCarDistanceSequence();
         }
 
+        getSchedule().scheduleActionAtEnd(new BasicAction() {
+            @Override
+            public void execute() {
+                plotDistanceTraveled.writeToFile();
+            }
+        });
+
         printAndSchedule(100, plotDistanceTraveled, "step", Schedule.LAST);
     }
 
@@ -649,6 +656,13 @@ public class Launcher extends Repast3Launcher {
             addSpecialCarIntersectionsSequence();
         }
 
+        getSchedule().scheduleActionAtEnd(new BasicAction() {
+            @Override
+            public void execute() {
+                plotNrIntersections.writeToFile();
+            }
+        });
+
         printAndSchedule(100, plotNrIntersections, "step", Schedule.LAST);
     }
 
@@ -715,6 +729,13 @@ public class Launcher extends Repast3Launcher {
         } else {
             addSpecialCarNumberSequence();
         }
+
+        getSchedule().scheduleActionAtEnd(new BasicAction() {
+            @Override
+            public void execute() {
+                plotNumberCars.writeToFile();
+            }
+        });
 
         printAndSchedule(100, plotNumberCars, "step", Schedule.LAST);
     }
