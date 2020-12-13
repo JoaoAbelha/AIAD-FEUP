@@ -12,10 +12,13 @@ import java.util.Random;
 public class CreatePriorityCars extends BasicAction {
     private final Launcher launcher;
     private int numberPriorityCars;
+    private boolean addCars = true;
 
-    public CreatePriorityCars(int numberPriorityCars, Launcher launcher) {
+
+    public CreatePriorityCars(int numberPriorityCars, Launcher launcher, boolean addCars) {
         this.numberPriorityCars = numberPriorityCars;
         this.launcher = launcher;
+        this.addCars = addCars;
     }
 
     @Override
@@ -24,7 +27,8 @@ public class CreatePriorityCars extends BasicAction {
             for (int i = 0; i < this.numberPriorityCars; i++) {
                 PriorityCar car = CarFactory.buildPriorityCar();
                 PriorityCarAgent carAgent = new PriorityCarAgent(car, launcher.getGraph());
-                launcher.addPriorityCarAgent(carAgent);
+                if (addCars)
+                 launcher.addPriorityCarAgent(carAgent);
                 try {
                     launcher.getMainContainer().acceptNewAgent(car.getName(), carAgent).start();
                 } catch (StaleProxyException e) {

@@ -1,8 +1,8 @@
 batchMode: false
-numberShortestTimeCar: 1
-numberShortestPathCar: 1
-numberMinIntersectionCar:0
-numberPriorityCar: 2
+numberShortestTimeCar: 2
+numberShortestPathCar: 2
+numberMinIntersectionCar:2
+numberPriorityCar: 0
 cars: exp1/car.txt
 priorityCars: exp1/priorityCars.txt
 graph: exp1/city.txt

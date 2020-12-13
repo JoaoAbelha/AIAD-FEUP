@@ -43,6 +43,7 @@ public class Launcher extends Repast3Launcher {
     private ContainerController mainContainer;
     private String folder;
     private boolean specialCars;
+    private boolean addCars;
 
     // viz
     private static List<DefaultDrawableNode> nodesViz;
@@ -65,12 +66,16 @@ public class Launcher extends Repast3Launcher {
     private CityAgent cityAgent;
     private Graph graph;
 
-    public Launcher(String arg, Configuration config, boolean runMode, boolean specialCars) {
+    public Launcher(String arg, Configuration config, boolean runMode, boolean specialCars, boolean addCars) {
         super();
         folder = arg;
         this.runInBatchMode = runMode;
         this.config = config;
         this.specialCars = specialCars;
+        this.addCars = addCars;
+
+
+
     }
 
     @Override
@@ -476,8 +481,8 @@ public class Launcher extends Repast3Launcher {
     }
 
     private void buildSchedule() {
-        CreateCars createCars = new CreateCars(this.getNumberMinIntersectionCar(), this.getNumberShortestTimeCar(), this.getNumberShortestPathCar(), this);
-        CreatePriorityCars createPriorityCars = new CreatePriorityCars(this.getNumberPriorityCars(), this);
+        CreateCars createCars = new CreateCars(this.getNumberMinIntersectionCar(), this.getNumberShortestTimeCar(), this.getNumberShortestPathCar(), this, addCars);
+        CreatePriorityCars createPriorityCars = new CreatePriorityCars(this.getNumberPriorityCars(), this, addCars);
         ChangeWeather changeWeather = new ChangeWeather(cityAgent, getProbabilityChangeWeather());
         boolean scheduleCars = false;
 
@@ -755,19 +760,35 @@ public class Launcher extends Repast3Launcher {
      */
     public static void main(String[] args) throws FileNotFoundException {
         boolean specialCars = false;
+        boolean addCar = false;
         if (args.length == 1) {
             if(!Launcher.checkFile(args[0])) return;
-        } else if(args.length == 2) {
+        } else if(args.length ==  2) {
             if(!Launcher.checkFile(args[0])) return;
-            if(!args[1].equals("-s")) {
+            if(!args[1].equals("-s") && !args[1].equals("-a")) {
                 System.out.println("Invalid command line flag!");
                 System.out.println("Flags:");
-                System.out.println("-s: Display Special Cars data");
+                System.out.println("-s: Display Special Cars data\n-a: Add car factories to statistics");
                 return;
-            } else {
-                specialCars = true;
+            } else  {
+                if (args[1].equals("-s"))
+                    specialCars = true;
+                else addCar = true;
+
             }
-        } else {
+        }  else if (args.length == 3) {
+            boolean valid = (args[1].equals("-s") && args[2].equals("-a")) ||
+                    (args[2].equals("-s") && args[1].equals("-a"));
+            if(!valid) {
+                System.out.println("Invalid command line flag!");
+                System.out.println("Flags:");
+                System.out.println("-s: Display Special Cars data\n-a: Add car factories to statistics");
+                return;
+            }
+            addCar = true;
+            specialCars = true;
+        }
+        else {
             System.out.println("Invalid number of arguments");
             return;
         }
@@ -791,7 +812,7 @@ public class Launcher extends Repast3Launcher {
         SimInit init = new SimInit();
         Configuration config = new Configuration(args);
         init.setNumRuns(1);   // works only in batch mode
-        init.loadModel(new Launcher(args[0], config, config.getBatchMode(), specialCars), null, false);
+        init.loadModel(new Launcher(args[0], config, config.getBatchMode(), specialCars, addCar), null, false);
     }
 }
 
