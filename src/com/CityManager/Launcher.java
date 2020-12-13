@@ -325,6 +325,13 @@ public class Launcher extends Repast3Launcher {
         twr.readFile();
         HashMap<String, Float> weatherVelocityRestriction = twr.getInfo();
 
+        CheckValidaty X = new CheckValidaty(graph.getEdges());
+        if (!X.validateNodeNr()) System.exit(1);
+        if (!X.validateCars(cars)) System.exit(1);
+        if (!X.validatePriorityCars(priorityCars))System.exit(1);
+        if (!X.check()) System.exit(1);
+
+
         WeatherStation weatherStation = new WeatherStation(weatherVelocityRestriction);
         cityAgent = new CityAgent(weatherStation, graph);
         try {
@@ -777,7 +784,6 @@ public class Launcher extends Repast3Launcher {
         }
 
         //CityManager cityManager = new CityManager(args[0]);
-        //CheckValidaty X = new CheckValidaty(cityManager.graph.getEdges());
         //if (!X.validateNodeNr()) return;
         //if (!X.validateCars(cityManager.cars)) return;
         //if (!X.validatePriorityCars(cityManager.priorityCars)) return;
