@@ -31,6 +31,7 @@ import uchicago.src.sim.network.DefaultDrawableNode;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -766,37 +767,19 @@ public class Launcher extends Repast3Launcher {
                 else addCar = true;
 
             }
-        }  else if (args.length == 3) {
-            boolean valid = (args[1].equals("-s") && args[2].equals("-a")) ||
-                    (args[2].equals("-s") && args[1].equals("-a"));
-            if(!valid) {
-                System.out.println("Invalid command line flag!");
-                System.out.println("Flags:");
-                System.out.println("-s: Display Special Cars data\n-a: Add car factories to statistics");
-                return;
-            }
-            addCar = true;
-            specialCars = true;
-        }
-        else {
+        } else {
             System.out.println("Invalid number of arguments");
             return;
         }
-
-        //CityManager cityManager = new CityManager(args[0]);
-        //if (!X.validateNodeNr()) return;
-        //if (!X.validateCars(cityManager.cars)) return;
-        //if (!X.validatePriorityCars(cityManager.priorityCars)) return;
-        //if (!X.check()) return;
 
         File dir2 = new File("logs/");
         if (!dir2.exists()){
             dir2.mkdir();
         }
-        for (File file: dir2.listFiles())
+        for (File file: dir2.listFiles()) {
             if (!file.isDirectory())
                 file.delete();
-
+        }
 
         SimInit init = new SimInit();
         Configuration config = new Configuration(args);
